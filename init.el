@@ -333,19 +333,7 @@
 
 ;; Eglot の設定
 (require 'eglot)
-
-;; 安全に eglot を起動する関数を定義
-(defun my-safe-eglot-ensure ()
-  ;; 1. 間接バッファ（Polymodeのチャンクなど）ではないことを確認
-  ;;    (間接バッファの場合、buffer-base-buffer が非nilを返します)
-  (unless (buffer-base-buffer)
-    ;; 2. かつ、ファイル名が存在し、拡張子が .py で終わる場合のみ起動
-    (when (and buffer-file-name
-               (string-match "\\.py$" buffer-file-name))
-      (eglot-ensure))))
-
-;; 定義した関数をフックに追加
-(add-hook 'python-mode-hook 'my-safe-eglot-ensure)
+(add-hook 'python-mode-hook 'eglot-ensure)
 
 ;; (オプション) Eglot 利用時に、保存時に自動でフォーマット(autopep8等)をかける場合
 ;; (add-hook 'python-mode-hook
@@ -418,12 +406,18 @@
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
-;; Markdown (polymode を使用して色分けトラブルを回避)
-(autoload 'poly-markdown-mode "poly-markdown" nil t)
-(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
+;; ;; Markdown (polymode を使用して色分けトラブルを回避)
+;; (autoload 'poly-markdown-mode "poly-markdown" nil t)
+;; (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
 
-;; 【追加】Poly-markdown 起動時に、強制的に相対行番号を表示する
-(add-hook 'poly-markdown-mode-hook
-          (lambda ()
-            (setq display-line-numbers-type 'relative) ; 相対表示を指定
-            (display-line-numbers-mode 1)))            ; 行番号を表示
+;; ;; 【追加】Poly-markdown 起動時に、強制的に相対行番号を表示する
+;; (add-hook 'poly-markdown-mode-hook
+;;           (lambda ()
+;;             (setq display-line-numbers-type 'relative) ; 相対表示を指定
+;;             (display-line-numbers-mode 1)))            ; 行番号を表示
+;; Markdown
+(autoload 'markdown-mode "markdown-mode" "Major mode for Markdown" t)
+(autoload 'poly-markdown-mode "poly-markdown" nil t)
+
+;; .md は通常の markdown-mode で開くように変更
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
