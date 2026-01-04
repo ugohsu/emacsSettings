@@ -83,11 +83,11 @@
 
 ;; buffer menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-(add-hook 'ibuffer-mode-hook
-          '(lambda()
-             (ibuffer-auto-mode 1)
-             (local-set-key "j" 'next-line)
-             (local-set-key "k" 'previous-line)))
+;; (add-hook 'ibuffer-mode-hook
+;;           '(lambda()
+;;              (ibuffer-auto-mode 1)
+;;              (local-set-key "j" 'next-line)
+;;              (local-set-key "k" 'previous-line)))
 
 ;; ビープ音を無くす
 (setq visible-bell t)
@@ -195,7 +195,12 @@
 ;;;;
 ;;;; evil
 ;;;;
+;; 【重要】Evil 本体がロードされる前にこの変数を nil に設定する必要があります
+(setq evil-want-keybinding nil)
 (evil-mode 1)
+;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
+(when (require 'evil-collection nil t)
+  (evil-collection-init))
 ;; (global-undo-tree-mode)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -204,7 +209,8 @@
  ;; If there is more than one, they won't work right.
  '(evil-undo-system 'undo-redo)
  '(package-selected-packages
-   '(linum-relative ein web-mode pony-mode poly-R polymode yatex org markdown-mode magit evil-surround ess ddskk)))
+   '(ddskk ein ess evil-collection evil-surround linum-relative magit
+           markdown-mode org poly-R polymode pony-mode web-mode yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
@@ -283,8 +289,8 @@
 (add-hook 'occur-hook
           '(lambda ()
              (next-error-follow-minor-mode)
-             (local-set-key "j" 'next-line)
-             (local-set-key "k" 'previous-line)
+             ;; (local-set-key "j" 'next-line)
+             ;; (local-set-key "k" 'previous-line)
              (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
              (switch-to-buffer-other-window "*Occur*")))
 
