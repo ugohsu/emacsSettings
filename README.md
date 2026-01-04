@@ -55,3 +55,13 @@ make && sudo make install
 
 (message "すべてのパッケージのインストールが完了しました！")
 ```
+
+## Python の補完・定義ジャンプを支援する Eglot (LSP クライアント) の導入
+
+Python 用のサーバの導入
+
+```bash
+pip3 install "python-lsp-server[all]"
+```
+
+eglot は Emacs 29 以降は標準搭載されている。それ以前のバージョンを使用する場合は、eglot パッケージを手動でインストールする必要がある。

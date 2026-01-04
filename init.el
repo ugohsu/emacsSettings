@@ -331,6 +331,24 @@
 
 (setq python-shell-interpreter "python3")
 
+;; Eglot の設定
+;; Python ファイルを開いたときだけ eglot を自動起動する
+(require 'eglot)
+
+;; 変更後: 通常のファイルのみ Eglot を有効化（Rmd 内のチャンクでは無効化）
+(add-hook 'python-mode-hook
+          (lambda ()
+            ;; バッファ名が .py で終わる、かつ polymode の内部バッファでない場合のみ起動
+            (when (and buffer-file-name
+                       (string-match "\\.py$" buffer-file-name)
+                       (not (bound-and-true-p polymode-mode)))
+              (eglot-ensure))))
+
+;; (オプション) Eglot 利用時に、保存時に自動でフォーマット(autopep8等)をかける場合
+;; (add-hook 'python-mode-hook
+;;           (lambda ()
+;;             (add-hook 'before-save-hook 'eglot-format-buffer -10 t)))
+
 ;;;;
 ;;;; other setting
 ;;;;
