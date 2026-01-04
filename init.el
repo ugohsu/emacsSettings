@@ -209,7 +209,7 @@
  ;; If there is more than one, they won't work right.
  '(evil-undo-system 'undo-redo)
  '(package-selected-packages
-   '(ddskk ein ess evil-collection evil-surround linum-relative magit
+   '(ddskk ess evil-collection evil-surround linum-relative magit
            markdown-mode org poly-R polymode pony-mode web-mode yatex)))
 
 ;; function
@@ -350,8 +350,7 @@
 (global-display-line-numbers-mode t)
 
 ;; ただし、以下のモードでは行番号を表示しない
-(dolist (mode '(org-mode-hook
-                term-mode-hook
+(dolist (mode '(term-mode-hook
                 shell-mode-hook
                 eshell-mode-hook
                 calendar-mode-hook
@@ -398,15 +397,12 @@
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
-;; web-mode
-(autoload 'web-mode "web-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-(defun my-web-mode-hook ()
-  "Hooks for Web mode."
-  (setq web-mode-markup-indent-offset 2)
-)
-(add-hook 'web-mode-hook 'my-web-mode-hook)
+;; Markdown (polymode を使用して色分けトラブルを回避)
+(autoload 'poly-markdown-mode "poly-markdown" nil t)
+(add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
 
-;; Markdown
-(autoload 'markdown-mode "markdown-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+;; 【追加】Poly-markdown 起動時に、強制的に相対行番号を表示する
+(add-hook 'poly-markdown-mode-hook
+          (lambda ()
+            (setq display-line-numbers-type 'relative) ; 相対表示を指定
+            (display-line-numbers-mode 1)))            ; 行番号を表示

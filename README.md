@@ -42,13 +42,6 @@ make && sudo make install
     polymode
     poly-R
     poly-markdown
-    
-    ;; Web
-    web-mode
-    
-    ;; その他（必要なければコメントアウトしてください）
-    ein
-    pony-mode
     ))
 
 ;; 3. リストを回して、入っていないものだけインストール

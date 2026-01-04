@@ -79,7 +79,10 @@
            (shell-quote-argument
             (file-name-sans-extension (buffer-file-name))))))
   
-(add-hook 'markdown-mode-hook
-          '(lambda ()
-             (define-key poly-markdown+r-mode-map "\C-c\C-b" 'rmarkdown-to-html)
-             (define-key poly-markdown+r-mode-map "\C-c\C-t" 'jupytext-sync)))
+;; Jupytext 同期コマンド (C-c C-t)
+(add-hook 'poly-markdown-mode-hook
+          (lambda ()
+            ;; Rmarkdown の変換
+            (define-key poly-markdown-mode-map (kbd "C-c C-b") 'rmarkdown-to-html)
+            ;; .md <-> .ipynb の同期
+            (define-key poly-markdown-mode-map (kbd "C-c C-t") 'jupytext-sync)))
