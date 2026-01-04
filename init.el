@@ -197,7 +197,14 @@
 ;;;;
 (evil-mode 1)
 ;; (global-undo-tree-mode)
-(custom-set-variables '(evil-undo-system 'undo-redo))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(evil-undo-system 'undo-redo)
+ '(package-selected-packages
+   '(linum-relative ein web-mode pony-mode poly-R polymode yatex org markdown-mode magit evil-surround ess ddskk)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
@@ -322,9 +329,6 @@
 ;;;; other setting
 ;;;;
 
-;; ALC による検索
-(autoload 'als "eww-alc-search" nil t)
-
 ;; R mode および yatex mode の設定
 (load "yatex_ess")
 
@@ -361,18 +365,8 @@
 ;;                     (expand-file-name "~/Dropbox/org/trello/") buffer-file-name)
 ;;                (org-trello-mode))))
 
-;; ugLaTeX 関係
-;; org-mode の参考文献データを bib 形式に変更する
-(autoload 'ugbib-replace
-  "./ugLaTeX/properties-to-bib.el" nil t)
 (put 'upcase-region 'disabled nil)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(ein web-mode pony-mode poly-R polymode yatex org markdown-mode magit evil-surround ess ddskk)))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

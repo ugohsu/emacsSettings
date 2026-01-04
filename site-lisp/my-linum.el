@@ -5,7 +5,6 @@
 
 (defcustom linum-disabled-modes-list (list
                                       'eshell-mode
-                                      'eww-mode
                                       'dired-mode)
   "* List of modes disabled when global linum mode is on"
   :type '(repeat (sexp :tag "Major mode"))
