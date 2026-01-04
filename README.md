@@ -30,6 +30,7 @@ make && sudo make install
   '(
     ;; 基本
     evil
+    evil-collection  ; 追加: キーバインド一括設定
     evil-surround
     ddskk
     magit
