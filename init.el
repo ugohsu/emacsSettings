@@ -332,11 +332,25 @@
 ;; R mode および yatex mode の設定
 (load "yatex_ess")
 
-;; mode-line の設定
-(load "my-modeline")
+;;;;
+;;;; 行番号表示 (標準機能 display-line-numbers を使用)
+;;;;
 
-;; 行数表示 (linum-mode) の設定
-(load "my-linum")
+;; 行番号のタイプを「相対表示」にする
+;; (通常表示がいい場合は t 、折り返しを考慮した相対表示は 'visual)
+(setq-default display-line-numbers-type 'relative)
+
+;; 行番号をすべてのバッファで有効にする
+(global-display-line-numbers-mode t)
+
+;; ただし、以下のモードでは行番号を表示しない
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook
+                calendar-mode-hook
+                dired-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 ;; ugr 関連関数
 ;; frame-name の補完
