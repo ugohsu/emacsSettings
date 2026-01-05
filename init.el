@@ -200,6 +200,9 @@
 (evil-mode 1)
 ;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
 (when (require 'evil-collection nil t)
+  ;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
+  ;; evil-collection による上書きを禁止する
+  (setq evil-collection-key-blacklist '("SPC"))
   (evil-collection-init))
 ;; (global-undo-tree-mode)
 (custom-set-variables
