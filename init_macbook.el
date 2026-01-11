@@ -1,6 +1,6 @@
 ;; ロードパス
 (add-to-list 'load-path "~/.emacs.d/site-lisp")
-(setenv "PATH" (concat "$HOME/controls/scripts:$HOME/.local/bin:" (getenv "PATH")))
+(setenv "PATH" (concat "$HOME/Library/Python/3.8/bin:$HOME/docs/scripts:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:" (getenv "PATH")))
 (setq exec-path (parse-colon-path (getenv "PATH")))
 
 ;; package
@@ -9,27 +9,30 @@
              '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
 
-;; fonts
-(cond
- ;; IPA と Inconsolata をあわせる
- ((and (x-family-fonts "Inconsolata")
-       (x-family-fonts "IPAGothic"))
-  (set-face-attribute 'default nil :family "Inconsolata" :height 150)
-  (set-fontset-font
-   nil 'japanese-jisx0208 (font-spec :family "IPAGothic")))
- ;; RictyDiminishedDiscord を用いる場合
- ((x-family-fonts "RictyDiminishedDiscord")
-  (set-face-attribute 'default nil :family "RictyDiminishedDiscord" :height 150))
- ;; NotoSansMono
- ((x-family-fonts "Noto Sans Mono CJK JP")
-  (set-face-attribute 'default nil :family "Noto Sans Mono CJK JP" :height 150))
- ;; IPA Gothicを用いる場合
- ((x-family-fonts "IPAGothic")
-  (set-face-attribute 'default nil :family "IPAGothic" :height 120))
- ;; MS ゴシックを用いる場合
- (t
-  (custom-set-faces
-   '(default ((t (:family "ＭＳ ゴシック" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))))
+(set-locale-environment "utf-8")
+(setenv "LANG" "ja_JP.UTF-8")
+(x-family-fonts "Takaoゴシック-10")
+;; ;; fonts
+;; (cond
+;;  ;; IPA と Inconsolata をあわせる
+;;  ((and (x-family-fonts "Inconsolata")
+;;        (x-family-fonts "IPAGothic"))
+;;   (set-face-attribute 'default nil :family "Inconsolata" :height 150)
+;;   (set-fontset-font
+;;    nil 'japanese-jisx0208 (font-spec :family "IPAGothic")))
+;;  ;; RictyDiminishedDiscord を用いる場合
+;;  ((x-family-fonts "RictyDiminishedDiscord")
+;;   (set-face-attribute 'default nil :family "RictyDiminishedDiscord" :height 150))
+;;  ;; NotoSansMono
+;;  ((x-family-fonts "Noto Sans Mono CJK JP")
+;;   (set-face-attribute 'default nil :family "Noto Sans Mono CJK JP" :height 150))
+;;  ;; IPA Gothicを用いる場合
+;;  ((x-family-fonts "IPAGothic")
+;;   (set-face-attribute 'default nil :family "IPAGothic" :height 120))
+;;  ;; MS ゴシックを用いる場合
+;;  (t
+;;   (custom-set-faces
+;;    '(default ((t (:family "ＭＳ ゴシック" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))))
 
 ;; theme
 (load-theme 'wheatgrass t)
@@ -51,6 +54,8 @@
 
 ;; frame-maximize
 ;; (set-frame-parameter nil 'fullscreen 'maximized)
+(add-hook 'window-setup-hook 'toggle-frame-maximized t)
+
 
 ;; yes or y
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -83,11 +88,11 @@
 
 ;; buffer menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-;; (add-hook 'ibuffer-mode-hook
-;;           '(lambda()
-;;              (ibuffer-auto-mode 1)
-;;              (local-set-key "j" 'next-line)
-;;              (local-set-key "k" 'previous-line)))
+(add-hook 'ibuffer-mode-hook
+          '(lambda()
+             (ibuffer-auto-mode 1)
+             (local-set-key "j" 'next-line)
+             (local-set-key "k" 'previous-line)))
 
 ;; ビープ音を無くす
 (setq visible-bell t)
@@ -195,25 +200,10 @@
 ;;;;
 ;;;; evil
 ;;;;
-;; 【重要】Evil 本体がロードされる前にこの変数を nil に設定する必要があります
-(setq evil-want-keybinding nil)
+
 (evil-mode 1)
-;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
-(when (require 'evil-collection nil t)
-  ;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
-  ;; evil-collection による上書きを禁止する
-  (setq evil-collection-key-blacklist '("SPC"))
-  (evil-collection-init))
-;; (global-undo-tree-mode)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-undo-system 'undo-redo)
- '(package-selected-packages
-   '(ddskk ess evil-collection evil-surround fasd linum-relative magit
-           markdown-mode org poly-R polymode pony-mode web-mode yatex)))
+(global-undo-tree-mode)
+(custom-set-variables '(evil-undo-system 'undo-tree))
 
 ;; function
 (defun evil-mysetting-spccmd ()
@@ -261,8 +251,8 @@
 (define-key evil-motion-state-map
   "Q" 'kill-buffer)
 (define-key evil-normal-state-map
-;;   "U" 'undo-tree-visualize)
-;; (define-key evil-motion-state-map
+  "U" 'undo-tree-visualize)
+(define-key evil-motion-state-map
   (kbd "C-{") 'spconv)
 (define-key evil-insert-state-map
   (kbd "C-{") 'spconv)
@@ -292,8 +282,8 @@
 (add-hook 'occur-hook
           '(lambda ()
              (next-error-follow-minor-mode)
-             ;; (local-set-key "j" 'next-line)
-             ;; (local-set-key "k" 'previous-line)
+             (local-set-key "j" 'next-line)
+             (local-set-key "k" 'previous-line)
              (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
              (switch-to-buffer-other-window "*Occur*")))
 
@@ -334,40 +324,21 @@
 
 (setq python-shell-interpreter "python3")
 
-;; Eglot の設定
-(require 'eglot)
-(add-hook 'python-mode-hook 'eglot-ensure)
-
-;; (オプション) Eglot 利用時に、保存時に自動でフォーマット(autopep8等)をかける場合
-;; (add-hook 'python-mode-hook
-;;           (lambda ()
-;;             (add-hook 'before-save-hook 'eglot-format-buffer -10 t)))
-
 ;;;;
 ;;;; other setting
 ;;;;
 
+;; ALC による検索
+(autoload 'als "eww-alc-search" nil t)
+
 ;; R mode および yatex mode の設定
 (load "yatex_ess")
 
-;;;;
-;;;; 行番号表示 (標準機能 display-line-numbers を使用)
-;;;;
+;; mode-line の設定
+(load "my-modeline")
 
-;; 行番号のタイプを「相対表示」にする
-;; (通常表示がいい場合は t 、折り返しを考慮した相対表示は 'visual)
-(setq-default display-line-numbers-type 'relative)
-
-;; 行番号をすべてのバッファで有効にする
-(global-display-line-numbers-mode t)
-
-;; ただし、以下のモードでは行番号を表示しない
-(dolist (mode '(term-mode-hook
-                shell-mode-hook
-                eshell-mode-hook
-                calendar-mode-hook
-                dired-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+;; 行数表示 (linum-mode) の設定
+(load "my-linum")
 
 ;; ugr 関連関数
 ;; frame-name の補完
@@ -396,8 +367,18 @@
 ;;                     (expand-file-name "~/Dropbox/org/trello/") buffer-file-name)
 ;;                (org-trello-mode))))
 
+;; ugLaTeX 関係
+;; org-mode の参考文献データを bib 形式に変更する
+(autoload 'ugbib-replace
+  "./ugLaTeX/properties-to-bib.el" nil t)
 (put 'upcase-region 'disabled nil)
-
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(undo-tree ein web-mode pony-mode poly-R polymode yatex org markdown-mode magit evil-surround ess ddskk)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -409,18 +390,11 @@
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
-;; ;; Markdown (polymode を使用して色分けトラブルを回避)
-;; (autoload 'poly-markdown-mode "poly-markdown" nil t)
-;; (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
-
-;; ;; 【追加】Poly-markdown 起動時に、強制的に相対行番号を表示する
-;; (add-hook 'poly-markdown-mode-hook
-;;           (lambda ()
-;;             (setq display-line-numbers-type 'relative) ; 相対表示を指定
-;;             (display-line-numbers-mode 1)))            ; 行番号を表示
-;; Markdown
-(autoload 'markdown-mode "markdown-mode" "Major mode for Markdown" t)
-(autoload 'poly-markdown-mode "poly-markdown" nil t)
-
-;; .md は通常の markdown-mode で開くように変更
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+;; web-mode
+(autoload 'web-mode "web-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+)
+(add-hook 'web-mode-hook 'my-web-mode-hook)

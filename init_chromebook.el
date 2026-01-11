@@ -1,6 +1,9 @@
+;; Common Lisp (package.el に [loop] という関数が必要)
+(require 'cl)
+
 ;; ロードパス
 (add-to-list 'load-path "~/.emacs.d/site-lisp")
-(setenv "PATH" (concat "$HOME/controls/scripts:$HOME/.local/bin:" (getenv "PATH")))
+(setenv "PATH" (concat "~/docs/scripts:" (getenv "PATH")))
 (setq exec-path (parse-colon-path (getenv "PATH")))
 
 ;; package
@@ -52,9 +55,6 @@
 ;; frame-maximize
 ;; (set-frame-parameter nil 'fullscreen 'maximized)
 
-;; yes or y
-(defalias 'yes-or-no-p 'y-or-n-p)
-
 ;; indent
 (setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
@@ -69,7 +69,6 @@
 (global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "M-r") 'revert-buffer)
 (setq skeleton-pair 1)
 
 ;; Region がオンのときのみ C-w を kill-region とする
@@ -83,11 +82,11 @@
 
 ;; buffer menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-;; (add-hook 'ibuffer-mode-hook
-;;           '(lambda()
-;;              (ibuffer-auto-mode 1)
-;;              (local-set-key "j" 'next-line)
-;;              (local-set-key "k" 'previous-line)))
+(add-hook 'ibuffer-mode-hook
+          '(lambda()
+             (ibuffer-auto-mode 1)
+             (local-set-key "j" 'next-line)
+             (local-set-key "k" 'previous-line)))
 
 ;; ビープ音を無くす
 (setq visible-bell t)
@@ -195,37 +194,20 @@
 ;;;;
 ;;;; evil
 ;;;;
-;; 【重要】Evil 本体がロードされる前にこの変数を nil に設定する必要があります
-(setq evil-want-keybinding nil)
+
+(require 'evil)
 (evil-mode 1)
-;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
-(when (require 'evil-collection nil t)
-  ;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
-  ;; evil-collection による上書きを禁止する
-  (setq evil-collection-key-blacklist '("SPC"))
-  (evil-collection-init))
-;; (global-undo-tree-mode)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-undo-system 'undo-redo)
- '(package-selected-packages
-   '(ddskk ess evil-collection evil-surround fasd linum-relative magit
-           markdown-mode org poly-R polymode pony-mode web-mode yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ファイル, b: バッファ, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, n: note を開く"))))
+             "SPC: スクロール, f: ファイル, b: バッファ, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, a: org-agenda"))))
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "a") (org-agenda))
           ((equal c "f") (ido-find-file))
           ((equal c "b") (ido-switch-buffer))
-          ((equal c "n") (find-file "~/Dropbox/org/note/note.org"))
           ((equal c ":") (eshell-cd-default-directory))
           ((equal c "h") (evil-window-left 1))
           ((equal c "j") (evil-window-down 1))
@@ -245,10 +227,10 @@
   (if (region-active-p)
       (progn
         (kill-region (region-beginning) (region-end))
-        (insert " (\\textcolor{white}{\\LARGE ")
+        (insert " (\\textcolor{white}{\\Large ")
         (yank)
         (insert "}) "))
-    (insert "(\\textcolor{white}{\\LARGE ")
+    (insert "(\\textcolor{white}{\\Large ")
     (let ((tmpp (point)))
       (insert "})")
       (goto-char tmpp))))
@@ -261,13 +243,11 @@
 (define-key evil-motion-state-map
   "Q" 'kill-buffer)
 (define-key evil-normal-state-map
-;;   "U" 'undo-tree-visualize)
-;; (define-key evil-motion-state-map
+  "U" 'undo-tree-visualize)
+(define-key evil-motion-state-map
   (kbd "C-{") 'spconv)
 (define-key evil-insert-state-map
   (kbd "C-{") 'spconv)
-(define-key evil-motion-state-map
-  (kbd "C-:") 'eshell-command)
 
 ;; config
 (setq evil-want-C-i-jump nil)
@@ -292,8 +272,8 @@
 (add-hook 'occur-hook
           '(lambda ()
              (next-error-follow-minor-mode)
-             ;; (local-set-key "j" 'next-line)
-             ;; (local-set-key "k" 'previous-line)
+             (local-set-key "j" 'next-line)
+             (local-set-key "k" 'previous-line)
              (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
              (switch-to-buffer-other-window "*Occur*")))
 
@@ -303,15 +283,15 @@
 ;;;;
 ;;;; chord
 ;;;;
-;; (require 'key-chord)
-;; (setq key-chord-two-keys-delay 0.04)
-;; (key-chord-mode 1)
+(require 'key-chord)
+(setq key-chord-two-keys-delay 0.04)
+(key-chord-mode 1)
 
 ;; view-mode
 ;; (key-chord-define-global "fd" 'view-mode)
 
 ;; evil mode 
-;; (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 
 ;;;;
 ;;;; eshell
@@ -334,40 +314,21 @@
 
 (setq python-shell-interpreter "python3")
 
-;; Eglot の設定
-(require 'eglot)
-(add-hook 'python-mode-hook 'eglot-ensure)
-
-;; (オプション) Eglot 利用時に、保存時に自動でフォーマット(autopep8等)をかける場合
-;; (add-hook 'python-mode-hook
-;;           (lambda ()
-;;             (add-hook 'before-save-hook 'eglot-format-buffer -10 t)))
-
 ;;;;
 ;;;; other setting
 ;;;;
 
+;; ALC による検索
+(autoload 'als "eww-alc-search" nil t)
+
 ;; R mode および yatex mode の設定
 (load "yatex_ess")
 
-;;;;
-;;;; 行番号表示 (標準機能 display-line-numbers を使用)
-;;;;
+;; mode-line の設定
+(load "my-modeline")
 
-;; 行番号のタイプを「相対表示」にする
-;; (通常表示がいい場合は t 、折り返しを考慮した相対表示は 'visual)
-(setq-default display-line-numbers-type 'relative)
-
-;; 行番号をすべてのバッファで有効にする
-(global-display-line-numbers-mode t)
-
-;; ただし、以下のモードでは行番号を表示しない
-(dolist (mode '(term-mode-hook
-                shell-mode-hook
-                eshell-mode-hook
-                calendar-mode-hook
-                dired-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+;; 行数表示 (linum-mode) の設定
+(load "my-linum")
 
 ;; ugr 関連関数
 ;; frame-name の補完
@@ -396,8 +357,19 @@
 ;;                     (expand-file-name "~/Dropbox/org/trello/") buffer-file-name)
 ;;                (org-trello-mode))))
 
+;; ugLaTeX 関係
+;; org-mode の参考文献データを bib 形式に変更する
+(autoload 'ugbib-replace
+  "./ugLaTeX/properties-to-bib.el" nil t)
 (put 'upcase-region 'disabled nil)
-
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (web-mode evil-magit pony-mode poly-R polymode yatex org-trello org markdown-mode magit evil-surround ess ddskk))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -408,19 +380,13 @@
 ;; magit 関係
 
 (global-set-key (kbd "C-x g") 'magit-status)
+(require 'evil-magit)
 
-;; ;; Markdown (polymode を使用して色分けトラブルを回避)
-;; (autoload 'poly-markdown-mode "poly-markdown" nil t)
-;; (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
-
-;; ;; 【追加】Poly-markdown 起動時に、強制的に相対行番号を表示する
-;; (add-hook 'poly-markdown-mode-hook
-;;           (lambda ()
-;;             (setq display-line-numbers-type 'relative) ; 相対表示を指定
-;;             (display-line-numbers-mode 1)))            ; 行番号を表示
-;; Markdown
-(autoload 'markdown-mode "markdown-mode" "Major mode for Markdown" t)
-(autoload 'poly-markdown-mode "poly-markdown" nil t)
-
-;; .md は通常の markdown-mode で開くように変更
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+;; web-mode
+(autoload 'web-mode "web-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 2)
+)
+(add-hook 'web-mode-hook  'my-web-mode-hook)
