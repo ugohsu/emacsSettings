@@ -55,6 +55,9 @@
 ;; yes or y
 (defalias 'yes-or-no-p 'y-or-n-p)
 
+;; シンボリックリンクの読み込みを許可（確認しない）
+(setq vc-follow-symlinks t)
+
 ;; indent
 (setq-default indent-tabs-mode nil)
 (setq-default c-basic-offset 4)
@@ -212,20 +215,22 @@
  ;; If there is more than one, they won't work right.
  '(evil-undo-system 'undo-redo)
  '(package-selected-packages
-   '(ddskk ess evil-collection evil-surround fasd linum-relative magit
-           markdown-mode org poly-R polymode pony-mode web-mode yatex)))
+   '(ddskk ess evil-collection evil-surround fasd fzf linum-relative
+           magit markdown-mode org poly-R polymode pony-mode web-mode
+           yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ファイル, b: バッファ, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, n: note を開く"))))
+             "SPC: スクロール, f: ファイル, b: バッファ, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, z: fasd")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "a") (org-agenda))
           ((equal c "f") (ido-find-file))
           ((equal c "b") (ido-switch-buffer))
-          ((equal c "n") (find-file "~/Dropbox/org/note/note.org"))
+          ;; ((equal c "n") (find-file "~/Dropbox/org/note/note.org")) ;; 削除 (コメントアウト)
+          ((equal c "z") (my-fzf-fasd))  ;; 追加: z で fasd 起動
           ((equal c ":") (eshell-cd-default-directory))
           ((equal c "h") (evil-window-left 1))
           ((equal c "j") (evil-window-down 1))
@@ -424,3 +429,22 @@
 
 ;; .md は通常の markdown-mode で開くように変更
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;;;;
+;;;; fzf + fasd 設定
+;;;;
+
+;; fzf パッケージを読み込み (インストールされていないとエラーになるので注意)
+(require 'fzf)
+
+;; fzf コマンドのオプション設定 (必要に応じて)
+;; Emacs がシステムに入っている fzf コマンドを使えるようにする
+(setq fzf/executable "fzf") 
+
+(defun my-fzf-fasd ()
+  "fasd の履歴を fzf で絞り込んで開く"
+  (interactive)
+  ;; fzf-with-command: 指定したシェルコマンドの結果を fzf に渡す関数
+  ;; "fasd -Rfl": Recency(最近/頻度)順、Fileのみ、List形式
+  (fzf-with-command "fasd -Rfl"
+                    (lambda (x) (find-file x))))

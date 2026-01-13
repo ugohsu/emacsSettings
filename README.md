@@ -34,6 +34,7 @@ make && sudo make install
     evil-surround
     ddskk
     magit
+    fzf
     
     ;; LaTeX / R / Markdown
     yatex
