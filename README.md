@@ -36,9 +36,10 @@ make && sudo make install
     magit
     fzf
     
-    ;; LaTeX / R / Markdown
+    ;; LaTeX / R / Python / Markdown
     yatex
     ess
+    pyvenv
     markdown-mode
     polymode
     poly-R

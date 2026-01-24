@@ -9,30 +9,25 @@
              '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
 
-;; fonts
-(cond
- ;; IPA と Inconsolata をあわせる
- ((and (x-family-fonts "Inconsolata")
-       (x-family-fonts "IPAGothic"))
-  (set-face-attribute 'default nil :family "Inconsolata" :height 150)
-  (set-fontset-font
-   nil 'japanese-jisx0208 (font-spec :family "IPAGothic")))
- ;; RictyDiminishedDiscord を用いる場合
- ((x-family-fonts "RictyDiminishedDiscord")
-  (set-face-attribute 'default nil :family "RictyDiminishedDiscord" :height 150))
- ;; NotoSansMono
- ((x-family-fonts "Noto Sans Mono CJK JP")
-  (set-face-attribute 'default nil :family "Noto Sans Mono CJK JP" :height 150))
- ;; IPA Gothicを用いる場合
- ((x-family-fonts "IPAGothic")
-  (set-face-attribute 'default nil :family "IPAGothic" :height 120))
- ;; MS ゴシックを用いる場合
- (t
-  (custom-set-faces
-   '(default ((t (:family "ＭＳ ゴシック" :foundry "outline" :slant normal :weight normal :height 120 :width normal)))))))
 
 ;; theme
 (load-theme 'wheatgrass t)
+
+
+;;;; --------------------------------------------------------
+;;;; フォント設定:
+;;;; --------------------------------------------------------
+
+;; 1. 英字フォントを標準に設定
+(set-face-attribute 'default nil :family "Ricty Diminished Discord" :height 150)
+;; (set-face-attribute 'default nil :family "Inconsolata" :height 150)
+;; (set-face-attribute 'default nil :family  "Noto Sans Mono CJK JP" :height 120)
+;; (set-face-attribute 'default nil :family  "IPAGothic" :height 150)
+
+;; 2. 日本語フォントを上書き設定
+(dolist (target '(japanese-jisx0208 kana han symbol cjk-misc bopomofo))
+;;   (set-fontset-font t target (font-spec :family "Noto Sans Mono CJK JP")))
+  (set-fontset-font t target (font-spec :family "IPAGothic")))
 
 ;; カーソルの色
 (set-cursor-color "white")
@@ -216,8 +211,8 @@
  '(evil-undo-system 'undo-redo)
  '(package-selected-packages
    '(ddskk ess evil-collection evil-surround fasd fzf linum-relative
-           magit markdown-mode org poly-R polymode pony-mode web-mode
-           yatex)))
+           magit markdown-mode org poly-R polymode pony-mode pyvenv
+           web-mode yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
