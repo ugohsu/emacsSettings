@@ -19,7 +19,12 @@
 (modify-coding-system-alist 'file "\\.sty\\'" 'utf-8)
 
 ;; auto fill mode
-(add-hook 'yatex-mode (lambda () (auto-fill-mode t)))
+;; YaTeX は古い実装のため after-change-major-mode-hook が自動で呼ばれない。
+;; これを手動で発火させることで、すべての global-* モードを一括で有効化する。
+(add-hook 'yatex-mode-hook
+          (lambda ()
+            (run-hooks 'after-change-major-mode-hook)
+            (auto-fill-mode t)))
 
 ;;;; 
 ;;;; R
