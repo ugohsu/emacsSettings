@@ -43,8 +43,10 @@
 (add-to-list 'auto-mode-alist '("\\.Rnw$" . noweb-mode))
 (add-to-list 'auto-mode-alist '("\\.Rmd$" . poly-markdown+r-mode))
 
-;; R起動時にワーキングディレクトリを訊ねない
-(setq ess-ask-for-ess-directory nil)
+
+;; (setq ess-ask-for-ess-directory nil) ; R起動時にワーキングディレクトリを訊ねない
+;; プロジェクトルートではなくファイルのディレクトリをワーキングディレクトリとする
+(setq ess-startup-directory 'default-directory)
 
 ;; .R file to sjis-dos
 ;; (modify-coding-system-alist 'file "\\.R\\'" 'utf-8-unix)
