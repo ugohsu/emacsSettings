@@ -58,6 +58,24 @@ make && sudo make install
 (message "すべてのパッケージのインストールが完了しました！")
 ```
 
+## YaTeX での LuaLaTeX 使用
+
+デフォルトのエンジンは uplatex。特定のファイルで LuaLaTeX を使う場合は、ファイル先頭にマジックコメントを書き、プリアンブルに `luatexja` を読み込む。
+
+```tex
+%#!lualatex --interaction=nonstopmode
+\documentclass{article}
+\usepackage{luatexja}
+\begin{document}
+こんにちは世界
+\end{document}
+```
+
+- マジックコメントにより、YaTeX はそのファイルだけ `lualatex` でタイプセットする
+- `--interaction=nonstopmode` はエラー時にハングしないために必要
+- `luatexja` パッケージで日本語組版が有効になる
+- タイプセット後のプレビューは従来通り `C-c t p` → zathura で行う
+
 ## Python の補完・定義ジャンプを支援する Eglot (LSP クライアント) の導入
 
 Python 用のサーバの導入
