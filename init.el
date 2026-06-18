@@ -443,3 +443,8 @@
   ;; "fasd -Rfl": Recency(最近/頻度)順、Fileのみ、List形式
   (fzf-with-command "fasd -Rfl"
                     (lambda (x) (find-file x))))
+
+;; ローカル環境固有の設定（存在する場合のみ読み込む）
+(let ((local-config (expand-file-name "server_local.el" user-emacs-directory)))
+  (when (file-exists-p local-config)
+    (load local-config)))

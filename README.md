@@ -76,6 +76,21 @@ make && sudo make install
 - `luatexja` パッケージで日本語組版が有効になる
 - タイプセット後のプレビューは従来通り `C-c t p` → zathura で行う
 
+## 環境固有の設定（server_local.el）
+
+`init.el` は末尾で `~/.emacs.d/server_local.el` が存在すれば自動的に読み込む。
+環境ごとの差異はこのファイルに書くことで、`init.el` 本体を汚さずに済む。
+
+### workbox コンテナの場合
+
+Docker コンテナ内では pty の挙動の違いにより、ESS で R にコードを送るとタイムアウトする問題がある。`server_local.el` に以下を書いて対処する：
+
+```elisp
+(setq ess-eval-visibly 'nowait)
+```
+
+`server_local.el` は `workbox_setup/` で管理し、`run.sh` でマウントする。
+
 ## Python の補完・定義ジャンプを支援する Eglot (LSP クライアント) の導入
 
 Python 用のサーバの導入
