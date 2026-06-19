@@ -201,6 +201,7 @@
   ;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
   ;; evil-collection による上書きを禁止する
   (setq evil-collection-key-blacklist '("SPC"))
+  (setq evil-collection-repl-submit-state 'insert)
   (evil-collection-init))
 ;; (global-undo-tree-mode)
 (custom-set-variables
