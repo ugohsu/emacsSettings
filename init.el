@@ -1,3 +1,5 @@
+;;; -*- lexical-binding: t; -*-
+
 ;; ロードパス
 (add-to-list 'load-path "~/.emacs.d/site-lisp")
 (setenv "PATH" (concat "$HOME/controls/scripts:$HOME/.local/bin:" (getenv "PATH")))

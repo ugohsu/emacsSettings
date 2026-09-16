@@ -78,10 +78,17 @@ make && sudo make install
 
 ## Python の補完・定義ジャンプを支援する Eglot (LSP クライアント) の導入
 
-Python 用のサーバの導入
+Python 用のサーバの導入。trixie ではシステム Python への pip install が非推奨のため、apt からインストールする。
 
 ```bash
-pip3 install "python-lsp-server[all]"
+sudo apt install python3-pylsp
+```
+
+pip 版の `python-lsp-server[all]` に相当する追加のリンタ・フォーマッタ機能が欲しい場合は、以下も合わせてインストールする（`python3-pylsp` の Suggests に列挙されているパッケージ）。
+
+```bash
+sudo apt install python3-pylsp-black python3-pylsp-isort python3-pylsp-mypy python3-pylsp-rope \
+  flake8 pylint python3-autopep8 python3-pycodestyle python3-pydocstyle python3-pyflakes python3-yapf
 ```
 
 eglot は Emacs 29 以降は標準搭載されている。それ以前のバージョンを使用する場合は、eglot パッケージを手動でインストールする必要がある。

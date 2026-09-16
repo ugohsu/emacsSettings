@@ -1,6 +1,7 @@
-;;;; 
+;;; -*- lexical-binding: t; -*-
+;;;;
 ;;;; YaTeX-mode
-;;;; 
+;;;;
 (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
 (setq auto-mode-alist
       (cons (cons "\\.tex$" 'yatex-mode) auto-mode-alist))
