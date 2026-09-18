@@ -3,10 +3,15 @@
 ## Emacs のビルド
 
 ```bash
-sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev
+sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev
 ./configure --with-x-toolkit=gtk3 --without-toolkit-scroll-bars --without-xaw3d --without-xim --without-rsvg --without-xpm --without-tiff --without-gpm --with-wide-int 
 make && sudo make install
 ```
+
+- `libxml2-dev` が無いと `configure` 時に `libxml-2.0` (pkg-config) が見つからず、XMLサポートが無効なままビルドされる。
+  この状態で `eww` を使うと `error in process filter: Symbol's function definition is void: libxml-parse-html-region`
+  というエラーになる(2026-09-18に発覚。当時のビルド(`/home/ugos/progfile/emacs-31.1`)では未導入だったため発生)。
+  再ビルド時は必ず上記コマンドで `libxml2-dev` を入れてから `configure` すること。
 
 ## パッケージのインストール
 
