@@ -114,8 +114,14 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
 - **Wayland移行時**: `xclip`のようなX11専用ではなく、OSC 52という端末プロトコル
   自体でクリップボードとやり取りするため、X11/Waylandどちらでも(SSH越しでも)
   設定変更なしで動作する。
-- **tmux/screen経由の場合**: 追加設定が必要(`.tmux.conf`に
-  `set -ag update-environment "SSH_TTY"`を追加する等)。サーバー(hp-mini、
-  `controls/setting/server/hp-mini/`)にssh+tmux+dockerで入る運用では、
-  emacs -nwを使う機会自体が少ないため現時点では未対応・保留。必要になったら
-  対応すること。
+- **tmux/screen経由の場合**: tmux 3.3以降はセキュリティ上の理由でDCSパススルーを
+  デフォルトでブロックしており、`.tmux.conf`に以下が必要。
+  ```
+  set -g set-clipboard external
+  set -g allow-passthrough on
+  ```
+- **サーバー(hp-mini)側**: kitty→SSH→hp-mini→docker exec→コンテナ内tmux→emacs、という
+  経路で上記tmux設定を導入し(2026-09-18)、コンテナ内emacsのkill-ringをクライアント側
+  クリップボードに載せられるようになった。設定はDockerfileに焼き込み済み。手順・原因の
+  詳細は`controls/setting/server/hp-mini/workbox_setup/README.md`の「11. Emacs (clipetty)
+  の kill-ring → クリップボード連携に必要な tmux 設定」を参照。
