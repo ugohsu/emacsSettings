@@ -213,9 +213,9 @@
  ;; If there is more than one, they won't work right.
  '(evil-undo-system 'undo-redo)
  '(package-selected-packages
-   '(ddskk ess evil-collection evil-surround fasd fzf linum-relative
-           magit markdown-mode org poly-R polymode pony-mode pyvenv
-           web-mode yatex)))
+   '(clipetty ddskk ess evil-collection evil-surround fasd fzf
+              linum-relative magit markdown-mode org poly-R polymode
+              pony-mode pyvenv web-mode yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
@@ -446,3 +446,15 @@
   ;; "fasd -Rfl": Recency(最近/頻度)順、Fileのみ、List形式
   (fzf-with-command "fasd -Rfl"
                     (lambda (x) (find-file x))))
+
+;;;;
+;;;; killring とクリップボードの連携 (端末版 emacs -nw 用)
+;;;;
+;; GUI版はXのクリップボードAPIに直接繋がるため自動連携されるが、
+;; -nw ではその経路が無いため既定では連携しない。OSC 52 エスケープ
+;; シーケンスで端末(kitty)経由で連携する clipetty を使う。
+;; GUIフレームでは clipetty-cut が display-graphic-p を見て何もせず
+;; 元の interprogram-cut-function に素通しするだけなので、この設定を
+;; GUI版と共有しても副作用は無い。
+(when (require 'clipetty nil t)
+  (global-clipetty-mode 1))

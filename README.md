@@ -35,6 +35,7 @@ make && sudo make install
     ddskk
     magit
     fzf
+    clipetty  ; emacs -nw でkillring⇄クリップボード連携 (OSC 52)
     
     ;; LaTeX / R / Python / Markdown
     yatex
@@ -92,3 +93,29 @@ sudo apt install python3-pylsp-black python3-pylsp-isort python3-pylsp-mypy pyth
 ```
 
 eglot は Emacs 29 以降は標準搭載されている。それ以前のバージョンを使用する場合は、eglot パッケージを手動でインストールする必要がある。
+
+## emacs -nw (CLI版) でのクリップボード連携 (clipetty)
+
+GUI版はXのクリップボードAPIに直接繋がるため、killしたテキストが自動的に
+システムクリップボードと連携される。一方 `emacs -nw` (端末版) はディスプレイ
+サーバーへの接続を持たないため、既定では killring とクリップボードが
+連携しない。
+
+対策として [clipetty](https://github.com/spudlyo/clipetty) を導入(2026-09-18)。
+OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボードと連携する。
+`init.el`側の設定は`(when (require 'clipetty nil t) (global-clipetty-mode 1))`
+で、GUIフレームでは`clipetty-cut`が`display-graphic-p`を見て何もせず元の
+`interprogram-cut-function`に素通しするだけなので、GUI版と同じinit.elを
+共有しても副作用はない。
+
+- **kitty対応**: READMEで名指しで対応が明記されている(kitty独自の拡張clipboard
+  機能自体は未対応だが、互換性はあり無効化も不要)。通常の用途で問題になるのは
+  「killringで非常に大きなテキスト塊を一度にkillする」ような極端なケースのみ。
+- **Wayland移行時**: `xclip`のようなX11専用ではなく、OSC 52という端末プロトコル
+  自体でクリップボードとやり取りするため、X11/Waylandどちらでも(SSH越しでも)
+  設定変更なしで動作する。
+- **tmux/screen経由の場合**: 追加設定が必要(`.tmux.conf`に
+  `set -ag update-environment "SSH_TTY"`を追加する等)。サーバー(hp-mini、
+  `controls/setting/server/hp-mini/`)にssh+tmux+dockerで入る運用では、
+  emacs -nwを使う機会自体が少ないため現時点では未対応・保留。必要になったら
+  対応すること。
