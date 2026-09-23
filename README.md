@@ -147,7 +147,7 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
 のみ。どちらも autoload されるので `require` は不要。
 
 ファイルを開く `SPC f` だけは従来どおり `ido-find-file` を使い、バッファ切替
-`SPC b` は通常の `switch-to-buffer` (vertico 適用) にしている。
+`SPC b` は vertico が効く `consult-buffer` にしている (後述の consult を参照)。
 
 - **ido-mode は有効にしない**: `(ido-mode 'buffers)` は `C-x b` などを
   `ido-switch-buffer` に、`(ido-mode 'files)` は `C-x C-f`・`C-x d`・
@@ -174,14 +174,18 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 
 [consult](https://github.com/minad/consult) はコマンドを追加するだけのパッケージ
 で、呼ばない限り既存の挙動は変わらない。コマンドは autoload されるので
-`require` は不要。`SPC` メニューに次のように割り当てている。
+`require` は不要。よく使うものを `SPC` メニューに割り当てている。
 
 | キー | コマンド | 内容 |
 |---|---|---|
 | `SPC b` | `consult-buffer` | バッファ・最近開いたファイル (recentf)・ブックマークから選ぶ |
-| `SPC s` | `consult-line` | 現在のバッファの行をプレビューしながら検索 |
-| `SPC r` | `consult-ripgrep` | ディレクトリ (プロジェクト) 全体を grep |
-| `SPC o` | `consult-org-heading` / `consult-outline` | org では見出し、それ以外はアウトラインへジャンプ |
+| `SPC /` | `consult-line` | 現在のバッファの行をプレビューしながら検索 |
+
+キーに割り当てていないコマンドは `M-x` から呼ぶ。例:
+
+- `consult-ripgrep`: ディレクトリ (プロジェクト) 全体を grep
+- `consult-org-heading` / `consult-outline`: org の見出し / アウトラインへジャンプ
+- `consult-yank-pop`: kill-ring を一覧から選んで貼り付け
 
 - `consult-buffer` で最近開いたファイルを出すため `(recentf-mode 1)` を有効にしている。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
@@ -207,9 +211,9 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
     `C-x C-f` などのファイル補完で `d` → 削除。アクション選択中に `C-h` で
     アクション一覧を補完で選べる)
   - 補完中に `M-o` → `E` (`embark-export`): 候補一覧を通常のバッファに書き出す。
-    `SPC r` (`consult-ripgrep`) の結果なら grep バッファになり、`SPC s`
+    `M-x consult-ripgrep` の結果なら grep バッファになり、`SPC /`
     (`consult-line`) の結果なら occur バッファになる。
-- **wgrep で一括置換**: `SPC r` → `M-o` `E` で書き出した grep バッファで
+- **wgrep で一括置換**: `M-x consult-ripgrep` → `M-o` `E` で書き出した grep バッファで
   `C-c C-p` (`wgrep-change-to-wgrep-mode`) を押すと編集可能になる。
   普通に編集して `C-c C-c` で各ファイルに反映 (`C-c C-k` で破棄)。反映後は
   `M-x save-some-buffers` で保存する。
