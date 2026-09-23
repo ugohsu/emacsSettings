@@ -43,6 +43,8 @@ make && sudo make install
     clipetty  ; emacs -nw でkillring⇄クリップボード連携 (OSC 52)
     vertico     ; ミニバッファ補完の縦表示
     marginalia  ; 補完候補に注釈を表示
+    orderless   ; 補完をスペース区切り・順不同で絞り込む
+    consult     ; 検索・バッファ切替などの補完コマンド集
     
     ;; LaTeX / R / Python / Markdown
     yatex
@@ -153,3 +155,31 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
   `ido-mode` 変数が nil だと通常の `find-file` にフォールバックする
   (ido.el の `ido-file-internal`)。そのため `evil-mysetting-spccmd` では
   `(let ((ido-mode 'file)) (ido-find-file))` として呼び出し中だけ有効にしている。
+
+## orderless と consult
+
+[orderless](https://github.com/oantolin/orderless) を補完スタイルに加え、
+vertico の候補をスペース区切りの複数キーワードで順不同に絞り込めるようにしている
+(2026-09-23 導入)。
+
+- `completion-styles` は `(orderless basic)`。ファイル名だけは
+  `completion-category-overrides` で `basic` と `partial-completion` を使うため、
+  `C-x C-f` で `~/d/o` のような略記入力もできる。
+- orderless は smart-case (入力が全部小文字なら大文字小文字を区別しない、
+  大文字を含めると区別する)。
+- `SPC f` の `ido-find-file` は ido 独自のマッチングなので影響を受けない。
+
+[consult](https://github.com/minad/consult) はコマンドを追加するだけのパッケージ
+で、呼ばない限り既存の挙動は変わらない。コマンドは autoload されるので
+`require` は不要。`SPC` メニューと `M-y` に次のように割り当てている。
+
+| キー | コマンド | 内容 |
+|---|---|---|
+| `SPC b` | `consult-buffer` | バッファ・最近開いたファイル (recentf)・ブックマークから選ぶ |
+| `SPC s` | `consult-line` | 現在のバッファの行をプレビューしながら検索 |
+| `SPC r` | `consult-ripgrep` | ディレクトリ (プロジェクト) 全体を grep |
+| `SPC o` | `consult-org-heading` / `consult-outline` | org では見出し、それ以外はアウトラインへジャンプ |
+| `M-y` | `consult-yank-pop` | kill-ring を一覧から選んで貼り付け |
+
+- `consult-buffer` で最近開いたファイルを出すため `(recentf-mode 1)` を有効にしている。
+- `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`

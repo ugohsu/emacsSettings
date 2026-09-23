@@ -207,6 +207,23 @@
       read-file-name-completion-ignore-case t)
 
 ;;;;
+;;;; orderless (スペース区切りの複数キーワードで順不同に絞り込む)
+;;;;
+;; ファイル名は basic と partial-completion を優先し、"~/d/o" のような略記も使えるようにする
+;; (SPC f の ido-find-file は ido 独自のマッチングなので影響しない)
+(setq completion-styles '(orderless basic)
+      completion-category-defaults nil
+      completion-category-overrides '((file (styles basic partial-completion))))
+
+;;;;
+;;;; consult (検索・バッファ切替などの補完コマンド集)
+;;;;
+;; consult-buffer で最近開いたファイルも候補に出すため recentf を有効にする
+(recentf-mode 1)
+;; M-y を kill-ring の一覧選択にする
+(global-set-key [remap yank-pop] #'consult-yank-pop)
+
+;;;;
 ;;;; evil
 ;;;;
 ;; 【重要】Evil 本体がロードされる前にこの変数を nil に設定する必要があります
@@ -231,13 +248,18 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ファイル, b: バッファ, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, z: fasd")))) ;; メッセージを変更
+             "SPC: スクロール, f: ファイル, b: バッファ, s: 行検索, r: grep, o: 見出し, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, z: fasd")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "a") (org-agenda))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
-          ((equal c "b") (call-interactively #'switch-to-buffer))
+          ((equal c "b") (consult-buffer))
+          ((equal c "s") (consult-line))
+          ((equal c "r") (consult-ripgrep))
+          ((equal c "o") (if (derived-mode-p 'org-mode)
+                             (consult-org-heading)
+                           (consult-outline)))
           ;; ((equal c "n") (find-file "~/Dropbox/org/note/note.org")) ;; 削除 (コメントアウト)
           ((equal c "z") (my-fzf-fasd))  ;; 追加: z で fasd 起動
           ((equal c ":") (eshell-cd-default-directory))
