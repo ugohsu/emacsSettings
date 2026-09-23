@@ -227,8 +227,10 @@
 ;;;; embark (補完候補やカーソル位置の対象にアクションを実行する)
 ;;;;
 ;; C-. は evil の normal state で evil-repeat-pop に使われているため C-; にする
+;; C-; は端末版 (emacs -nw) では ; として届くため、端末でも使える M-o にも割り当てる
 ;; embark-consult は consult と embark が両方読み込まれると自動で読み込まれる
 (global-set-key (kbd "C-;") #'embark-act)
+(global-set-key (kbd "M-o") #'embark-act)
 
 ;;;;
 ;;;; evil

@@ -191,10 +191,13 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 [embark](https://github.com/oantolin/embark) は、ミニバッファの補完候補や
 カーソル位置の対象 (ファイル名・URL・シンボルなど) に対して、アクションの
 メニューを出して実行するパッケージ (2026-09-23 導入)。`embark-act` を `C-;`
-に割り当てている。
+と `M-o` に割り当てている。以下では `C-;` と書くが、`M-o` でも同じ。
 
 - **キー**: embark の README の例は `C-.` だが、evil の normal state では
   `C-.` が `evil-repeat-pop` に使われているため `C-;` にした。
+- **端末版 (`emacs -nw`) では `M-o` を使う**: 端末は `C-;` を `;` として送る
+  ため (kitty で確認)、端末でも届く `M-o` にも割り当てている。`M-o` は
+  ibuffer 内だけ evil-collection の `ibuffer-visit-buffer-1-window` が優先される。
 - **embark-consult**: consult と embark が両方読み込まれると自動で読み込まれる
   ので、`init.el` への記述は不要。
 - **主な使い方**:
