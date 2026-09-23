@@ -27,6 +27,29 @@
             (run-hooks 'after-change-major-mode-hook)
             (auto-fill-mode t)))
 
+;; 穴埋めプリント用の空欄を作る (C-{、evil の normal / insert state)
+;; 空欄にしたい語を \textcolor{white}{\LARGE ...} で白文字にして ( ) で囲む。
+;; 白文字は印刷しても見えないが幅は確保されるので、「(　　　)」の書き込み欄になる。
+;; 答えはソースに残るので、白を黒に変えれば (例: プリアンブルで
+;; \definecolor{white}{gray}{0}) 解答版になる。
+;; - リージョンあり: 選択した文字列を " (\textcolor{white}{\LARGE 文字列}) " に置き換える
+;; - リージョンなし: "(\textcolor{white}{\LARGE })" を挿入し、カーソルを {} の中に置く
+(defun spconv ()
+  (interactive)
+  (if (region-active-p)
+      (progn
+        (kill-region (region-beginning) (region-end))
+        (insert " (\\textcolor{white}{\\LARGE ")
+        (yank)
+        (insert "}) "))
+    (insert "(\\textcolor{white}{\\LARGE ")
+    (let ((tmpp (point)))
+      (insert "})")
+      (goto-char tmpp))))
+;; init.el で evil を読み込んだ後にこのファイルを load しているので、evil のキーマップに割り当てられる
+(define-key evil-normal-state-map (kbd "C-{") 'spconv)
+(define-key evil-insert-state-map (kbd "C-{") 'spconv)
+
 ;;;; 
 ;;;; R
 ;;;; 

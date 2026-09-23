@@ -290,19 +290,6 @@
           ((equal c "2") (split-window-below))
           ((equal c "3") (split-window-right)))))
 
-(defun spconv ()
-  (interactive)
-  (if (region-active-p)
-      (progn
-        (kill-region (region-beginning) (region-end))
-        (insert " (\\textcolor{white}{\\LARGE ")
-        (yank)
-        (insert "}) "))
-    (insert "(\\textcolor{white}{\\LARGE ")
-    (let ((tmpp (point)))
-      (insert "})")
-      (goto-char tmpp))))
-
 ;; keymap
 (define-key evil-motion-state-map
   (kbd "SPC") 'evil-mysetting-spccmd)
@@ -310,12 +297,9 @@
   (kbd "S-SPC") 'scroll-down-command)
 (define-key evil-motion-state-map
   "Q" 'kill-buffer)
-(define-key evil-normal-state-map
+;; (define-key evil-normal-state-map
 ;;   "U" 'undo-tree-visualize)
-;; (define-key evil-motion-state-map
-  (kbd "C-{") 'spconv)
-(define-key evil-insert-state-map
-  (kbd "C-{") 'spconv)
+;; C-{ (spconv) は site-lisp/yatex_ess.el に移動
 (define-key evil-motion-state-map
   (kbd "C-:") 'eshell-command)
 
