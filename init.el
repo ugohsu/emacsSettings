@@ -209,12 +209,11 @@
 (setq evil-want-keybinding nil)
 (evil-mode 1)
 ;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
-(when (require 'evil-collection nil t)
-  ;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
-  ;; evil-collection による上書きを禁止する
-  (setq evil-collection-key-blacklist '("SPC"))
-  (setq evil-collection-repl-submit-state 'insert)
-  (evil-collection-init))
+;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
+;; evil-collection による上書きを禁止する
+(setq evil-collection-key-blacklist '("SPC"))
+(setq evil-collection-repl-submit-state 'insert)
+(evil-collection-init)
 ;; (global-undo-tree-mode)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -462,5 +461,4 @@
 ;; GUIフレームでは clipetty-cut が display-graphic-p を見て何もせず
 ;; 元の interprogram-cut-function に素通しするだけなので、この設定を
 ;; GUI版と共有しても副作用は無い。
-(when (require 'clipetty nil t)
-  (global-clipetty-mode 1))
+(global-clipetty-mode 1)

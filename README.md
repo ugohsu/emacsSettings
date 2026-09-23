@@ -110,8 +110,8 @@ GUI版はXのクリップボードAPIに直接繋がるため、killしたテキ
 
 対策として [clipetty](https://github.com/spudlyo/clipetty) を導入(2026-09-18)。
 OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボードと連携する。
-`init.el`側の設定は`(when (require 'clipetty nil t) (global-clipetty-mode 1))`
-で、GUIフレームでは`clipetty-cut`が`display-graphic-p`を見て何もせず元の
+`init.el`側の設定は`(global-clipetty-mode 1)`のみ(autoload されるので
+`require` は不要)で、GUIフレームでは`clipetty-cut`が`display-graphic-p`を見て何もせず元の
 `interprogram-cut-function`に素通しするだけなので、GUI版と同じinit.elを
 共有しても副作用はない。
 
