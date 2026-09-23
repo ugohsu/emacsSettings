@@ -45,6 +45,9 @@ make && sudo make install
     marginalia  ; 補完候補に注釈を表示
     orderless   ; 補完をスペース区切り・順不同で絞り込む
     consult     ; 検索・バッファ切替などの補完コマンド集
+    embark          ; 補完候補などにアクションを実行する
+    embark-consult  ; embark と consult の連携
+    wgrep           ; grep バッファを直接編集して一括置換
     
     ;; LaTeX / R / Python / Markdown
     yatex
@@ -182,3 +185,26 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 
 - `consult-buffer` で最近開いたファイルを出すため `(recentf-mode 1)` を有効にしている。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
+
+## embark (+ embark-consult, wgrep)
+
+[embark](https://github.com/oantolin/embark) は、ミニバッファの補完候補や
+カーソル位置の対象 (ファイル名・URL・シンボルなど) に対して、アクションの
+メニューを出して実行するパッケージ (2026-09-23 導入)。`embark-act` を `C-;`
+に割り当てている。
+
+- **キー**: embark の README の例は `C-.` だが、evil の normal state では
+  `C-.` が `evil-repeat-pop` に使われているため `C-;` にした。
+- **embark-consult**: consult と embark が両方読み込まれると自動で読み込まれる
+  ので、`init.el` への記述は不要。
+- **主な使い方**:
+  - 補完中に `C-;` → アクションを選ぶ (例: `SPC b` の候補で `k` → バッファを kill、
+    `C-x C-f` などのファイル補完で `d` → 削除。アクション選択中に `C-h` で
+    アクション一覧を補完で選べる)
+  - 補完中に `C-;` → `E` (`embark-export`): 候補一覧を通常のバッファに書き出す。
+    `SPC r` (`consult-ripgrep`) の結果なら grep バッファになり、`SPC s`
+    (`consult-line`) の結果なら occur バッファになる。
+- **wgrep で一括置換**: `SPC r` → `C-;` `E` で書き出した grep バッファで
+  `C-c C-p` (`wgrep-change-to-wgrep-mode`) を押すと編集可能になる。
+  普通に編集して `C-c C-c` で各ファイルに反映 (`C-c C-k` で破棄)。反映後は
+  `M-x save-some-buffers` で保存する。

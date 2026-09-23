@@ -224,6 +224,13 @@
 ;; (global-set-key [remap yank-pop] #'consult-yank-pop)
 
 ;;;;
+;;;; embark (補完候補やカーソル位置の対象にアクションを実行する)
+;;;;
+;; C-. は evil の normal state で evil-repeat-pop に使われているため C-; にする
+;; embark-consult は consult と embark が両方読み込まれると自動で読み込まれる
+(global-set-key (kbd "C-;") #'embark-act)
+
+;;;;
 ;;;; evil
 ;;;;
 ;; 【重要】Evil 本体がロードされる前にこの変数を nil に設定する必要があります
