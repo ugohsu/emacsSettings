@@ -194,6 +194,29 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   20 件では少ないので 200 件にしている。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
 
+### consult-ripgrep の入力で rg のオプションを付ける
+
+`consult-ripgrep` は `default-directory` (プロジェクト内ならプロジェクトルート) から
+再帰的に検索する。入力欄では、検索語の後ろに `-` で始まる語を書くと、そこから先が
+rg のオプションとして渡される。
+
+| 入力 | 意味 (相当する rg コマンド) |
+|---|---|
+| `hogehoge --iglob *.hoge` | 拡張子 .hoge (大文字小文字を区別しない) のファイルだけを検索 (`rg hogehoge --iglob '*.hoge'`) |
+| `hogehoge -g *.el` | ファイル名を大文字小文字を区別して絞る (`-g` / `--glob`) |
+| `hogehoge -uu --iglob *.hoge` | 隠しファイルや `.gitignore` 対象も含めて検索 |
+| `foo bar` | 空白で区切った語をすべて含む行 (順不同) |
+| `\-v` | `-` で始まる語を検索語にするときは `\` を前に付ける |
+
+- 検索語は smart-case (小文字だけなら大文字小文字を区別しない)。
+- `hogehoge -- --iglob *.hoge` のように `--` を挟むと、`--` はオプションの終わりを
+  意味するので、後ろの `--iglob *.hoge` まで検索語として扱われてしまう。
+- rg は既定で隠しファイル・`.gitignore` 対象・バイナリを飛ばす。ただし `-g` /
+  `--iglob` に合うファイルは `.gitignore` で無視されていても対象になる (隠し
+  ファイルは飛ばされたまま)。全部を対象にするなら `-uu` を付ける。
+- `find . -iname '*.hoge' | xargs grep hogehoge` は、シェルでも
+  `rg hogehoge --iglob '*.hoge'` で書ける (rg は既定で再帰的に検索する)。
+
 ## embark (+ embark-consult, wgrep)
 
 [embark](https://github.com/oantolin/embark) は、ミニバッファの補完候補や
