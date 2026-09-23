@@ -224,6 +224,9 @@
 (recentf-mode 1)
 ;; ;; M-y を kill-ring の一覧選択にする
 ;; (global-set-key [remap yank-pop] #'consult-yank-pop)
+;; バッファ内の補完 (ESS・Eglot・eshell などの TAB / C-M-i) も *Completions* ではなく
+;; ミニバッファに出し、vertico・orderless・marginalia を効かせる
+(setq completion-in-region-function #'consult-completion-in-region)
 
 ;;;;
 ;;;; embark (補完候補やカーソル位置の対象にアクションを実行する)

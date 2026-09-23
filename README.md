@@ -192,6 +192,11 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   ファイル履歴の呼び出し (動作が不安定だった) は廃止した (`init.el` では
   コメントアウトして残している)。保存件数 (`recentf-max-saved-items`) は既定の
   20 件では少ないので 200 件にしている。
+- バッファ内の補完 (ESS・Eglot・eshell などの `TAB` / `C-M-i`) も
+  `completion-in-region-function` を `consult-completion-in-region` にして、
+  `*Completions*` ではなくミニバッファ (vertico・orderless・marginalia) に出している。
+  選択中の候補はバッファにプレビューされる。Eglot の候補だけは Eglot 専用の
+  補完スタイル (`eglot--dumb-flex`) で絞り込まれ、orderless は効かない。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
 
 ### consult-ripgrep の入力で rg のオプションを付ける
