@@ -41,6 +41,8 @@ make && sudo make install
     magit
     fzf
     clipetty  ; emacs -nw でkillring⇄クリップボード連携 (OSC 52)
+    vertico     ; ミニバッファ補完の縦表示
+    marginalia  ; 補完候補に注釈を表示
     
     ;; LaTeX / R / Python / Markdown
     yatex
@@ -130,3 +132,24 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
   クリップボードに載せられるようになった。設定はDockerfileに焼き込み済み。手順・原因の
   詳細は`controls/setting/server/hp-mini/workbox_setup/README.md`の「11. Emacs (clipetty)
   の kill-ring → クリップボード連携に必要な tmux 設定」を参照。
+
+## ミニバッファ補完 (vertico + marginalia) と ido-find-file の併用
+
+[vertico](https://github.com/minad/vertico) でミニバッファの補完候補を縦に並べ、
+同じ作者の [marginalia](https://github.com/minad/marginalia) で候補に注釈
+(バッファのモード・サイズ・ファイルパス、コマンドの説明など) を付ける
+(2026-09-23 導入)。`init.el` 側は `(vertico-mode 1)` と `(marginalia-mode 1)`
+のみ。どちらも autoload されるので `require` は不要。
+
+ファイルを開く `SPC f` だけは従来どおり `ido-find-file` を使い、バッファ切替
+`SPC b` は通常の `switch-to-buffer` (vertico 適用) にしている。
+
+- **ido-mode は有効にしない**: `(ido-mode 'buffers)` は `C-x b` などを
+  `ido-switch-buffer` に、`(ido-mode 'files)` は `C-x C-f`・`C-x d`・
+  `write-file` などを ido 版に置き換えてしまう。代わりに `ido-mode` が内部で
+  行う初期化 (`ido-common-initialization`、履歴 `ido.last` の読み込みと
+  終了時の保存) だけを `init.el` で直接呼んでいる。
+- **SPC f では `ido-mode` を一時的に有効扱いにする**: `ido-find-file` は
+  `ido-mode` 変数が nil だと通常の `find-file` にフォールバックする
+  (ido.el の `ido-file-internal`)。そのため `evil-mysetting-spccmd` では
+  `(let ((ido-mode 'file)) (ido-find-file))` として呼び出し中だけ有効にしている。

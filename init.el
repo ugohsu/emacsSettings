@@ -181,16 +181,26 @@
 (setq skk-henkan-strict-okuri-precedence t)
 
 ;;;;
-;;;; ido-mode
+;;;; ido (ido-find-file 専用)
 ;;;;
-(ido-mode 'buffers)
+;; ido-mode は有効にしない (有効にすると C-x b などが ido に置き換わる)。
+;; ido-find-file の動作に必要な初期化と履歴 (ido.last) の読み書きだけ行う。
+(require 'ido)
+(ido-common-initialization)
+(ido-load-history)
+(add-hook 'kill-emacs-hook #'ido-kill-emacs-hook)
 (setq ido-enable-flex-matching t)
-(setq ido-create-new-buffer 'always)
 
 (define-key ido-common-completion-map
   (kbd "C-n") 'ido-next-match)
 (define-key ido-common-completion-map
   (kbd "C-p") 'ido-prev-match)
+
+;;;;
+;;;; vertico + marginalia (ミニバッファ補完の縦表示と候補の注釈)
+;;;;
+(vertico-mode 1)
+(marginalia-mode 1)
 
 ;;;;
 ;;;; evil
@@ -211,11 +221,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-undo-system 'undo-redo)
- '(package-selected-packages
-   '(clipetty ddskk ess evil-collection evil-surround fasd fzf
-              linum-relative magit markdown-mode org poly-R polymode
-              pony-mode pyvenv web-mode yatex)))
+ '(evil-undo-system 'undo-redo))
 
 ;; function
 (defun evil-mysetting-spccmd ()
@@ -225,8 +231,10 @@
              "SPC: スクロール, f: ファイル, b: バッファ, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, z: fasd")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "a") (org-agenda))
-          ((equal c "f") (ido-find-file))
-          ((equal c "b") (ido-switch-buffer))
+          ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
+          ;; するため、呼び出し中だけ有効扱いにする
+          ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
+          ((equal c "b") (call-interactively #'switch-to-buffer))
           ;; ((equal c "n") (find-file "~/Dropbox/org/note/note.org")) ;; 削除 (コメントアウト)
           ((equal c "z") (my-fzf-fasd))  ;; 追加: z で fasd 起動
           ((equal c ":") (eshell-cd-default-directory))
