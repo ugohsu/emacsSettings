@@ -220,8 +220,8 @@
 ;;;;
 ;; consult-buffer で最近開いたファイルも候補に出すため recentf を有効にする
 (recentf-mode 1)
-;; M-y を kill-ring の一覧選択にする
-(global-set-key [remap yank-pop] #'consult-yank-pop)
+;; ;; M-y を kill-ring の一覧選択にする
+;; (global-set-key [remap yank-pop] #'consult-yank-pop)
 
 ;;;;
 ;;;; evil
@@ -241,7 +241,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(evil-undo-system 'undo-redo))
+ '(evil-undo-system 'undo-redo)
+ '(package-selected-packages
+   '(clipetty consult ddskk evil-collection evil-surround fzf magit
+              marginalia orderless poly-R pyvenv vertico yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
