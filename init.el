@@ -251,28 +251,29 @@
  ;; If there is more than one, they won't work right.
  '(evil-undo-system 'undo-redo)
  '(package-selected-packages
-   '(clipetty consult ddskk evil-collection evil-surround fzf magit
-              marginalia orderless poly-R pyvenv vertico yatex)))
+   '(clipetty consult ddskk embark embark-consult evil-collection
+              evil-surround fzf magit marginalia orderless poly-R
+              pyvenv vertico wgrep yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ファイル, b: バッファ, s: 行検索, r: grep, o: 見出し, ': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, z: fasd")))) ;; メッセージを変更
+             "SPC: スクロール, f: ファイル, b: バッファ, /: 行検索, ':': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, z: fasd")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
-          ((equal c "a") (org-agenda))
+          ;; ((equal c "a") (org-agenda))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
           ((equal c "b") (consult-buffer))
-          ((equal c "s") (consult-line))
-          ((equal c "r") (consult-ripgrep))
-          ((equal c "o") (if (derived-mode-p 'org-mode)
-                             (consult-org-heading)
-                           (consult-outline)))
+          ((equal c "/") (consult-line))
+          ;; ((equal c "r") (consult-ripgrep))
+          ;; ((equal c "o") (if (derived-mode-p 'org-mode)
+          ;;                    (consult-org-heading)
+          ;;                  (consult-outline)))
           ;; ((equal c "n") (find-file "~/Dropbox/org/note/note.org")) ;; 削除 (コメントアウト)
-          ((equal c "z") (my-fzf-fasd))  ;; 追加: z で fasd 起動
+          ;; ((equal c "z") (my-fzf-fasd))  ;; 追加: z で fasd 起動
           ((equal c ":") (eshell-cd-default-directory))
           ((equal c "h") (evil-window-left 1))
           ((equal c "j") (evil-window-down 1))
@@ -476,18 +477,18 @@
 ;;;; fzf + fasd 設定
 ;;;;
 
-;; fzf パッケージを読み込み (インストールされていないとエラーになるので注意)
-(require 'fzf)
-;; Emacs がシステムに入っている fzf コマンドを使えるようにする
-(setq fzf/executable "fzf") 
+;; ;; fzf パッケージを読み込み (インストールされていないとエラーになるので注意)
+;; (require 'fzf)
+;; ;; Emacs がシステムに入っている fzf コマンドを使えるようにする
+;; (setq fzf/executable "fzf") 
 
-(defun my-fzf-fasd ()
-  "fasd の履歴を fzf で絞り込んで開く"
-  (interactive)
-  ;; fzf-with-command: 指定したシェルコマンドの結果を fzf に渡す関数
-  ;; "fasd -Rfl": Recency(最近/頻度)順、Fileのみ、List形式
-  (fzf-with-command "fasd -Rfl"
-                    (lambda (x) (find-file x))))
+;; (defun my-fzf-fasd ()
+;;   "fasd の履歴を fzf で絞り込んで開く"
+;;   (interactive)
+;;   ;; fzf-with-command: 指定したシェルコマンドの結果を fzf に渡す関数
+;;   ;; "fasd -Rfl": Recency(最近/頻度)順、Fileのみ、List形式
+;;   (fzf-with-command "fasd -Rfl"
+;;                     (lambda (x) (find-file x))))
 
 ;;;;
 ;;;; killring とクリップボードの連携 (端末版 emacs -nw 用)
