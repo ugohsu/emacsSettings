@@ -73,13 +73,13 @@
 (setq skeleton-pair 1)
 
 ;; Region がオンのときのみ C-w を kill-region とする
-;; (defun backward-kill-word-or-kill-region ()
-;;   (interactive)
-;;   (if (or (not transient-mark-mode) (region-active-p))
-;;       (kill-region (region-beginning) (region-end))
-;;     (backward-kill-word 1)))
-;; (global-set-key (kbd "C-w")
-;;                 'backward-kill-word-or-kill-region)
+(defun backward-kill-word-or-kill-region ()
+  (interactive)
+  (if (or (not transient-mark-mode) (region-active-p))
+      (kill-region (region-beginning) (region-end))
+    (backward-kill-word 1)))
+(global-set-key (kbd "C-w")
+                'backward-kill-word-or-kill-region)
 
 ;; buffer menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
