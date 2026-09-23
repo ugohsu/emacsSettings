@@ -28,13 +28,16 @@
             (auto-fill-mode t)))
 
 ;; 穴埋めプリント用の空欄を作る (C-{、evil の normal / insert state)
-;; 空欄にしたい語を \textcolor{white}{\LARGE ...} で白文字にして ( ) で囲む。
-;; 白文字は印刷しても見えないが幅は確保されるので、「(　　　)」の書き込み欄になる。
-;; 答えはソースに残るので、白を黒に変えれば (例: プリアンブルで
-;; \definecolor{white}{gray}{0}) 解答版になる。
-;; - リージョンあり: 選択した文字列を " (\textcolor{white}{\LARGE 文字列}) " に置き換える
-;; - リージョンなし: "(\textcolor{white}{\LARGE })" を挿入し、カーソルを {} の中に置く
+;; docstring の 1 行目は embark-bindings などで marginalia の注釈として表示される
 (defun spconv ()
+  "LaTeX の穴埋め用空欄: 選択語を ( ) 付きの白文字にする。
+空欄にしたい語を \\textcolor{white}{\\LARGE ...} で白文字にして ( ) で囲む。
+白文字は印刷しても見えないが幅は確保されるので、「(　　　)」の書き込み欄になる。
+答えはソースに残るので、白を黒に変えれば (例: プリアンブルで
+\\definecolor{white}{gray}{0}) 解答版になる。
+
+- リージョンあり: 選択した文字列を \" (\\textcolor{white}{\\LARGE 文字列}) \" に置き換える
+- リージョンなし: \"(\\textcolor{white}{\\LARGE })\" を挿入し、カーソルを {} の中に置く"
   (interactive)
   (if (region-active-p)
       (progn
