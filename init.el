@@ -260,7 +260,7 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ファイル, b: バッファ, /: 行検索, ':': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作, z: fasd")))) ;; メッセージを変更
+             "SPC: スクロール, f: ファイル, b: バッファ, /: 行検索, ':': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ((equal c "a") (org-agenda))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック

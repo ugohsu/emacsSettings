@@ -39,7 +39,6 @@ make && sudo make install
     evil-surround
     ddskk
     magit
-    fzf
     clipetty  ; emacs -nw でkillring⇄クリップボード連携 (OSC 52)
     vertico     ; ミニバッファ補完の縦表示
     marginalia  ; 補完候補に注釈を表示
@@ -188,6 +187,11 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 - `consult-yank-pop`: kill-ring を一覧から選んで貼り付け
 
 - `consult-buffer` で最近開いたファイルを出すため `(recentf-mode 1)` を有効にしている。
+  履歴は Emacs 終了時に `~/.emacs.d/recentf` に保存されるので、再起動後も過去に
+  開いたファイルを選べる。このため、以前 `SPC z` で使っていた fzf + fasd による
+  ファイル履歴の呼び出し (動作が不安定だった) は廃止した (`init.el` では
+  コメントアウトして残している)。保存件数は既定で 20 件
+  (`recentf-max-saved-items`)。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
 
 ## embark (+ embark-consult, wgrep)
