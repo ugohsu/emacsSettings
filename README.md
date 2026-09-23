@@ -171,7 +171,7 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 
 [consult](https://github.com/minad/consult) はコマンドを追加するだけのパッケージ
 で、呼ばない限り既存の挙動は変わらない。コマンドは autoload されるので
-`require` は不要。`SPC` メニューと `M-y` に次のように割り当てている。
+`require` は不要。`SPC` メニューに次のように割り当てている。
 
 | キー | コマンド | 内容 |
 |---|---|---|
@@ -179,7 +179,6 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 | `SPC s` | `consult-line` | 現在のバッファの行をプレビューしながら検索 |
 | `SPC r` | `consult-ripgrep` | ディレクトリ (プロジェクト) 全体を grep |
 | `SPC o` | `consult-org-heading` / `consult-outline` | org では見出し、それ以外はアウトラインへジャンプ |
-| `M-y` | `consult-yank-pop` | kill-ring を一覧から選んで貼り付け |
 
 - `consult-buffer` で最近開いたファイルを出すため `(recentf-mode 1)` を有効にしている。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
