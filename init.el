@@ -201,6 +201,10 @@
 ;;;;
 (vertico-mode 1)
 (marginalia-mode 1)
+;; 補完で大文字小文字を区別しない ("mess" で "*Messages*" にヒットさせる)
+(setq completion-ignore-case t
+      read-buffer-completion-ignore-case t
+      read-file-name-completion-ignore-case t)
 
 ;;;;
 ;;;; evil
