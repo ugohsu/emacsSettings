@@ -190,8 +190,8 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   履歴は Emacs 終了時に `~/.emacs.d/recentf` に保存されるので、再起動後も過去に
   開いたファイルを選べる。このため、以前 `SPC z` で使っていた fzf + fasd による
   ファイル履歴の呼び出し (動作が不安定だった) は廃止した (`init.el` では
-  コメントアウトして残している)。保存件数は既定で 20 件
-  (`recentf-max-saved-items`)。
+  コメントアウトして残している)。保存件数 (`recentf-max-saved-items`) は既定の
+  20 件では少ないので 200 件にしている。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
 
 ## embark (+ embark-consult, wgrep)

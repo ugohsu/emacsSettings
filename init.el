@@ -219,6 +219,8 @@
 ;;;; consult (検索・バッファ切替などの補完コマンド集)
 ;;;;
 ;; consult-buffer で最近開いたファイルも候補に出すため recentf を有効にする
+;; 保存件数は既定の 20 件では少ないので 200 件にする
+(setq recentf-max-saved-items 200)
 (recentf-mode 1)
 ;; ;; M-y を kill-ring の一覧選択にする
 ;; (global-set-key [remap yank-pop] #'consult-yank-pop)
