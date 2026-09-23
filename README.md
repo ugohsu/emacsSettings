@@ -190,24 +190,26 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 
 [embark](https://github.com/oantolin/embark) は、ミニバッファの補完候補や
 カーソル位置の対象 (ファイル名・URL・シンボルなど) に対して、アクションの
-メニューを出して実行するパッケージ (2026-09-23 導入)。`embark-act` を `C-;`
-と `M-o` に割り当てている。以下では `C-;` と書くが、`M-o` でも同じ。
+メニューを出して実行するパッケージ (2026-09-23 導入)。`embark-act` を `M-o`
+に割り当てている。
 
-- **キー**: embark の README の例は `C-.` だが、evil の normal state では
-  `C-.` が `evil-repeat-pop` に使われているため `C-;` にした。
-- **端末版 (`emacs -nw`) では `M-o` を使う**: 端末は `C-;` を `;` として送る
-  ため (kitty で確認)、端末でも届く `M-o` にも割り当てている。`M-o` は
-  ibuffer 内だけ evil-collection の `ibuffer-visit-buffer-1-window` が優先される。
+- **キー**: embark の README の例は `C-.` だが、端末版 (`emacs -nw`) では
+  `C-;` は `;` として届いてしまい (kitty で確認)、`C-.` も同様に届かない
+  ことが多いうえ、`C-.` は
+  evil の normal state で `evil-repeat-pop` に使われている。そのため GUI 版・
+  端末版どちらでも使える `M-o` にした。
+- `M-o` は ibuffer 内だけ evil-collection の `ibuffer-visit-buffer-1-window` が
+  優先される。
 - **embark-consult**: consult と embark が両方読み込まれると自動で読み込まれる
   ので、`init.el` への記述は不要。
 - **主な使い方**:
-  - 補完中に `C-;` → アクションを選ぶ (例: `SPC b` の候補で `k` → バッファを kill、
+  - 補完中に `M-o` → アクションを選ぶ (例: `SPC b` の候補で `k` → バッファを kill、
     `C-x C-f` などのファイル補完で `d` → 削除。アクション選択中に `C-h` で
     アクション一覧を補完で選べる)
-  - 補完中に `C-;` → `E` (`embark-export`): 候補一覧を通常のバッファに書き出す。
+  - 補完中に `M-o` → `E` (`embark-export`): 候補一覧を通常のバッファに書き出す。
     `SPC r` (`consult-ripgrep`) の結果なら grep バッファになり、`SPC s`
     (`consult-line`) の結果なら occur バッファになる。
-- **wgrep で一括置換**: `SPC r` → `C-;` `E` で書き出した grep バッファで
+- **wgrep で一括置換**: `SPC r` → `M-o` `E` で書き出した grep バッファで
   `C-c C-p` (`wgrep-change-to-wgrep-mode`) を押すと編集可能になる。
   普通に編集して `C-c C-c` で各ファイルに反映 (`C-c C-k` で破棄)。反映後は
   `M-x save-some-buffers` で保存する。
