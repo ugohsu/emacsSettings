@@ -328,21 +328,22 @@
 ;; 移動時にバッファを閉じる
 (setq dired-kill-when-opening-new-dired-buffer t)
 
-;;;;
-;;;; Occur-mode
-;;;;
-;; デフォルトで *Occur* バッファのカーソルをオリジナルのバッファに関連
-;; 付ける
-(add-hook 'occur-hook
-          '(lambda ()
-             (next-error-follow-minor-mode)
-             ;; (local-set-key "j" 'next-line)
-             ;; (local-set-key "k" 'previous-line)
-             (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
-             (switch-to-buffer-other-window "*Occur*")))
+;; consult line や ripgrep を使うようになったので、Occur がそもそも不要になった
+;; ;;;;
+;; ;;;; Occur-mode
+;; ;;;;
+;; ;; デフォルトで *Occur* バッファのカーソルをオリジナルのバッファに関連
+;; ;; 付ける
+;; (add-hook 'occur-hook
+;;           '(lambda ()
+;;              (next-error-follow-minor-mode)
+;;              ;; (local-set-key "j" 'next-line)
+;;              ;; (local-set-key "k" 'previous-line)
+;;              (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
+;;              (switch-to-buffer-other-window "*Occur*")))
 
-;; 検索にヒットするものを中央にする
-(add-hook 'occur-mode-find-occurrence-hook 'recenter)
+;; ;; 検索にヒットするものを中央にする
+;; (add-hook 'occur-mode-find-occurrence-hook 'recenter)
 
 ;;;;
 ;;;; chord
