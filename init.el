@@ -11,6 +11,10 @@
              '("melpa" . "http://melpa.org/packages/"))
 (package-initialize)
 
+;; カスタムファイルは custom.el へ逃がす
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(load custom-file t)
+
 
 ;; theme
 (load-theme 'wheatgrass t)
@@ -241,6 +245,7 @@
 ;;;;
 ;; 【重要】Evil 本体がロードされる前にこの変数を nil に設定する必要があります
 (setq evil-want-keybinding nil)
+(setq evil-undo-system 'undo-redo)
 (evil-mode 1)
 ;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
 ;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
@@ -248,17 +253,6 @@
 (setq evil-collection-key-blacklist '("SPC"))
 (setq evil-collection-repl-submit-state 'insert)
 (evil-collection-init)
-;; (global-undo-tree-mode)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(evil-undo-system 'undo-redo)
- '(package-selected-packages
-   '(clipetty consult ddskk embark embark-consult evil-collection
-              evil-surround fzf magit marginalia orderless poly-R
-              pyvenv vertico wgrep yatex)))
 
 ;; function
 (defun evil-mysetting-spccmd ()
@@ -419,36 +413,27 @@
 (autoload 'ugr-framenames
   "./ugr/ugr-framenames/ugr-framenames_v0.0.3.el" nil t)
 
-;; org-mode
-;; キーバインド
-(add-hook 'org-mode-hook
-          '(lambda ()
-             (define-key org-mode-map (kbd "M-j") 'org-metadown)
-             (define-key org-mode-map (kbd "M-h") 'org-metaleft)
-             (define-key org-mode-map (kbd "M-l") 'org-metaright)
-             (define-key org-mode-map (kbd "M-k") 'org-metaup)))
-
-(setq org-agenda-files '("~/Dropbox/org"
-                         "~/Dropbox/org/autosync"
-                         "~/Dropbox/org/research"
-                         "~/Dropbox/org/lecture"))
-;; (global-set-key (kbd "C-c a") 'org-agenda)
-
-;; org-trello
+;; ;; org-mode
+;; ;; キーバインド
 ;; (add-hook 'org-mode-hook
 ;;           '(lambda ()
-;;              (when (string-match
-;;                     (expand-file-name "~/Dropbox/org/trello/") buffer-file-name)
-;;                (org-trello-mode))))
+;;              (define-key org-mode-map (kbd "M-j") 'org-metadown)
+;;              (define-key org-mode-map (kbd "M-h") 'org-metaleft)
+;;              (define-key org-mode-map (kbd "M-l") 'org-metaright)
+;;              (define-key org-mode-map (kbd "M-k") 'org-metaup)))
 
-(put 'upcase-region 'disabled nil)
+;; (setq org-agenda-files '("~/Dropbox/org"
+;;                          "~/Dropbox/org/autosync"
+;;                          "~/Dropbox/org/research"
+;;                          "~/Dropbox/org/lecture"))
+;; ;; (global-set-key (kbd "C-c a") 'org-agenda)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; ;; org-trello
+;; ;; (add-hook 'org-mode-hook
+;; ;;           '(lambda ()
+;; ;;              (when (string-match
+;; ;;                     (expand-file-name "~/Dropbox/org/trello/") buffer-file-name)
+;; ;;                (org-trello-mode))))
 
 ;; magit 関係
 
