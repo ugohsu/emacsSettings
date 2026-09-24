@@ -101,3 +101,11 @@
             (define-key poly-markdown-mode-map (kbd "C-c C-b") 'rmarkdown-to-html)
             ;; .md <-> .ipynb の同期
             (define-key poly-markdown-mode-map (kbd "C-c C-t") 'jupytext-sync)))
+
+;;
+;; quatro-mode
+;;
+
+;; .qmd では C-c C-s C で ```{python} のように波括弧付きのコードブロックを挿入する
+(add-hook 'poly-quarto-mode-hook
+          (lambda () (setq-local markdown-code-block-braces t)))
