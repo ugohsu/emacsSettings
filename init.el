@@ -137,21 +137,15 @@
 (defalias 'vf 'view-file)
 (defalias 'vo 'view-file-other-window)
 
+
 ;; pdf の表示 (zathura によって開く)
-(when (or
-       (string-match "debian" (system-name))
-       (string-match "zathura" (getenv "PATH")))
+(when (executable-find "zathura") 
+  (defun my-open-pdf-with-zathura ()
+    (let ((file (buffer-file-name)))
+      (kill-buffer)
+      (start-process "zathura" nil "zathura" file)))
   (add-to-list 'auto-mode-alist
-               '("\\(\\.pdf\\|\\.PDF\\)$" .
-                 (lambda()
-                   (let ((temp-buffer-show-function
-                          'set-buffer)
-                         (bf (buffer-file-name)))
-                     (kill-buffer)
-                     (with-output-to-temp-buffer "*apply-zathura*"
-                       (start-process-shell-command
-                        "apply-zathura" "*apply-zathura*"
-                        (concat "zathura " bf))))))))
+               '("\\.[pP][dD][fF]\\'" . my-open-pdf-with-zathura)))
 
 ;;;;
 ;;;; skk
