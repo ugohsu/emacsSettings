@@ -71,6 +71,12 @@
              (define-key inferior-ess-r-mode-map "_" #'ess-insert-assign)
              ))
 
+;; polymode の M-n v v で Python チャンクを評価できるようにする (R は poly-R が対応済み)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq-local polymode-eval-region-function
+                        (lambda (beg end _msg) (python-shell-send-region beg end)))))
+
 ;; Rmarkdown (polymode) のタイプセット
 (defun rmarkdown-to-html ()
   (interactive)
