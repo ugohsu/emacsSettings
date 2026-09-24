@@ -319,8 +319,11 @@
 
 (add-hook 'dired-mode-hook
           '(lambda ()
-             (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
-             (local-set-key (kbd "f") 'consult-find)))
+             (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)))
+;; f で consult-find (evil の normal state では local-set-key が
+;; evil-find-char に負けるため、evil のキーマップに登録する)
+(with-eval-after-load 'dired
+  (evil-define-key 'normal dired-mode-map "f" #'consult-find))
 ;; 移動時にバッファを閉じる
 (setq dired-kill-when-opening-new-dired-buffer t)
 
