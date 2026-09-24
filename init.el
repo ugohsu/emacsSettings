@@ -69,12 +69,8 @@
 ;; my setting
 (global-set-key "\C-h" 'delete-backward-char)
 (global-set-key "\C-\\" 'ignore)
-(global-set-key (kbd "(") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "{") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "[") 'skeleton-pair-insert-maybe)
-(global-set-key (kbd "\"") 'skeleton-pair-insert-maybe)
 (global-set-key (kbd "M-r") 'revert-buffer)
-(setq skeleton-pair 1)
+(electric-pair-mode 1)
 
 ;; Region がオンのときのみ C-w を kill-region とする
 (defun backward-kill-word-or-kill-region ()
@@ -87,11 +83,6 @@
 
 ;; buffer menu
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-;; (add-hook 'ibuffer-mode-hook
-;;           '(lambda()
-;;              (ibuffer-auto-mode 1)
-;;              (local-set-key "j" 'next-line)
-;;              (local-set-key "k" 'previous-line)))
 
 ;; ビープ音を無くす
 (setq visible-bell t)
@@ -261,19 +252,12 @@
             (read-char
              "SPC: スクロール, f: ido find, d: dired, b: buffer, /: 行検索, ':': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
-          ;; ((equal c "a") (org-agenda))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "/") (consult-line))
-          ;; ((equal c "r") (consult-ripgrep))
-          ;; ((equal c "o") (if (derived-mode-p 'org-mode)
-          ;;                    (consult-org-heading)
-          ;;                  (consult-outline)))
-          ;; ((equal c "n") (find-file "~/Dropbox/org/note/note.org")) ;; 削除 (コメントアウト)
-          ;; ((equal c "z") (my-fzf-fasd))  ;; 追加: z で fasd 起動
           ((equal c ":") (eshell-cd-default-directory))
           ((equal c "h") (evil-window-left 1))
           ((equal c "j") (evil-window-down 1))
@@ -295,8 +279,6 @@
   (kbd "S-SPC") 'scroll-down-command)
 (define-key evil-motion-state-map
   "Q" 'kill-buffer)
-;; (define-key evil-normal-state-map
-;;   "U" 'undo-tree-visualize)
 ;; C-{ (spconv) は site-lisp/yatex_ess.el に移動
 (define-key evil-motion-state-map
   (kbd "C-:") 'eshell-command)
@@ -311,46 +293,10 @@
 ;;;; dired-mode
 ;;;;
 
-;; (add-hook 'dired-mode-hook
-;;           '(lambda ()
-;;              (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)))
-;; f で consult-find (evil の normal state では local-set-key が
-;; evil-find-char に負けるため、evil のキーマップに登録する)
-;; うえの SPC の設定はそもそも入れなくても効いていたのでコメントアウト
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map "f" #'consult-find))
 ;; 移動時にバッファを閉じる
 (setq dired-kill-when-opening-new-dired-buffer t)
-
-;; consult line や ripgrep を使うようになったので、Occur がそもそも不要になった
-;; ;;;;
-;; ;;;; Occur-mode
-;; ;;;;
-;; ;; デフォルトで *Occur* バッファのカーソルをオリジナルのバッファに関連
-;; ;; 付ける
-;; (add-hook 'occur-hook
-;;           '(lambda ()
-;;              (next-error-follow-minor-mode)
-;;              ;; (local-set-key "j" 'next-line)
-;;              ;; (local-set-key "k" 'previous-line)
-;;              (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
-;;              (switch-to-buffer-other-window "*Occur*")))
-
-;; ;; 検索にヒットするものを中央にする
-;; (add-hook 'occur-mode-find-occurrence-hook 'recenter)
-
-;;;;
-;;;; chord
-;;;;
-;; (require 'key-chord)
-;; (setq key-chord-two-keys-delay 0.04)
-;; (key-chord-mode 1)
-
-;; view-mode
-;; (key-chord-define-global "fd" 'view-mode)
-
-;; evil mode 
-;; (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 
 ;;;;
 ;;;; eshell
@@ -376,11 +322,6 @@
 ;; Eglot の設定
 (require 'eglot)
 (add-hook 'python-mode-hook 'eglot-ensure)
-
-;; (オプション) Eglot 利用時に、保存時に自動でフォーマット(autopep8等)をかける場合
-;; (add-hook 'python-mode-hook
-;;           (lambda ()
-;;             (add-hook 'before-save-hook 'eglot-format-buffer -10 t)))
 
 ;;;;
 ;;;; other setting
@@ -413,41 +354,10 @@
 (autoload 'ugr-framenames
   "./ugr/ugr-framenames/ugr-framenames_v0.0.3.el" nil t)
 
-;; ;; org-mode
-;; ;; キーバインド
-;; (add-hook 'org-mode-hook
-;;           '(lambda ()
-;;              (define-key org-mode-map (kbd "M-j") 'org-metadown)
-;;              (define-key org-mode-map (kbd "M-h") 'org-metaleft)
-;;              (define-key org-mode-map (kbd "M-l") 'org-metaright)
-;;              (define-key org-mode-map (kbd "M-k") 'org-metaup)))
-
-;; (setq org-agenda-files '("~/Dropbox/org"
-;;                          "~/Dropbox/org/autosync"
-;;                          "~/Dropbox/org/research"
-;;                          "~/Dropbox/org/lecture"))
-;; ;; (global-set-key (kbd "C-c a") 'org-agenda)
-
-;; ;; org-trello
-;; ;; (add-hook 'org-mode-hook
-;; ;;           '(lambda ()
-;; ;;              (when (string-match
-;; ;;                     (expand-file-name "~/Dropbox/org/trello/") buffer-file-name)
-;; ;;                (org-trello-mode))))
-
 ;; magit 関係
 
 (global-set-key (kbd "C-x g") 'magit-status)
 
-;; ;; Markdown (polymode を使用して色分けトラブルを回避)
-;; (autoload 'poly-markdown-mode "poly-markdown" nil t)
-;; (add-to-list 'auto-mode-alist '("\\.md\\'" . poly-markdown-mode))
-
-;; ;; 【追加】Poly-markdown 起動時に、強制的に相対行番号を表示する
-;; (add-hook 'poly-markdown-mode-hook
-;;           (lambda ()
-;;             (setq display-line-numbers-type 'relative) ; 相対表示を指定
-;;             (display-line-numbers-mode 1)))            ; 行番号を表示
 ;; Markdown
 (autoload 'markdown-mode "markdown-mode" "Major mode for Markdown" t)
 (autoload 'poly-markdown-mode "poly-markdown" nil t)
@@ -455,22 +365,6 @@
 ;; .md は通常の markdown-mode で開くように変更
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-;;;;
-;;;; fzf + fasd 設定
-;;;;
-
-;; ;; fzf パッケージを読み込み (インストールされていないとエラーになるので注意)
-;; (require 'fzf)
-;; ;; Emacs がシステムに入っている fzf コマンドを使えるようにする
-;; (setq fzf/executable "fzf") 
-
-;; (defun my-fzf-fasd ()
-;;   "fasd の履歴を fzf で絞り込んで開く"
-;;   (interactive)
-;;   ;; fzf-with-command: 指定したシェルコマンドの結果を fzf に渡す関数
-;;   ;; "fasd -Rfl": Recency(最近/頻度)順、Fileのみ、List形式
-;;   (fzf-with-command "fasd -Rfl"
-;;                     (lambda (x) (find-file x))))
 
 ;;;;
 ;;;; killring とクリップボードの連携 (端末版 emacs -nw 用)
