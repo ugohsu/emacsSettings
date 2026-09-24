@@ -103,7 +103,7 @@
             (define-key poly-markdown-mode-map (kbd "C-c C-t") 'jupytext-sync)))
 
 ;;
-;; quatro-mode
+;; quarto-mode
 ;;
 
 ;; .qmd では C-c C-s C で ```{python} のように波括弧付きのコードブロックを挿入する
