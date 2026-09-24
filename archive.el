@@ -120,3 +120,13 @@
 ;;   ;; "fasd -Rfl": Recency(最近/頻度)順、Fileのみ、List形式
 ;;   (fzf-with-command "fasd -Rfl"
 ;;                     (lambda (x) (find-file x))))
+
+;; ESS (yatex_ess.el から移動)
+;; (setq ess-ask-for-ess-directory nil) ; R起動時にワーキングディレクトリを訊ねない
+;; .R file to sjis-dos
+;; (modify-coding-system-alist 'file "\\.R\\'" 'utf-8-unix)
+;; (setq ess-pre-run-hook
+;;  '((lambda () (setq S-directory default-directory)
+;;      (setq default-process-coding-system '(utf-8 .   utf-8))
+;;   )))
+;; (setq inferior-ess-r-program-name "/usr/bin/R")

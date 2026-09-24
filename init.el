@@ -353,10 +353,8 @@
 (global-set-key (kbd "C-x g") 'magit-status)
 
 ;; Markdown
-(autoload 'markdown-mode "markdown-mode" "Major mode for Markdown" t)
-(autoload 'poly-markdown-mode "poly-markdown" nil t)
-
-;; .md は通常の markdown-mode で開くように変更
+;; poly-markdown の autoload が .md を poly-markdown-mode に割り当てるので、
+;; .md は通常の markdown-mode で開くように上書きする
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 

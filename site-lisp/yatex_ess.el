@@ -56,38 +56,13 @@
 ;;;; 
 ;;;; R
 ;;;; 
-;; ESSの設定
-(autoload 'R "ess-site" "ESS" t)
-(autoload 'R-mode "ess-site" "ESS" t)
-(autoload 'r-mode "ess-site" "ESS" t)
-(autoload 'Rd-mode "ess-site" "ESS" t)
-(autoload 'noweb-mode "ess-site" "ESS" t)
-(autoload 'poly-markdown+r-mode "poly-markdown" nil t)
-(autoload 'poly-markdown+r-mode "poly-R" nil t)
-(add-to-list 'auto-mode-alist '("\\.R$" . R-mode))
-(add-to-list 'auto-mode-alist '("\\.r$" . R-mode))
-(add-to-list 'auto-mode-alist '("\\.Rd$" . Rd-mode))
-(add-to-list 'auto-mode-alist '("\\.Rnw$" . noweb-mode))
-(add-to-list 'auto-mode-alist '("\\.Rmd$" . poly-markdown+r-mode))
-
-
-;; (setq ess-ask-for-ess-directory nil) ; R起動時にワーキングディレクトリを訊ねない
+;; R / Rmd / Rnw のモード割り当ては ESS と poly-R の autoload で入るので書かない
 ;; プロジェクトルートではなくファイルのディレクトリをワーキングディレクトリとする
 (setq ess-startup-directory 'default-directory)
-
-;; .R file to sjis-dos
-;; (modify-coding-system-alist 'file "\\.R\\'" 'utf-8-unix)
-;; (setq ess-pre-run-hook
-;;  '((lambda () (setq S-directory default-directory)
-;;      (setq default-process-coding-system '(utf-8 .   utf-8))
-;;   )))
-
-;; (setq inferior-ess-r-program-name "/usr/bin/R")
 (setq inferior-R-args "--no-save")
 
 ;; auto fill mode
-(add-hook 'R-mode (lambda () (auto-fill-mode t)))
-(add-hook 'r-mode (lambda () (auto-fill-mode t)))
+(add-hook 'ess-r-mode-hook #'auto-fill-mode)
 
 ;; キーバインド
 (add-hook 'ess-mode-hook
