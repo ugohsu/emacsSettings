@@ -317,11 +317,12 @@
 ;;;; dired-mode
 ;;;;
 
-(add-hook 'dired-mode-hook
-          '(lambda ()
-             (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)))
+;; (add-hook 'dired-mode-hook
+;;           '(lambda ()
+;;              (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)))
 ;; f で consult-find (evil の normal state では local-set-key が
 ;; evil-find-char に負けるため、evil のキーマップに登録する)
+;; うえの SPC の設定はそもそも入れなくても効いていたのでコメントアウト
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map "f" #'consult-find))
 ;; 移動時にバッファを閉じる
