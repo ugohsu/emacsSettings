@@ -265,12 +265,13 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ファイル, b: バッファ, /: 行検索, ':': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, f: ido find, d: dired, b: buffer, /: 行検索, ':': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ((equal c "a") (org-agenda))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
+          ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "/") (consult-line))
           ;; ((equal c "r") (consult-ripgrep))
@@ -318,8 +319,10 @@
 
 (add-hook 'dired-mode-hook
           '(lambda ()
-             (local-set-key (kbd "SPC")
-                            'evil-mysetting-spccmd)))
+             (local-set-key (kbd "SPC") 'evil-mysetting-spccmd)
+             (local-set-key (kbd "f") 'consult-find)))
+;; 移動時にバッファを閉じる
+(setq dired-kill-when-opening-new-dired-buffer t)
 
 ;;;;
 ;;;; Occur-mode
