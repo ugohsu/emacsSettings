@@ -249,7 +249,7 @@
 ;; ranger の yp・yd・yn にならい、y をコピー用のプレフィックスにする
 ;; embark の一覧には :doc の1行目が説明として出るので、C (consult 検索) の案内も書いておく
 (defvar-keymap my-embark-yank-map
-  :doc "コピー: p 絶対パス, d ディレクトリ, n ファイル名 (consult 検索は C: f find, r ripgrep)"
+  :doc "コピー: p 絶対パス, d ディレクトリ, n ファイル名"
   "p" #'my-embark-copy-full-path
   "d" #'my-embark-copy-dir-path
   "n" #'my-embark-copy-file-name)
