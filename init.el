@@ -228,20 +228,39 @@
 ;; embark-consult は consult と embark が両方読み込まれると自動で読み込まれる
 (global-set-key (kbd "M-o") #'embark-act)
 
-;; embark の w は ~ で省略したパスをコピーするので、~ を展開した絶対パスをコピーする関数を用意する
+;; embark の w は ~ で省略したパスをコピーするので、~ を展開したパスなどをコピーする関数を用意する
+;; (ディレクトリが対象のときも directory-file-name で末尾の / を除いてから扱う)
+(defun my-embark--copy (string)
+  "STRING を kill-ring にコピーして表示する。"
+  (kill-new string)
+  (message "Copied: %s" string))
 (defun my-embark-copy-full-path (file)
   "FILE の絶対パス (~ を展開したもの) を kill-ring にコピーする。"
   (interactive "fFile: ")
-  (let ((path (expand-file-name file)))
-    (kill-new path)
-    (message "Copied: %s" path)))
-;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: 絶対パスをコピー)
+  (my-embark--copy (expand-file-name file)))
+(defun my-embark-copy-dir-path (file)
+  "FILE が属するディレクトリの絶対パス (~ を展開したもの) を kill-ring にコピーする。"
+  (interactive "fFile: ")
+  (my-embark--copy (file-name-directory (directory-file-name (expand-file-name file)))))
+(defun my-embark-copy-file-name (file)
+  "FILE のファイル名 (ディレクトリ部分を除いたもの) を kill-ring にコピーする。"
+  (interactive "fFile: ")
+  (my-embark--copy (file-name-nondirectory (directory-file-name file))))
+;; ranger の yp・yd・yn にならい、y をコピー用のプレフィックスにする
+;; embark の一覧には :doc の1行目が説明として出るので、C (consult 検索) の案内も書いておく
+(defvar-keymap my-embark-yank-map
+  :doc "コピー: p 絶対パス, d ディレクトリ, n ファイル名 (consult 検索は C: f find, r ripgrep)"
+  "p" #'my-embark-copy-full-path
+  "d" #'my-embark-copy-dir-path
+  "n" #'my-embark-copy-file-name)
+(fset 'my-embark-yank-map my-embark-yank-map)
+;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: コピー用プレフィックス)
 ;; embark-consult は consult が読み込まれるまで有効にならず、それまでは ; C f などの
 ;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
 (with-eval-after-load 'embark
   (require 'embark-consult)
   (keymap-set embark-file-map "V" #'view-file)
-  (keymap-set embark-file-map "y" #'my-embark-copy-full-path))
+  (keymap-set embark-file-map "y" 'my-embark-yank-map))
 
 ;;;;
 ;;;; evil
