@@ -247,7 +247,7 @@
   (interactive "fFile: ")
   (my-embark--copy (file-name-nondirectory (directory-file-name file))))
 ;; ranger の yp・yd・yn にならい、y をコピー用のプレフィックスにする
-;; embark の一覧には :doc の1行目が説明として出るので、C (consult 検索) の案内も書いておく
+;; embark の一覧には :doc の1行目が説明として出る (C を含む全体の案内は ~ のヒントに書く)
 (defvar-keymap my-embark-yank-map
   :doc "コピー: p 絶対パス, d ディレクトリ, n ファイル名"
   "p" #'my-embark-copy-full-path
