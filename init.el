@@ -228,6 +228,18 @@
 ;; embark-consult は consult と embark が両方読み込まれると自動で読み込まれる
 (global-set-key (kbd "M-o") #'embark-act)
 
+;; embark の w は ~ で省略したパスをコピーするので、~ を展開した絶対パスをコピーする関数を用意する
+(defun my-embark-copy-full-path (file)
+  "FILE の絶対パス (~ を展開したもの) を kill-ring にコピーする。"
+  (interactive "fFile: ")
+  (let ((path (expand-file-name file)))
+    (kill-new path)
+    (message "Copied: %s" path)))
+;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: 絶対パスをコピー)
+(with-eval-after-load 'embark
+  (keymap-set embark-file-map "V" #'view-file)
+  (keymap-set embark-file-map "y" #'my-embark-copy-full-path))
+
 ;;;;
 ;;;; evil
 ;;;;
@@ -290,8 +302,11 @@
 ;;;; dired-mode
 ;;;;
 
+;; ; は evil-collection で epa-dired (GPG 暗号化・署名) のプレフィックスだが、
+;; ほぼ使わないので embark-act (M-o と同じ) に割り当てる (epa-dired-do-* は M-x で呼べる)
 (with-eval-after-load 'dired
-  (evil-define-key 'normal dired-mode-map "f" #'consult-find))
+  (evil-define-key 'normal dired-mode-map "f" #'consult-find)
+  (evil-define-key 'normal dired-mode-map ";" #'embark-act))
 ;; 移動時にバッファを閉じる
 (setq dired-kill-when-opening-new-dired-buffer t)
 
