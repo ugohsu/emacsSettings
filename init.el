@@ -236,7 +236,10 @@
     (kill-new path)
     (message "Copied: %s" path)))
 ;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: 絶対パスをコピー)
+;; embark-consult は consult が読み込まれるまで有効にならず、それまでは ; C f などの
+;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
 (with-eval-after-load 'embark
+  (require 'embark-consult)
   (keymap-set embark-file-map "V" #'view-file)
   (keymap-set embark-file-map "y" #'my-embark-copy-full-path))
 
