@@ -254,13 +254,21 @@
   "d" #'my-embark-copy-dir-path
   "n" #'my-embark-copy-file-name)
 (fset 'my-embark-yank-map my-embark-yank-map)
-;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: コピー用プレフィックス)
+;; embark の一覧ではプレフィックス (y や C) が末尾に回されて見えにくいので、
+;; 一覧の上の方に出る ~ にプレフィックスの案内を docstring として書いたコマンドを置く
+(defun my-embark-hint ()
+  "ヒント: y コピー (p 絶対パス, d ディレクトリ, n ファイル名) / C consult 検索 (f find, r ripgrep)"
+  (interactive)
+  (message "%s" (car (split-string (documentation 'my-embark-hint) "\n"))))
+;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: コピー用プレフィックス, ~: ヒント)
+;; ~ は一覧の上に出るよう最後に設定する (押しやすいキーをふさがないよう、使いにくい ~ にしている)
 ;; embark-consult は consult が読み込まれるまで有効にならず、それまでは ; C f などの
 ;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
 (with-eval-after-load 'embark
   (require 'embark-consult)
   (keymap-set embark-file-map "V" #'view-file)
-  (keymap-set embark-file-map "y" 'my-embark-yank-map))
+  (keymap-set embark-file-map "y" 'my-embark-yank-map)
+  (keymap-set embark-file-map "~" #'my-embark-hint))
 
 ;;;;
 ;;;; evil
