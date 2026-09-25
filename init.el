@@ -190,6 +190,9 @@
 ;;;;
 (vertico-mode 1)
 (marginalia-mode 1)
+;; ミニバッファの履歴 (M-x のコマンド履歴など) をセッションをまたいで保存する
+;; vertico は履歴順に候補を並べるので、再起動後もよく使うコマンドが上に来る
+(savehist-mode 1)
 ;; 補完で大文字小文字を区別しない ("mess" で "*Messages*" にヒットさせる)
 (setq completion-ignore-case t
       read-buffer-completion-ignore-case t
