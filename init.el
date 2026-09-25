@@ -257,7 +257,7 @@
 ;; embark の一覧ではプレフィックス (y や C) が末尾に回されて見えにくいので、
 ;; 一覧の上の方に出る ~ にプレフィックスの案内を docstring として書いたコマンドを置く
 (defun my-embark-hint ()
-  "ヒント: y コピー (p 絶対パス, d ディレクトリ, n ファイル名) / C consult 検索 (f find, r ripgrep)"
+  "y パス類のコピー / C 検索 (f find, r ripgrep) / M-x 任意のコマンド"
   (interactive)
   (message "%s" (car (split-string (documentation 'my-embark-hint) "\n"))))
 ;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: コピー用プレフィックス, ~: ヒント)
