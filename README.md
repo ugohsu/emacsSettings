@@ -205,6 +205,44 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   補完スタイル (`eglot--dumb-flex`) で絞り込まれ、orderless は効かない。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
 
+### orderless の書き方
+
+vertico の補完 (`M-x`・`SPC b`・`SPC /` など) で使える書き方。
+
+| 入力 | 意味 |
+|---|---|
+| `2026 draft` | 空白で区切った語をすべて含む (順不同。AND) |
+| `draft\|final` | どちらかを含む (正規表現の OR) |
+| `!draft` | その語を含まない (否定) |
+| `qmd$` | その語で終わる (`^` なら始まる。正規表現) |
+
+### consult-find・consult-ripgrep の入力の `#` (外部コマンドと orderless の分担)
+
+`consult-find` (dired の `f`) や `consult-ripgrep` のように外部コマンド (find・rg) を
+動かすコマンドでは、入力欄の先頭に最初から `#` が入っている。入力は
+`#外部コマンドに渡す部分#orderless で絞る部分` という形になる。
+
+- 先頭の `#` だけでは何も変わらない (`#report` は `report` と同じで、全部が find に渡る)。
+- **2つ目の `#` を打つと**、その後ろは外部コマンドに渡されず、すでに出ている結果を
+  Emacs の中で orderless が絞り込む。書き換えても外部コマンドは実行し直さない。
+  上の orderless の書き方がそのまま使える。
+- 外部コマンド側は、入力を変えるたびに実行し直す (3文字打つまでは実行しない)。
+- find 側では `$` が使えない (consult が入力を `.*入力.*` で包んで `-iregex` に渡すため、
+  途中の `$` がただの文字になる)。末尾などの細かい条件は2つ目の `#` の後ろで書く。
+- 先頭の記号が区切りになるので、`#` を検索したいときは先頭の `#` を消して
+  `/foo#bar/baz` のように別の記号で始める。
+
+例 (`report_2026_draft.qmd`・`report_final_2026.md`・`draft-report-2025.md` などが
+あるディレクトリで `consult-find`。2026-09-27 に確認):
+
+| 入力 | 結果 |
+|---|---|
+| `#report` | `report` を含むファイル全部 (find) |
+| `#report#2026 draft` | そのうち `2026` と `draft` の両方を含むもの |
+| `#report#draft\|final` | そのうち `draft` か `final` を含むもの |
+| `#report#!draft` | そのうち `draft` を含まないもの |
+| `#report#qmd$` | そのうち `qmd` で終わるもの |
+
 ### consult-ripgrep の入力で rg のオプションを付ける
 
 `consult-ripgrep` は `default-directory` (プロジェクト内ならプロジェクトルート) から
