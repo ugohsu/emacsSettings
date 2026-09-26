@@ -142,3 +142,13 @@
 ;; (setq eshell-cmpl-ignore-case t)
 ;; SPC メニュー: ((equal c ":") (eshell-cd-default-directory))
 ;; (define-key evil-motion-state-map (kbd "C-:") 'eshell-command)
+;; jupytext (quarto の convert / render で ipynb と変換する方針にしたため
+;; site-lisp/yatex_ess.el から移動, 2026-09-27)
+;; (defun jupytext-sync ()
+;;   (interactive)
+;;   "Run jupytext sync"
+;;   (eshell-command
+;;    (format "jupytext --sync %s.ipynb"
+;;            (shell-quote-argument
+;;             (file-name-sans-extension (buffer-file-name))))))
+;; poly-markdown-mode-hook 内: (define-key poly-markdown-mode-map (kbd "C-c C-t") 'jupytext-sync)

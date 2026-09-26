@@ -85,22 +85,12 @@
    (format "Rscript -e \"library(rmarkdown); library(knitr); rmarkdown::render ('%s')\""
            (shell-quote-argument (buffer-file-name)))))
 
-;; jupytext の sync
-(defun jupytext-sync ()
-  (interactive)
-  "Run jupytext sync"
-  (eshell-command
-   (format "jupytext --sync %s.ipynb"
-           (shell-quote-argument
-            (file-name-sans-extension (buffer-file-name))))))
-  
-;; Jupytext 同期コマンド (C-c C-t)
+;; Rmarkdown の変換 (C-c C-b)
+;; (jupytext の同期 C-c C-t は、.qmd を原本にして quarto で ipynb と変換する方針にしたので
+;; archive.el に移した)
 (add-hook 'poly-markdown-mode-hook
           (lambda ()
-            ;; Rmarkdown の変換
-            (define-key poly-markdown-mode-map (kbd "C-c C-b") 'rmarkdown-to-html)
-            ;; .md <-> .ipynb の同期
-            (define-key poly-markdown-mode-map (kbd "C-c C-t") 'jupytext-sync)))
+            (define-key poly-markdown-mode-map (kbd "C-c C-b") 'rmarkdown-to-html)))
 
 ;;
 ;; quarto-mode
