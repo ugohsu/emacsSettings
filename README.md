@@ -22,8 +22,9 @@ apt から入れた `emacs-gtk 30.1`。31 にするときは以下に注意す�
   `make install` はホストから `docker exec -u root -it <コンテナ名> bash` で入って行う。
 - **コンテナを作り直すと 30.1 に戻る**: 恒久的にするなら Dockerfile 側にも反映する。
 - **追加で必要なパッケージ**:
-  - `texinfo`: `makeinfo` が無いと `configure` が止まる (マニュアル不要なら
-    `--without-makeinfo` でも回避できる)。
+  - `texinfo` (`makeinfo`) は入れない (TeX Live を apt 外で入れているので混ぜない)。
+    リリース版の tarball には作成済みのマニュアルが同梱されているので不要な見込み。
+    `configure` が `makeinfo` が無いと言って止まったら `--without-makeinfo` を付ける。
   - `libgccjit-14-dev`: ネイティブコンパイル用 (任意)。apt 版はネイティブコンパイル有効
     (`~/.emacs.d/eln-cache` がある) なので、同じ速さにするなら入れる。
   - `libncurses5-dev` が見つからなければ `libncurses-dev` を使う。
