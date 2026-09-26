@@ -300,7 +300,7 @@
           ((equal c "F") (find-file))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
-          ((equal c "b") (embark-bindings))
+          ((equal c "B") (embark-bindings))
           ((equal c "/") (consult-line))
           ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
           ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
