@@ -13,6 +13,28 @@ make && sudo make install
   というエラーになる(2026-09-18に発覚。当時のビルド(`/home/ugos/progfile/emacs-31.1`)では未導入だったため発生)。
   再ビルド時は必ず上記コマンドで `libxml2-dev` を入れてから `configure` すること。
 
+### workbox コンテナ (Debian 13 trixie) で再ビルドするときの注意 (2026-09-26 調査、ビルドは未実施)
+
+コンテナの Emacs は、イメージの Dockerfile (`hp-mini_config/workbox_setup/Dockerfile`) で
+apt から入れた `emacs-gtk 30.1`。31 にするときは以下に注意する。
+
+- **root で実行する**: コンテナ内は `node` ユーザーで `sudo` が無いので、`apt` と
+  `make install` はホストから `docker exec -u root -it <コンテナ名> bash` で入って行う。
+- **コンテナを作り直すと 30.1 に戻る**: 恒久的にするなら Dockerfile 側にも反映する。
+- **追加で必要なパッケージ**:
+  - `texinfo`: `makeinfo` が無いと `configure` が止まる (マニュアル不要なら
+    `--without-makeinfo` でも回避できる)。
+  - `libgccjit-14-dev`: ネイティブコンパイル用 (任意)。apt 版はネイティブコンパイル有効
+    (`~/.emacs.d/eln-cache` がある) なので、同じ速さにするなら入れる。
+  - `libncurses5-dev` が見つからなければ `libncurses-dev` を使う。
+  - `libgtk2.0-dev` は `--with-x-toolkit=gtk3` なので無くてもよい。
+  - `gcc`・`make`・`pkg-config`・`autoconf` は導入済み。
+- **apt 版の削除**: `apt remove emacs emacs-gtk emacs-bin-common emacs-common emacs-el emacsen-common`。
+  これらに依存する他のパッケージは無い。`make install` は `/usr/local/bin/emacs` に入り、
+  PATH では `/usr/local/bin` が `/usr/bin` より前なので、消さなくても新しい方が起動する。
+- `~/.emacs.d/elpa` のパッケージはそのまま使える見込み。ネイティブコンパイルのキャッシュは
+  バージョンごとに作り直される。
+
 ## パッケージのインストール
 
 - 以下のコードを Emacs の `*scratch*` に貼り付ける
