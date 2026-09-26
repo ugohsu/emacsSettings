@@ -292,13 +292,15 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ido find, d: dired, b: buffer, /: 行検索, ':': eat (新しいシェル), [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, [fF]: file, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
+          ((equal c "F") (find-file))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
+          ((equal c "b") (embark-bindings))
           ((equal c "/") (consult-line))
           ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
           ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
