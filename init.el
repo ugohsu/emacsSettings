@@ -292,12 +292,13 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, [fF]: file, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, [fFv]: file, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
           ((equal c "F") (call-interactively #'find-file))
+          ((equal c "v") (call-interactively #'view-file))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "B") (call-interactively #'embark-bindings))
