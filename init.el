@@ -216,7 +216,7 @@
 (recentf-mode 1)
 ;; ;; M-y を kill-ring の一覧選択にする
 ;; (global-set-key [remap yank-pop] #'consult-yank-pop)
-;; バッファ内の補完 (ESS・Eglot・eshell などの TAB / C-M-i) も *Completions* ではなく
+;; バッファ内の補完 (ESS・Eglot などの TAB / C-M-i) も *Completions* ではなく
 ;; ミニバッファに出し、vertico・orderless・marginalia を効かせる
 (setq completion-in-region-function #'consult-completion-in-region)
 
@@ -292,7 +292,7 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, f: ido find, d: dired, b: buffer, /: 行検索, ':': eshell, [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, f: ido find, d: dired, b: buffer, /: 行検索, ':': eat (新しいシェル), [hjkl]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
@@ -300,7 +300,9 @@
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "/") (consult-line))
-          ((equal c ":") (eshell-cd-default-directory))
+          ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを開く
+          ;; (非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
+          ((equal c ":") (eat nil '(4)))
           ((equal c "h") (evil-window-left 1))
           ((equal c "j") (evil-window-down 1))
           ((equal c "k") (evil-window-up 1))
@@ -322,8 +324,9 @@
 (define-key evil-motion-state-map
   "Q" 'kill-buffer)
 ;; C-{ (spconv) は site-lisp/yatex_ess.el に移動
+;; C-: は1回だけのシェルコマンド実行 (eshell-command から bash で動く shell-command に変更)
 (define-key evil-motion-state-map
-  (kbd "C-:") 'eshell-command)
+  (kbd "C-:") 'shell-command)
 
 ;; config
 (setq evil-want-C-i-jump nil)
@@ -353,19 +356,15 @@
 (setq quit-window-kill-buffer '(dired-mode))
 
 ;;;;
-;;;; eshell
+;;;; eat (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
 ;;;;
-
-;; function
-(defun eshell-cd-default-directory ()
-  (interactive)
-  (let ((dir default-directory))
-    (eshell) (cd dir)
-    (eshell-interactive-print (concat "cd " dir "\n"))
-    (eshell-emit-prompt)))
-
-;; 補完時に大文字小文字を区別しない
-(setq eshell-cmpl-ignore-case t)
+;; eshell から乗り換えた (2026-09-26)。eshell の設定は archive.el に移した
+;; C-h は global で delete-backward-char にしているが、eat ではキーがターミナルに送られず
+;; バッファを消そうとしてしまうので、^H として bash に送り backspace として効かせる
+;; (insert state は evil の割り当てが優先されるので evil 側にも設定する)
+(with-eval-after-load 'eat
+  (keymap-set eat-semi-char-mode-map "C-h" #'eat-self-input)
+  (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input))
 
 ;;;;
 ;;;; python
@@ -398,7 +397,7 @@
 ;; ただし、以下のモードでは行番号を表示しない
 (dolist (mode '(term-mode-hook
                 shell-mode-hook
-                eshell-mode-hook
+                eat-mode-hook
                 calendar-mode-hook
                 dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))

@@ -130,3 +130,15 @@
 ;;      (setq default-process-coding-system '(utf-8 .   utf-8))
 ;;   )))
 ;; (setq inferior-ess-r-program-name "/usr/bin/R")
+
+;; eshell (eat に乗り換えたため init.el から移動, 2026-09-26)
+;; (defun eshell-cd-default-directory ()
+;;   (interactive)
+;;   (let ((dir default-directory))
+;;     (eshell) (cd dir)
+;;     (eshell-interactive-print (concat "cd " dir "\n"))
+;;     (eshell-emit-prompt)))
+;; 補完時に大文字小文字を区別しない
+;; (setq eshell-cmpl-ignore-case t)
+;; SPC メニュー: ((equal c ":") (eshell-cd-default-directory))
+;; (define-key evil-motion-state-map (kbd "C-:") 'eshell-command)

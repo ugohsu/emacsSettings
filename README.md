@@ -52,8 +52,9 @@ apt から入れた `emacs-gtk 30.1`。31 にするときは以下に注意す�
 ;; 1. パッケージ管理の初期化
 (require 'package)
 (setq package-archives
-      '(("melpa" . "https://melpa.org/packages/")
-        ("gnu"   . "https://elpa.gnu.org/packages/")))
+      '(("melpa"  . "https://melpa.org/packages/")
+        ("gnu"    . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")))  ; eat は NonGNU ELPA にだけある
 (package-initialize)
 
 ;; 2. インストールしたいパッケージのリスト
@@ -73,6 +74,7 @@ apt から入れた `emacs-gtk 30.1`。31 にするときは以下に注意す�
     embark          ; 補完候補などにアクションを実行する
     embark-consult  ; embark と consult の連携
     wgrep           ; grep バッファを直接編集して一括置換
+    eat             ; Emacs 内のターミナル (bash)
     
     ;; LaTeX / R / Python / Markdown
     yatex
@@ -218,7 +220,7 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   ファイル履歴の呼び出し (動作が不安定だった) は廃止した (`init.el` では
   コメントアウトして残している)。保存件数 (`recentf-max-saved-items`) は既定の
   20 件では少ないので 200 件にしている。
-- バッファ内の補完 (ESS・Eglot・eshell などの `TAB` / `C-M-i`) も
+- バッファ内の補完 (ESS・Eglot などの `TAB` / `C-M-i`) も
   `completion-in-region-function` を `consult-completion-in-region` にして、
   `*Completions*` ではなくミニバッファ (vertico・orderless・marginalia) に出している。
   選択中の候補はバッファにプレビューされる。Eglot の候補だけは Eglot 専用の
@@ -279,6 +281,32 @@ rg のオプションとして渡される。
   `C-c C-p` (`wgrep-change-to-wgrep-mode`) を押すと編集可能になる。
   普通に編集して `C-c C-c` で各ファイルに反映 (`C-c C-k` で破棄)。反映後は
   `M-x save-some-buffers` で保存する。
+
+## eat (Emacs 内のターミナル)
+
+[eat](https://codeberg.org/akib/emacs-eat) (Emulate A Terminal) は elisp で書かれた
+ターミナルエミュレータ。中身は普通の bash なので、`` `...` `` や `$(...)`、`.bashrc` の
+設定がそのまま使え、vim などの TUI アプリも動く。2026-09-26 に eshell から乗り換えた
+(eshell は bash と書き方が違い、`` `...` `` や `$(...)` が使えないため)。eshell の設定は
+`archive.el` に移した。NonGNU ELPA にだけあるので、`package-archives` に `nongnu` が必要
+(`init.el` は既定のアーカイブに melpa を足しているので入っている)。
+
+| キー | 内容 |
+|---|---|
+| `SPC :` | 今のバッファのディレクトリで、新しい eat のシェルを開く (押すたびに別のシェル) |
+| `C-:` | 1回だけシェルコマンドを実行 (`shell-command`、bash で動く) |
+
+- `.qmd` などを編集中に `SPC :` を押せば、同じディレクトリでシェルが開く。
+  `quarto preview` と `jupyter lab` を別々のシェルで同時に動かせる。
+  バッファ名は `*eat*`・`*eat*<2>`… になるので、用途ごとに `M-x rename-buffer` で
+  名前を付けると `SPC b` から探しやすい。
+- `M-x eat` は既存のシェルに切り替える (無ければ作る)。`C-u 2 M-x eat` のように
+  番号を付けるとその番号のシェルに切り替える。
+- `C-h` は global で `delete-backward-char` にしているが、eat では ^H として bash に送り、
+  backspace として効かせている (`init.el` の eat の節)。
+- Emacs を終了すると、eat で動かしていたプロセス (`jupyter lab` など) も止まる。
+- ESC は evil の normal state に入る (evil-collection の既定)。normal state では
+  `SPC` メニューなど普段のキーが使える。
 
 ## 複数の Emacs を同時に起動しているときの SKK 個人辞書
 
