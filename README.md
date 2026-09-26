@@ -3,11 +3,14 @@
 ## Emacs のビルド
 
 ```bash
-sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev
+sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev libgccjit-14-dev
 ./configure --with-x-toolkit=gtk3 --without-toolkit-scroll-bars --without-xaw3d --without-xim --without-rsvg --without-xpm --without-tiff --without-gpm --with-wide-int 
 make && sudo make install
 ```
 
+- `libgccjit-14-dev` はネイティブコンパイル (Emacs Lisp を機械語に変換して速くする) 用。
+  無くてもビルドはできるが、`configure` がネイティブコンパイル無しで進む。
+  `14` は gcc のメジャーバージョンに合わせる (`gcc --version` で確認。Debian 13 は 14)。
 - `libxml2-dev` が無いと `configure` 時に `libxml-2.0` (pkg-config) が見つからず、XMLサポートが無効なままビルドされる。
   この状態で `eww` を使うと `error in process filter: Symbol's function definition is void: libxml-parse-html-region`
   というエラーになる(2026-09-18に発覚。当時のビルド(`/home/ugos/progfile/emacs-31.1`)では未導入だったため発生)。
@@ -25,8 +28,8 @@ apt から入れた `emacs-gtk 30.1`。31 にするときは以下に注意す�
   - `texinfo` (`makeinfo`) は入れない (TeX Live を apt 外で入れているので混ぜない)。
     リリース版の tarball には作成済みのマニュアルが同梱されているので不要な見込み。
     `configure` が `makeinfo` が無いと言って止まったら `--without-makeinfo` を付ける。
-  - `libgccjit-14-dev`: ネイティブコンパイル用 (任意)。apt 版はネイティブコンパイル有効
-    (`~/.emacs.d/eln-cache` がある) なので、同じ速さにするなら入れる。
+  - `libgccjit-14-dev`: ネイティブコンパイル用。上の `apt install` に含めた。
+    2026-09-26 の 31.1 のビルドでは入れておらず、ネイティブコンパイル無効になった。
   - `libncurses5-dev` が見つからなければ `libncurses-dev` を使う。
   - `libgtk2.0-dev` は `--with-x-toolkit=gtk3` なので無くてもよい。
   - `gcc`・`make`・`pkg-config`・`autoconf` は導入済み。
