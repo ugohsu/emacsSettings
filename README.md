@@ -212,9 +212,10 @@ vertico の補完 (`M-x`・`SPC b`・`SPC /` など) で使える書き方。
 | 入力 | 意味 |
 |---|---|
 | `2026 draft` | 空白で区切った語をすべて含む (順不同。AND) |
-| `draft\|final` | どちらかを含む (正規表現の OR) |
 | `!draft` | その語を含まない (否定) |
 | `qmd$` | その語で終わる (`^` なら始まる。正規表現) |
+
+OR は正規表現の `\|` で書く (例: `draft\|final` で `draft` か `final` を含む)。
 
 ### consult-find・consult-ripgrep の入力の `#` (外部コマンドと orderless の分担)
 
@@ -239,9 +240,10 @@ vertico の補完 (`M-x`・`SPC b`・`SPC /` など) で使える書き方。
 |---|---|
 | `#report` | `report` を含むファイル全部 (find) |
 | `#report#2026 draft` | そのうち `2026` と `draft` の両方を含むもの |
-| `#report#draft\|final` | そのうち `draft` か `final` を含むもの |
 | `#report#!draft` | そのうち `draft` を含まないもの |
 | `#report#qmd$` | そのうち `qmd` で終わるもの |
+
+`#report#draft\|final` なら、そのうち `draft` か `final` を含むもの。
 
 ### consult-ripgrep の入力で rg のオプションを付ける
 
