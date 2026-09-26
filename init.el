@@ -223,10 +223,13 @@
 ;;;;
 ;;;; embark (補完候補やカーソル位置の対象にアクションを実行する)
 ;;;;
-;; 端末版 (emacs -nw) でも届く M-o にする (C-. や C-; は端末では . や ; として届き、
+;; 端末版 (emacs -nw) でも届く M-a (act) にする (C-. や C-; は端末では . や ; として届き、
 ;; C-. は evil の normal state で evil-repeat-pop にも使われている)
-;; embark-consult は consult と embark が両方読み込まれると自動で読み込まれる
-(global-set-key (kbd "M-o") #'embark-act)
+;; M-a の既定の backward-sentence は evil では ( で代用できるので上書きする
+(global-set-key (kbd "M-a") #'embark-act)
+;; ミニバッファでは M-e (export) で候補一覧をバッファに書き出す (M-a E と同じ)
+;; M-e の既定の forward-sentence はミニバッファではほぼ使わない
+(keymap-set minibuffer-local-map "M-e" #'embark-export)
 
 ;; embark の w は ~ で省略したパスをコピーするので、~ を展開したパスなどをコピーする関数を用意する
 ;; (ディレクトリが対象のときも directory-file-name で末尾の / を除いてから扱う)
@@ -333,7 +336,7 @@
 ;;;;
 
 ;; ; は evil-collection で epa-dired (GPG 暗号化・署名) のプレフィックスだが、
-;; ほぼ使わないので embark-act (M-o と同じ) に割り当てる (epa-dired-do-* は M-x で呼べる)
+;; ほぼ使わないので embark-act (M-a と同じ) に割り当てる (epa-dired-do-* は M-x で呼べる)
 ;; h・l は ranger のように親ディレクトリへ戻る・ディレクトリに入る (ファイルなら開く) にする
 ;; (dired では行内の左右移動はほぼ使わないので上書きする)
 (with-eval-after-load 'dired

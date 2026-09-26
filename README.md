@@ -252,26 +252,30 @@ rg のオプションとして渡される。
 
 [embark](https://github.com/oantolin/embark) は、ミニバッファの補完候補や
 カーソル位置の対象 (ファイル名・URL・シンボルなど) に対して、アクションの
-メニューを出して実行するパッケージ (2026-09-23 導入)。`embark-act` を `M-o`
-に割り当てている。
+メニューを出して実行するパッケージ (2026-09-23 導入)。`embark-act` を `M-a` (act)、
+ミニバッファでの `embark-export` を `M-e` (export) に割り当てている (2026-09-26 に
+`M-o` から変更。`M-o` は押しにくく、名前からも連想しにくかったため)。
 
 - **キー**: embark の README の例は `C-.` だが、端末版 (`emacs -nw`) では
   `C-;` は `;` として届いてしまい (kitty で確認)、`C-.` も同様に届かない
   ことが多いうえ、`C-.` は
   evil の normal state で `evil-repeat-pop` に使われている。そのため GUI 版・
-  端末版どちらでも使える `M-o` にした。
-- `M-o` は ibuffer 内だけ evil-collection の `ibuffer-visit-buffer-1-window` が
-  優先される。
-- **embark-consult**: consult と embark が両方読み込まれると自動で読み込まれる
-  ので、`init.el` への記述は不要。
+  端末版どちらでも使える Alt + 英字にした。
+- `M-a`・`M-e` の既定は文単位の移動 (`backward-sentence`・`forward-sentence`) だが、
+  evil では `(`・`)` で代用できるので上書きした。
+- `M-a` は embark-collect のバッファ内だけ evil-collection の
+  `embark-collect-direct-action-minor-mode` が優先される。
+- **embark-consult**: consult と embark が両方読み込まれると自動で読み込まれるが、
+  それまでは consult 検索のメニュー (`C`) が使えないため、`init.el` で embark と同時に
+  `require` している。
 - **主な使い方**:
-  - 補完中に `M-o` → アクションを選ぶ (例: `SPC b` の候補で `k` → バッファを kill、
+  - 補完中に `M-a` → アクションを選ぶ (例: `SPC b` の候補で `k` → バッファを kill、
     `C-x C-f` などのファイル補完で `d` → 削除。アクション選択中に `C-h` で
     アクション一覧を補完で選べる)
-  - 補完中に `M-o` → `E` (`embark-export`): 候補一覧を通常のバッファに書き出す。
+  - 補完中に `M-e` (`M-a` → `E` と同じ、`embark-export`): 候補一覧を通常のバッファに書き出す。
     `M-x consult-ripgrep` の結果なら grep バッファになり、`SPC /`
     (`consult-line`) の結果なら occur バッファになる。
-- **wgrep で一括置換**: `M-x consult-ripgrep` → `M-o` `E` で書き出した grep バッファで
+- **wgrep で一括置換**: `M-x consult-ripgrep` → `M-e` で書き出した grep バッファで
   `C-c C-p` (`wgrep-change-to-wgrep-mode`) を押すと編集可能になる。
   普通に編集して `C-c C-c` で各ファイルに反映 (`C-c C-k` で破棄)。反映後は
   `M-x save-some-buffers` で保存する。
