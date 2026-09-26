@@ -349,8 +349,8 @@ rg のオプションとして渡される。
   GitHub で見せたいときは、作業の終わりに `.ipynb` を作る。`.ipynb` は直接編集せず、
   直すときは `.qmd` を直して作り直す (jupytext のような双方向同期はしない)。
   - `quarto convert` で作った `.ipynb` には実行結果が入らない。
-  - 実行結果まで入れるなら `quarto render <file>.qmd --to ipynb` (未確認。最初に
-    GitHub での表示を確かめる)。
+  - 実行結果まで入れるなら `quarto render <file>.qmd --to ipynb` (2026-09-27 確認)。
+    コードを実行するので、venv を有効にしておく (有効にしないとエラーになる)。
 - **`C-c C-p` (`run-python`) も venv に通す**: `init.el` では `python-shell-interpreter` が
   `python3` なので、そのままではシステムの Python が起動する。先に
   `M-x pyvenv-activate` で `.venv` を選んでから (共通の venv なら `M-x pyvenv-workon` で
@@ -358,8 +358,10 @@ rg のオプションとして渡される。
   venv 名がすぐ候補に出るが、`pyvenv-activate` は普通のディレクトリ選択でパスを辿る。
   pyvenv は Emacs の `PATH` などを venv に向けるので、そのあとに起動した `C-c C-p` の
   Python や、eat から実行した `quarto` も venv を使う (2026-09-27 確認)。Eglot (pylsp) も
-  venv を使う見込み (未確認)。すでに起動している Python や Eglot には反映されないので、
-  その場合は再起動する。
+  venv のライブラリを見る (2026-09-27 確認。`.py` で `pd.DataFrame` の定義へジャンプすると
+  venv の pandas が開く。evil の normal state では `M-.` が取られているので、`gd`、
+  `M-a` → `RET`、`M-x xref-find-definitions` のいずれかで)。すでに起動している Python や
+  Eglot には反映されないので、その場合は再起動する (Eglot は `M-x eglot-reconnect`)。
 - `quarto preview` が動かす Python (Jupyter カーネル) と `C-c C-p` の Python は別のプロセス
   で、変数やデータは共有されない。`C-c C-p` 側で試しながら書き、`quarto preview` 側で
   最終結果を確かめる。
