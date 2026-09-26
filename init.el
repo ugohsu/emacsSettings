@@ -324,6 +324,10 @@
 (define-key evil-motion-state-map
   "Q" 'kill-buffer)
 ;; C-{ (spconv) は site-lisp/yatex_ess.el に移動
+;; C-h は global で delete-backward-char にしているが、normal state では vim と同じく
+;; 左移動にする (insert state では global のまま backspace として効く)
+(define-key evil-motion-state-map
+  (kbd "C-h") 'evil-backward-char)
 ;; C-: は1回だけのシェルコマンド実行 (eshell-command から bash で動く shell-command に変更)
 (define-key evil-motion-state-map
   (kbd "C-:") 'shell-command)
@@ -359,11 +363,9 @@
 ;;;; eat (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
 ;;;;
 ;; eshell から乗り換えた (2026-09-26)。eshell の設定は archive.el に移した
-;; C-h は global で delete-backward-char にしているが、eat ではキーがターミナルに送られず
-;; バッファを消そうとしてしまうので、^H として bash に送り backspace として効かせる
-;; (insert state は evil の割り当てが優先されるので evil 側にも設定する)
+;; eat は C-h をターミナルに送らないので、insert state でだけ ^H として bash に送り
+;; backspace として効かせる (normal state では evil の左移動のまま)
 (with-eval-after-load 'eat
-  (keymap-set eat-semi-char-mode-map "C-h" #'eat-self-input)
   (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input))
 
 ;;;;

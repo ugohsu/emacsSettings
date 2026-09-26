@@ -302,8 +302,9 @@ rg のオプションとして渡される。
   名前を付けると `SPC b` から探しやすい。
 - `M-x eat` は既存のシェルに切り替える (無ければ作る)。`C-u 2 M-x eat` のように
   番号を付けるとその番号のシェルに切り替える。
-- `C-h` は global で `delete-backward-char` にしているが、eat では ^H として bash に送り、
-  backspace として効かせている (`init.el` の eat の節)。
+- `C-h` は insert state では ^H として bash に送り、backspace として効かせている
+  (`init.el` の eat の節)。normal state では vim と同じく左移動 (evil の節で
+  `evil-motion-state-map` に設定。普通のバッファでも同じ)。
 - Emacs を終了すると、eat で動かしていたプロセス (`jupyter lab` など) も止まる。
 - ESC は evil の normal state に入る (evil-collection の既定)。normal state では
   `SPC` メニューなど普段のキーが使える。
