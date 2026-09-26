@@ -312,6 +312,49 @@ rg のオプションとして渡される。
 - ESC は evil の normal state に入る (evil-collection の既定)。normal state では
   `SPC` メニューなど普段のキーが使える。
 
+## Python の分析環境 (venv + quarto + run-python) の方針
+
+2026-09-26 に決めた方針。
+
+- **パッケージは venv に入れる**: trixie ではシステム Python への `pip install` が
+  できないため。numpy・pandas・sudachi などに加えて、`quarto preview` で Python
+  チャンクを実行するための jupyter も同じ venv に入れる (apt の `python3-jupyter` 系と
+  混ぜると、カーネルが venv のパッケージを見つけられないなどの混乱が起きやすい)。
+  JupyterLab の画面は使わなくても、Quarto が Python チャンクの実行に Jupyter の部品を
+  使うので必要。システムの `/usr/bin/python3` (3.13) には jupyter が無い
+  (`quarto check jupyter` で確認済み)。
+- **venv はプロジェクトごとに `.venv` を作る** (共通の分析用 venv を1つ使い回してもよい)。
+  `python3 -m venv` は追加の apt パッケージ無しで使える。
+
+  ```bash
+  cd ~/projects/<プロジェクト>
+  python3 -m venv .venv
+  source .venv/bin/activate
+  pip install jupyter numpy pandas sudachipy sudachidict_core
+  pip freeze > requirements.txt   # 再現用に記録しておく
+  ```
+
+- **`.qmd` を原本にする**: 作業中は `SPC :` で開いた eat で venv を `activate` してから
+  `quarto preview` する。どの Python が使われるかは `quarto check jupyter` で確認できる。
+  GitHub で見せたいときは、作業の終わりに `.ipynb` を作る。`.ipynb` は直接編集せず、
+  直すときは `.qmd` を直して作り直す (jupytext のような双方向同期はしない)。
+  - `quarto convert` で作った `.ipynb` には実行結果が入らない。
+  - 実行結果まで入れるなら `quarto render <file>.qmd --to ipynb` (未確認。最初に
+    GitHub での表示を確かめる)。
+- **`C-c C-p` (`run-python`) も venv に通す**: `init.el` では `python-shell-interpreter` が
+  `python3` なので、そのままではシステムの Python が起動する。先に
+  `M-x pyvenv-activate` で `.venv` を選んでから `C-c C-p` を押す。
+  pyvenv は Emacs の `PATH` などを venv に向けるので、そのあとに開いた eat や
+  Eglot (pylsp) も venv を使う見込み (未確認)。すでに起動している Python や Eglot には
+  反映されないので、その場合は再起動する。
+- `quarto preview` が動かす Python (Jupyter カーネル) と `C-c C-p` の Python は別のプロセス
+  で、変数やデータは共有されない。`C-c C-p` 側で試しながら書き、`quarto preview` 側で
+  最終結果を確かめる。
+- **uv は使わない** (未導入)。`uv venv` で作られるのも普通の `.venv` なので、あとから
+  切り替えてもこの運用はそのまま使える。システムと違う Python のバージョンが必要に
+  なったとき、インストールの遅さが気になったとき、ロックファイルで厳密に再現したく
+  なったときに検討する。
+
 ## 複数の Emacs を同時に起動しているときの SKK 個人辞書
 
 SKK は Emacs 終了時 (`kill-emacs-hook`) に個人辞書を保存する。複数の Emacs を
