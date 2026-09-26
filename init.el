@@ -297,10 +297,10 @@
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
-          ((equal c "F") (find-file))
+          ((equal c "F") (call-interactively #'find-file))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
-          ((equal c "B") (embark-bindings))
+          ((equal c "B") (call-interactively #'embark-bindings))
           ((equal c "/") (consult-line))
           ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
           ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
