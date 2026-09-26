@@ -334,9 +334,13 @@
 
 ;; ; は evil-collection で epa-dired (GPG 暗号化・署名) のプレフィックスだが、
 ;; ほぼ使わないので embark-act (M-o と同じ) に割り当てる (epa-dired-do-* は M-x で呼べる)
+;; h・l は ranger のように親ディレクトリへ戻る・ディレクトリに入る (ファイルなら開く) にする
+;; (dired では行内の左右移動はほぼ使わないので上書きする)
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map "f" #'consult-find)
-  (evil-define-key 'normal dired-mode-map ";" #'embark-act))
+  (evil-define-key 'normal dired-mode-map ";" #'embark-act)
+  (evil-define-key 'normal dired-mode-map "h" #'dired-up-directory)
+  (evil-define-key 'normal dired-mode-map "l" #'dired-find-file))
 ;; 移動時にバッファを閉じる
 (setq dired-kill-when-opening-new-dired-buffer t)
 
