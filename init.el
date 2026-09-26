@@ -346,6 +346,8 @@
 ;; 2つのウィンドウで dired を開いているとき、C (コピー) や R (移動) の送り先の初期値を
 ;; もう一方の dired のディレクトリにする
 (setq dired-dwim-target t)
+;; q (quit-window) で dired のバッファも消す (Emacs 31 以降で有効。30 以前では何も起きない)
+(setq quit-window-kill-buffer '(dired-mode))
 
 ;;;;
 ;;;; eshell
