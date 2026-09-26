@@ -300,9 +300,10 @@
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "/") (consult-line))
-          ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを開く
-          ;; (非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
-          ((equal c ":") (eat nil '(4)))
+          ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
+          ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
+          ;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
+          ((equal c ":") (eat-other-window nil '(4)))
           ((equal c "h") (evil-window-left 1))
           ((equal c "j") (evil-window-down 1))
           ((equal c "k") (evil-window-up 1))
