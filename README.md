@@ -354,10 +354,12 @@ rg のオプションとして渡される。
 - **`C-c C-p` (`run-python`) も venv に通す**: `init.el` では `python-shell-interpreter` が
   `python3` なので、そのままではシステムの Python が起動する。先に
   `M-x pyvenv-activate` で `.venv` を選んでから (共通の venv なら `M-x pyvenv-workon` で
-  `analysis` を選んでから) `C-c C-p` を押す。
-  pyvenv は Emacs の `PATH` などを venv に向けるので、そのあとに開いた eat や
-  Eglot (pylsp) も venv を使う見込み (未確認)。すでに起動している Python や Eglot には
-  反映されないので、その場合は再起動する。
+  `analysis` を選んでから) `C-c C-p` を押す。`pyvenv-workon` は `~/.virtualenvs` の中の
+  venv 名がすぐ候補に出るが、`pyvenv-activate` は普通のディレクトリ選択でパスを辿る。
+  pyvenv は Emacs の `PATH` などを venv に向けるので、そのあとに起動した `C-c C-p` の
+  Python や、eat から実行した `quarto` も venv を使う (2026-09-27 確認)。Eglot (pylsp) も
+  venv を使う見込み (未確認)。すでに起動している Python や Eglot には反映されないので、
+  その場合は再起動する。
 - `quarto preview` が動かす Python (Jupyter カーネル) と `C-c C-p` の Python は別のプロセス
   で、変数やデータは共有されない。`C-c C-p` 側で試しながら書き、`quarto preview` 側で
   最終結果を確かめる。
