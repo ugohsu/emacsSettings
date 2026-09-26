@@ -334,6 +334,16 @@ rg のオプションとして渡される。
   pip freeze > requirements.txt   # 再現用に記録しておく
   ```
 
+- **共通の分析用 venv は `~/.virtualenvs/analysis`**: プロジェクトごとに作るほどでもない
+  分析は、共通の venv を使い回す。`~/.virtualenvs` は pyvenv が venv を探す既定の場所
+  (環境変数 `WORKON_HOME` が無いとき) なので、`M-x pyvenv-workon` で名前 (`analysis`)
+  から選べる。共通の venv を増やすときも同じ場所に置く。
+
+  ```bash
+  python3 -m venv ~/.virtualenvs/analysis
+  source ~/.virtualenvs/analysis/bin/activate   # eat などのシェルで有効にするとき
+  ```
+
 - **`.qmd` を原本にする**: 作業中は `SPC :` で開いた eat で venv を `activate` してから
   `quarto preview` する。どの Python が使われるかは `quarto check jupyter` で確認できる。
   GitHub で見せたいときは、作業の終わりに `.ipynb` を作る。`.ipynb` は直接編集せず、
@@ -343,7 +353,8 @@ rg のオプションとして渡される。
     GitHub での表示を確かめる)。
 - **`C-c C-p` (`run-python`) も venv に通す**: `init.el` では `python-shell-interpreter` が
   `python3` なので、そのままではシステムの Python が起動する。先に
-  `M-x pyvenv-activate` で `.venv` を選んでから `C-c C-p` を押す。
+  `M-x pyvenv-activate` で `.venv` を選んでから (共通の venv なら `M-x pyvenv-workon` で
+  `analysis` を選んでから) `C-c C-p` を押す。
   pyvenv は Emacs の `PATH` などを venv に向けるので、そのあとに開いた eat や
   Eglot (pylsp) も venv を使う見込み (未確認)。すでに起動している Python や Eglot には
   反映されないので、その場合は再起動する。
