@@ -15,29 +15,7 @@ make && sudo make install
   この状態で `eww` を使うと `error in process filter: Symbol's function definition is void: libxml-parse-html-region`
   というエラーになる(2026-09-18に発覚。当時のビルド(`/home/ugos/progfile/emacs-31.1`)では未導入だったため発生)。
   再ビルド時は必ず上記コマンドで `libxml2-dev` を入れてから `configure` すること。
-
-### workbox コンテナ (Debian 13 trixie) で再ビルドするときの注意 (2026-09-26 調査、ビルドは未実施)
-
-コンテナの Emacs は、イメージの Dockerfile (`hp-mini_config/workbox_setup/Dockerfile`) で
-apt から入れた `emacs-gtk 30.1`。31 にするときは以下に注意する。
-
-- **root で実行する**: コンテナ内は `node` ユーザーで `sudo` が無いので、`apt` と
-  `make install` はホストから `docker exec -u root -it <コンテナ名> bash` で入って行う。
-- **コンテナを作り直すと 30.1 に戻る**: 恒久的にするなら Dockerfile 側にも反映する。
-- **追加で必要なパッケージ**:
-  - `texinfo` (`makeinfo`) は入れない (TeX Live を apt 外で入れているので混ぜない)。
-    リリース版の tarball には作成済みのマニュアルが同梱されているので不要な見込み。
-    `configure` が `makeinfo` が無いと言って止まったら `--without-makeinfo` を付ける。
-  - `libgccjit-14-dev`: ネイティブコンパイル用。上の `apt install` に含めた。
-    2026-09-26 の 31.1 のビルドでは入れておらず、ネイティブコンパイル無効になった。
-  - `libncurses5-dev` が見つからなければ `libncurses-dev` を使う。
-  - `libgtk2.0-dev` は `--with-x-toolkit=gtk3` なので無くてもよい。
-  - `gcc`・`make`・`pkg-config`・`autoconf` は導入済み。
-- **apt 版の削除**: `apt remove emacs emacs-gtk emacs-bin-common emacs-common emacs-el emacsen-common`。
-  これらに依存する他のパッケージは無い。`make install` は `/usr/local/bin/emacs` に入り、
-  PATH では `/usr/local/bin` が `/usr/bin` より前なので、消さなくても新しい方が起動する。
-- `~/.emacs.d/elpa` のパッケージはそのまま使える見込み。ネイティブコンパイルのキャッシュは
-  バージョンごとに作り直される。
+- `texinfo` は不要。texlive と衝突するため apt での導入を避ける。
 
 ## パッケージのインストール
 
