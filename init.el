@@ -343,6 +343,9 @@
   (evil-define-key 'normal dired-mode-map "l" #'dired-find-file))
 ;; 移動時にバッファを閉じる
 (setq dired-kill-when-opening-new-dired-buffer t)
+;; 2つのウィンドウで dired を開いているとき、C (コピー) や R (移動) の送り先の初期値を
+;; もう一方の dired のディレクトリにする
+(setq dired-dwim-target t)
 
 ;;;;
 ;;;; eshell
