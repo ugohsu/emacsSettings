@@ -62,6 +62,7 @@ make && sudo make install
     polymode
     poly-R
     poly-markdown
+    quarto-mode  ; .qmd 編集用 (poly-quarto-mode)。Emacs 標準には無い
     ))
 
 ;; 3. リストを回して、入っていないものだけインストール
