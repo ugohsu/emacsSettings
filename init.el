@@ -292,14 +292,13 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, [fF]: file, [vV]: 閲覧, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, [fF]: file, v: 閲覧, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
           ((equal c "F") (call-interactively #'find-file))
           ((equal c "v") (my-view-current-buffer))
-          ((equal c "V") (my-view-current-buffer))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "B") (call-interactively #'embark-bindings))
@@ -444,7 +443,7 @@
   (view-mode -1)
   (poly-quarto-mode))
 
-;; SPC v / SPC V: poly-quarto-mode なら my-qmd-view、それ以外は view-mode にするだけ
+;; SPC v: poly-quarto-mode なら my-qmd-view、それ以外は view-mode にするだけ
 (defun my-view-current-buffer ()
   (interactive)
   (if (bound-and-true-p poly-quarto-mode)
