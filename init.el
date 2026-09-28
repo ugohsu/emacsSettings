@@ -292,13 +292,15 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, [fF]: file, v: 閲覧, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, [fF]: file, v: 閲覧, a: embark, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
           ((equal c "F") (call-interactively #'find-file))
           ((equal c "v") (my-view-current-buffer))
+          ;; カーソル位置の対象に embark のアクションを実行 (ミニバッファの補完中は M-a)
+          ((equal c "a") (call-interactively #'embark-act))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "B") (call-interactively #'embark-bindings))
@@ -346,13 +348,10 @@
 ;;;; dired-mode
 ;;;;
 
-;; ; は evil-collection で epa-dired (GPG 暗号化・署名) のプレフィックスだが、
-;; ほぼ使わないので embark-act (M-a と同じ) に割り当てる (epa-dired-do-* は M-x で呼べる)
 ;; h・l は ranger のように親ディレクトリへ戻る・ディレクトリに入る (ファイルなら開く) にする
 ;; (dired では行内の左右移動はほぼ使わないので上書きする)
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map "f" #'consult-find)
-  (evil-define-key 'normal dired-mode-map ";" #'embark-act)
   (evil-define-key 'normal dired-mode-map "h" #'dired-up-directory)
   (evil-define-key 'normal dired-mode-map "l" #'dired-find-file))
 ;; 移動時にバッファを閉じる
