@@ -334,9 +334,9 @@
 ;; 左移動にする (insert state では global のまま backspace として効く)
 (define-key evil-motion-state-map
   (kbd "C-h") 'evil-backward-char)
-;; C-: は1回だけのシェルコマンド実行 (eshell-command から bash で動く shell-command に変更)
+;; C-: は1回だけのシェルコマンド実行 (eshell-command。bash で動かしたいときは M-! の shell-command)
 (define-key evil-motion-state-map
-  (kbd "C-:") 'shell-command)
+  (kbd "C-:") 'eshell-command)
 
 ;; config
 (setq evil-want-C-i-jump nil)
