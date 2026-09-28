@@ -292,13 +292,14 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, [fFv]: file, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, [fFv]: file, V: 閲覧, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
           ;; するため、呼び出し中だけ有効扱いにする
           ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
           ((equal c "F") (call-interactively #'find-file))
           ((equal c "v") (call-interactively #'view-file))
+          ((equal c "V") (my-view-current-buffer))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
           ((equal c "B") (call-interactively #'embark-bindings))
@@ -421,6 +422,34 @@
 ;; poly-markdown の autoload が .md を poly-markdown-mode に割り当てるので、
 ;; .md は通常の markdown-mode で開くように上書きする
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
+;; .qmd の閲覧用モード
+;; poly-quarto-mode ではチャンクの色付けがときどき markdown のままになる (青くなる) ので、
+;; 閲覧するときは markdown-mode に切り替え、チャンクは markdown-mode 自身に
+;; python-mode で色付けさせる (markdown-fontify-code-blocks-natively)
+(defun my-qmd-view ()
+  "polymode をやめて markdown-mode + view-mode で表示する。戻すときは M-x my-qmd-edit。"
+  (interactive)
+  ;; チャンク内 (polymode の [python] バッファ) にいるときは、先に markdown 側のバッファに移る
+  (when (buffer-base-buffer)
+    (pm-switch-to-buffer (list nil (point) (point) (oref pm/polymode -hostmode))))
+  (markdown-mode)
+  (setq-local markdown-fontify-code-blocks-natively t)
+  (font-lock-update)
+  (view-mode 1))
+
+(defun my-qmd-edit ()
+  "view-mode を切って poly-quarto-mode に戻す。"
+  (interactive)
+  (view-mode -1)
+  (poly-quarto-mode))
+
+;; SPC V: poly-quarto-mode なら my-qmd-view、それ以外は view-mode にするだけ
+(defun my-view-current-buffer ()
+  (interactive)
+  (if (bound-and-true-p poly-quarto-mode)
+      (my-qmd-view)
+    (view-mode 1)))
 
 
 ;;;;
