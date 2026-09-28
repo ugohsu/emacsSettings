@@ -72,6 +72,11 @@
 (global-set-key (kbd "M-r") 'revert-buffer)
 (electric-pair-mode 1)
 
+;; 他の場所でファイルが変わったら自動で読み直す (未保存の変更があるバッファは読み直さない)。
+;; dired などファイル以外のバッファも対象にする。magit-auto-revert-mode は自動で止まる
+(global-auto-revert-mode 1)
+(setq global-auto-revert-non-file-buffers t)
+
 ;; Region がオンのときのみ C-w を kill-region とする
 (defun backward-kill-word-or-kill-region ()
   (interactive)
