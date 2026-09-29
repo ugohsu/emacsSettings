@@ -238,6 +238,11 @@
 ;; アクションをキーマップのヒントではなく completing-read で選ぶ
 ;; (ヒントは幅が足りず見切れるため、vertico・orderless で絞り込めるようにする)
 (setq embark-prompter #'embark-completing-read-prompter)
+;; 標準の詳細ヒント (*Embark Actions*) は completing-read の一覧と二重になるので外す
+(setq embark-indicators
+      '(embark-minimal-indicator
+        embark-highlight-indicator
+        embark-isearch-highlight-indicator))
 
 ;; embark の w は ~ で省略したパスをコピーするので、~ を展開したパスなどをコピーする関数を用意する
 ;; (ディレクトリが対象のときも directory-file-name で末尾の / を除いてから扱う)
