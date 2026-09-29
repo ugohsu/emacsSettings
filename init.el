@@ -235,6 +235,9 @@
 ;; ミニバッファでは M-e (export) で候補一覧をバッファに書き出す (M-a E と同じ)
 ;; M-e の既定の forward-sentence はミニバッファではほぼ使わない
 (keymap-set minibuffer-local-map "M-e" #'embark-export)
+;; アクションをキーマップのヒントではなく completing-read で選ぶ
+;; (ヒントは幅が足りず見切れるため、vertico・orderless で絞り込めるようにする)
+(setq embark-prompter #'embark-completing-read-prompter)
 
 ;; embark の w は ~ で省略したパスをコピーするので、~ を展開したパスなどをコピーする関数を用意する
 ;; (ディレクトリが対象のときも directory-file-name で末尾の / を除いてから扱う)
