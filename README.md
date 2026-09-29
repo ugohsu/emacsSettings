@@ -144,7 +144,7 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
   詳細は`controls/setting/server/hp-mini/workbox_setup/README.md`の「11. Emacs (clipetty)
   の kill-ring → クリップボード連携に必要な tmux 設定」を参照。
 
-## ミニバッファ補完 (vertico + marginalia) と ido-find-file の併用
+## ミニバッファ補完 (vertico + marginalia)
 
 [vertico](https://github.com/minad/vertico) でミニバッファの補完候補を縦に並べ、
 同じ作者の [marginalia](https://github.com/minad/marginalia) で候補に注釈
@@ -152,18 +152,10 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
 (2026-09-23 導入)。`init.el` 側は `(vertico-mode 1)` と `(marginalia-mode 1)`
 のみ。どちらも autoload されるので `require` は不要。
 
-ファイルを開く `SPC f` だけは従来どおり `ido-find-file` を使い、バッファ切替
-`SPC b` は vertico が効く `consult-buffer` にしている (後述の consult を参照)。
-
-- **ido-mode は有効にしない**: `(ido-mode 'buffers)` は `C-x b` などを
-  `ido-switch-buffer` に、`(ido-mode 'files)` は `C-x C-f`・`C-x d`・
-  `write-file` などを ido 版に置き換えてしまう。代わりに `ido-mode` が内部で
-  行う初期化 (`ido-common-initialization`、履歴 `ido.last` の読み込みと
-  終了時の保存) だけを `init.el` で直接呼んでいる。
-- **SPC f では `ido-mode` を一時的に有効扱いにする**: `ido-find-file` は
-  `ido-mode` 変数が nil だと通常の `find-file` にフォールバックする
-  (ido.el の `ido-file-internal`)。そのため `evil-mysetting-spccmd` では
-  `(let ((ido-mode 'file)) (ido-find-file))` として呼び出し中だけ有効にしている。
+ファイルを開く `SPC f` は vertico が効く通常の `find-file`、バッファ切替
+`SPC b` は `consult-buffer` にしている (後述の consult を参照)。以前は `SPC f` に
+`ido-find-file` を、`SPC F` に `find-file` を割り当てていたが、`find-file` に
+一本化して `SPC F` は空けた (2026-09-30)。ido の設定は `archive.el` に移した。
 
 ## orderless と consult
 
@@ -172,11 +164,20 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 (2026-09-23 導入)。
 
 - `completion-styles` は `(orderless basic)`。ファイル名だけは
-  `completion-category-overrides` で `basic` と `partial-completion` を使うため、
-  `C-x C-f` で `~/d/o` のような略記入力もできる。
+  `completion-category-overrides` で `basic` と `partial-completion` を先に試すため、
+  `SPC f` や `C-x C-f` で `~/d/o` のような略記入力もできる (orderless の README の
+  推奨設定と同じ)。
+- ファイル名でも orderless は効く: カテゴリ別の指定のあとに `completion-styles` が
+  続けて試されるので (`minibuffer.el` の `completion--styles`)、`basic` と
+  `partial-completion` で候補が出なければ orderless に進む。ただし入力で始まる
+  ファイルが1つでもあると `basic` で止まり、途中に含むファイルは出ない。
+  - **先頭にスペースを付けると orderless で絞り込める**: ` a` と入力すると
+    `basic` と `partial-completion` では候補が出ないので orderless に進み
+    (先頭の空の語は無視される)、`a` を途中に含むファイルもすべて出る。
+    ただし `my article.txt` のように「スペース + a」を名前に含むファイルがあると、
+    `partial-completion` (スペースを単語の区切りとして扱う) がそれだけを拾って止まる。
 - orderless は smart-case (入力が全部小文字なら大文字小文字を区別しない、
   大文字を含めると区別する)。
-- `SPC f` の `ido-find-file` は ido 独自のマッチングなので影響を受けない。
 
 [consult](https://github.com/minad/consult) はコマンドを追加するだけのパッケージ
 で、呼ばない限り既存の挙動は変わらない。コマンドは autoload されるので

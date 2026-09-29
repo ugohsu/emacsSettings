@@ -161,3 +161,20 @@
 ;; init.el から移動, 2026-09-30)
 ;; (define-key evil-motion-state-map
 ;;   "Q" 'kill-buffer)
+;; ido-find-file (SPC f を vertico が効く find-file にしたため init.el から移動, 2026-09-30)
+;; ;;;;
+;; ;;;; ido (ido-find-file 専用)
+;; ;;;;
+;; ;; ido-mode は有効にしない (有効にすると C-x b などが ido に置き換わる)。
+;; ;; ido-find-file の動作に必要な初期化と履歴 (ido.last) の読み書きだけ行う。
+;; (require 'ido)
+;; (ido-common-initialization)
+;; (ido-load-history)
+;; (add-hook 'kill-emacs-hook #'ido-kill-emacs-hook)
+;; (setq ido-enable-flex-matching t)
+;;
+;; (define-key ido-common-completion-map
+;;   (kbd "C-n") 'ido-next-match)
+;; (define-key ido-common-completion-map
+;;   (kbd "C-p") 'ido-prev-match)
+;; SPC メニュー: ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))

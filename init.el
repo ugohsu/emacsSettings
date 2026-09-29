@@ -175,22 +175,6 @@
 (setq skk-henkan-strict-okuri-precedence t)
 
 ;;;;
-;;;; ido (ido-find-file 専用)
-;;;;
-;; ido-mode は有効にしない (有効にすると C-x b などが ido に置き換わる)。
-;; ido-find-file の動作に必要な初期化と履歴 (ido.last) の読み書きだけ行う。
-(require 'ido)
-(ido-common-initialization)
-(ido-load-history)
-(add-hook 'kill-emacs-hook #'ido-kill-emacs-hook)
-(setq ido-enable-flex-matching t)
-
-(define-key ido-common-completion-map
-  (kbd "C-n") 'ido-next-match)
-(define-key ido-common-completion-map
-  (kbd "C-p") 'ido-prev-match)
-
-;;;;
 ;;;; vertico + marginalia (ミニバッファ補完の縦表示と候補の注釈)
 ;;;;
 (vertico-mode 1)
@@ -207,7 +191,6 @@
 ;;;; orderless (スペース区切りの複数キーワードで順不同に絞り込む)
 ;;;;
 ;; ファイル名は basic と partial-completion を優先し、"~/d/o" のような略記も使えるようにする
-;; (SPC f の ido-find-file は ido 独自のマッチングなので影響しない)
 (setq completion-styles '(orderless basic)
       completion-category-defaults nil
       completion-category-overrides '((file (styles basic partial-completion))))
@@ -304,12 +287,9 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: スクロール, [fF]: file, v: 閲覧, a: embark, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
+             "SPC: スクロール, f: file, v: 閲覧, a: embark, d: dired, b: buffer, B: バインディング確認, /: 行検索, ':': シェル起動, [hjklHJKL]: ウィンドウ移動, [0123]: ウィンドウ操作")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
-          ;; ido-mode が nil だと ido-find-file は通常の find-file にフォールバック
-          ;; するため、呼び出し中だけ有効扱いにする
-          ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
-          ((equal c "F") (call-interactively #'find-file))
+          ((equal c "f") (call-interactively #'find-file))
           ((equal c "v") (my-view-current-buffer))
           ;; カーソル位置の対象に embark のアクションを実行 (ミニバッファの補完中は M-a)
           ((equal c "a") (call-interactively #'embark-act))
