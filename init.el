@@ -276,13 +276,12 @@
   "y パス類のコピー / C 検索 (f find, r ripgrep) / M-x 任意のコマンド"
   (interactive)
   (message "%s" (car (split-string (documentation 'my-embark-hint) "\n"))))
-;; ファイルを対象にしたときのアクションを追加する (V: view-file, y: コピー用プレフィックス, ~: ヒント)
+;; ファイルを対象にしたときのアクションを追加する (y: コピー用プレフィックス, ~: ヒント)
 ;; ~ は一覧の上に出るよう最後に設定する (押しやすいキーをふさがないよう、使いにくい ~ にしている)
-;; embark-consult は consult が読み込まれるまで有効にならず、それまでは ; C f などの
+;; embark-consult は consult が読み込まれるまで有効にならず、それまでは M-a C f などの
 ;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
 (with-eval-after-load 'embark
   (require 'embark-consult)
-  (keymap-set embark-file-map "V" #'view-file)
   (keymap-set embark-file-map "y" 'my-embark-yank-map)
   (keymap-set embark-file-map "~" #'my-embark-hint))
 
@@ -340,8 +339,6 @@
   (kbd "SPC") 'evil-mysetting-spccmd)
 (define-key evil-motion-state-map
   (kbd "S-SPC") 'scroll-down-command)
-(define-key evil-motion-state-map
-  "Q" 'kill-buffer)
 ;; C-{ (spconv) は site-lisp/yatex_ess.el に移動
 ;; C-h は global で delete-backward-char にしているが、normal state では vim と同じく
 ;; 左移動にする (insert state では global のまま backspace として効く)
@@ -439,7 +436,8 @@
 ;; 閲覧するときは markdown-mode に切り替え、チャンクは markdown-mode 自身に
 ;; python-mode で色付けさせる (markdown-fontify-code-blocks-natively)
 (defun my-qmd-view ()
-  "polymode をやめて markdown-mode + view-mode で表示する。戻すときは M-x my-qmd-edit。"
+  "polymode をやめて markdown-mode + view-mode で表示する。戻すときは M-x my-qmd-edit。
+q で抜けるとバッファも閉じる (変更があれば閉じない)。"
   (interactive)
   ;; チャンク内 (polymode の [python] バッファ) にいるときは、先に markdown 側のバッファに移る
   (when (buffer-base-buffer)
@@ -447,7 +445,7 @@
   (markdown-mode)
   (setq-local markdown-fontify-code-blocks-natively t)
   (font-lock-update)
-  (view-mode 1))
+  (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified)))
 
 (defun my-qmd-edit ()
   "view-mode を切って poly-quarto-mode に戻す。"
@@ -455,12 +453,13 @@
   (view-mode -1)
   (poly-quarto-mode))
 
-;; SPC v: poly-quarto-mode なら my-qmd-view、それ以外は view-mode にするだけ
+;; SPC v: poly-quarto-mode なら my-qmd-view、それ以外は view-mode にする
+;; ファイルのバッファは view-file と同じく q でバッファも閉じる (変更があれば閉じない)
 (defun my-view-current-buffer ()
   (interactive)
   (if (bound-and-true-p poly-quarto-mode)
       (my-qmd-view)
-    (view-mode 1)))
+    (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified))))
 
 
 ;;;;

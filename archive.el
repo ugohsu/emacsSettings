@@ -152,3 +152,12 @@
 ;;            (shell-quote-argument
 ;;             (file-name-sans-extension (buffer-file-name))))))
 ;; poly-markdown-mode-hook 内: (define-key poly-markdown-mode-map (kbd "C-c C-t") 'jupytext-sync)
+;; embark のファイル用アクションに view-file を V で追加していた
+;; (SPC v の view-mode でも q でバッファを閉じるようにしたため init.el から移動, 2026-09-30)
+;; ;; ファイルを対象にしたときのアクションを追加する (V: view-file, ...)
+;; (with-eval-after-load 'embark
+;;   (keymap-set embark-file-map "V" #'view-file))
+;; Q でバッファを閉じていた (C-x k を使うようになり、vim の Q とも違う個人的な割り当てのため
+;; init.el から移動, 2026-09-30)
+;; (define-key evil-motion-state-map
+;;   "Q" 'kill-buffer)
