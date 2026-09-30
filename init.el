@@ -14,6 +14,7 @@
 ;; カスタムファイルは custom.el へ逃がす
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file t)
+;; 環境固有の設定 (local.el) は init.el の設定を上書きできるよう末尾で読み込む
 
 
 ;; theme
@@ -452,3 +453,11 @@ q で抜けるとバッファも閉じる (変更があれば閉じない)。"
 ;; 元の interprogram-cut-function に素通しするだけなので、この設定を
 ;; GUI版と共有しても副作用は無い。
 (global-clipetty-mode 1)
+
+
+;;;;
+;;;; 環境固有の設定
+;;;;
+;; リポジトリで共有しない、その環境だけの設定を ~/.emacs.d/local.el に書く。
+;; init.el の設定を上書きできるよう最後に読み込む (ファイルがなければ何もしない)
+(load (locate-user-emacs-file "local.el") t)

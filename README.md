@@ -77,6 +77,13 @@ make && sudo make install
 (message "すべてのパッケージのインストールが完了しました！")
 ```
 
+## 環境固有の設定 (local.el)
+
+リポジトリで共有しない、その環境だけの設定は `~/.emacs.d/local.el` に書く
+(2026-09-30 導入)。`init.el` の末尾で `(load (locate-user-emacs-file "local.el") t)`
+として読み込むので、ファイルがなければ何もしない。最後に読み込むため、テーマなど
+`init.el` の設定をその環境だけ上書きできる。
+
 ## YaTeX での LuaLaTeX 使用
 
 デフォルトのエンジンは uplatex。特定のファイルで LuaLaTeX を使う場合は、ファイル先頭にマジックコメントを書き、プリアンブルに `luatexja` を読み込む。
