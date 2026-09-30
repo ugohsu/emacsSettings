@@ -179,6 +179,8 @@
 ;;;; vertico + marginalia (ミニバッファ補完の縦表示と候補の注釈)
 ;;;;
 (vertico-mode 1)
+;; 候補の表示件数 (デフォルトは 10)
+(setq vertico-count 20)
 (marginalia-mode 1)
 ;; ミニバッファの履歴 (M-x のコマンド履歴など) をセッションをまたいで保存する
 ;; vertico は履歴順に候補を並べるので、再起動後もよく使うコマンドが上に来る
