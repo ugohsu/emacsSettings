@@ -455,7 +455,8 @@ q で抜けるとバッファも閉じる (変更があれば閉じない)。"
   "チャンク内ならホスト側に移り、markdown 系ならレベル 6 以下で始める
 (コードのコメントはレベル 7 になるので出ない。DEL で絞り込みを外せば全部見える)。"
   (interactive)
-  (when (buffer-base-buffer)
+  ;; polymode 以外の indirect buffer (clone-indirect-buffer など) では何もしない
+  (when (and (buffer-base-buffer) (bound-and-true-p pm/polymode))
     (pm-switch-to-buffer (list nil (point) (point) (oref pm/polymode -hostmode))))
   (consult-outline (and (derived-mode-p 'markdown-mode) 6)))
 
