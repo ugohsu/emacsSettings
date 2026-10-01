@@ -218,7 +218,7 @@
 ;;;; which-key (プレフィックスキーを押して少し待つと、続くキーの一覧を出す)
 ;;;;
 ;; consult-buffer で < を押したときの絞り込みの一覧もこれで出る
-(setq which-key-idle-delay 0.3)
+(setq which-key-idle-delay 0.5)
 (which-key-mode 1)
 
 ;;;;
