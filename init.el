@@ -300,7 +300,7 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: scroll, f: file, v: view-mode, [aB]: embark, d: dired, b: buffer, /: search, ':': shell, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
+             "SPC: scroll, f: file, v: view-mode, [aB]: embark, d: dired, b: buffer, /: search, o: outline, ':': shell, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "f") (call-interactively #'find-file))
           ((equal c "v") (my-view-current-buffer))
@@ -310,6 +310,7 @@
           ((equal c "b") (consult-buffer))
           ((equal c "B") (call-interactively #'embark-bindings))
           ((equal c "/") (consult-line))
+          ((equal c "o") (my-consult-outline))
           ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
           ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
           ;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
@@ -445,6 +446,18 @@ q で抜けるとバッファも閉じる (変更があれば閉じない)。"
   (interactive)
   (view-mode -1)
   (poly-quarto-mode))
+
+;; SPC o: 見出しの一覧 (consult-outline)
+;; markdown-mode はコードブロック内の # 行をレベル 7 にするので、レベル 6 以下で始めて
+;; コードのコメントを見出しから外す。poly-quarto-mode でチャンク内にいるときは
+;; チャンク側 (python-mode など) の outline-regexp で探してしまうので、先にホスト側に移る
+(defun my-consult-outline ()
+  "チャンク内ならホスト側に移り、markdown 系ならレベル 6 以下で始める
+(コードのコメントはレベル 7 になるので出ない。DEL で絞り込みを外せば全部見える)。"
+  (interactive)
+  (when (buffer-base-buffer)
+    (pm-switch-to-buffer (list nil (point) (point) (oref pm/polymode -hostmode))))
+  (consult-outline (and (derived-mode-p 'markdown-mode) 6)))
 
 ;; SPC v: poly-quarto-mode なら my-qmd-view、それ以外は view-mode にする
 ;; ファイルのバッファは view-file と同じく q でバッファも閉じる (変更があれば閉じない)
