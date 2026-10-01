@@ -210,6 +210,16 @@
 ;; バッファ内の補完 (ESS・Eglot などの TAB / C-M-i) も *Completions* ではなく
 ;; ミニバッファに出し、vertico・orderless・marginalia を効かせる
 (setq completion-in-region-function #'consult-completion-in-region)
+;; consult-buffer などで < に続く 1 文字で候補の種類を絞り込む (< m でブックマークなど)
+;; 先頭で m SPC と打っても同じ。< 自体を入力したいときは C-q <
+(setq consult-narrow-key "<")
+
+;;;;
+;;;; which-key (プレフィックスキーを押して少し待つと、続くキーの一覧を出す)
+;;;;
+;; consult-buffer で < を押したときの絞り込みの一覧もこれで出る
+(setq which-key-idle-delay 0.3)
+(which-key-mode 1)
 
 ;;;;
 ;;;; embark (補完候補やカーソル位置の対象にアクションを実行する)
