@@ -53,6 +53,7 @@ make && sudo make install
     embark-consult  ; embark と consult の連携
     wgrep           ; grep バッファを直接編集して一括置換
     eat             ; Emacs 内のターミナル (bash)
+    ef-themes       ; テーマ (init.el で ef-melissa-light を使用)
     
     ;; LaTeX / R / Python / Markdown
     yatex

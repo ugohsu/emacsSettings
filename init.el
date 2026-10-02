@@ -18,7 +18,7 @@
 
 
 ;; theme
-(load-theme 'modus-operandi-tinted t)
+(load-theme 'ef-melissa-light t)
 
 
 ;;;; --------------------------------------------------------
