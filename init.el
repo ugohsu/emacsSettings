@@ -426,22 +426,30 @@
 ;; poly-quarto-mode ではチャンクの色付けがときどき markdown のままになる (青くなる) ので、
 ;; 閲覧するときは markdown-mode に切り替え、チャンクは markdown-mode 自身に
 ;; python-mode で色付けさせる (markdown-fontify-code-blocks-natively)
-(defun my-qmd-view ()
-  "polymode をやめて markdown-mode + view-mode で表示する。戻すときは M-x my-qmd-edit。
+(defun my-markdown-view ()
+  "markdown-view-mode (マークアップを隠した閲覧用表示) で開く。
 q で抜けるとバッファも閉じる (変更があれば閉じない)。"
   (interactive)
   ;; チャンク内 (polymode の [python] バッファ) にいるときは、先に markdown 側のバッファに移る
-  (when (buffer-base-buffer)
+  (when (and (buffer-base-buffer) (bound-and-true-p pm/polymode))
     (pm-switch-to-buffer (list nil (point) (point) (oref pm/polymode -hostmode))))
-  (markdown-mode)
+  (markdown-view-mode)
   (setq-local markdown-fontify-code-blocks-natively t)
   (font-lock-update)
+  ;; markdown-view-mode は read-only-mode にするだけで q では抜けられないので、
+  ;; view-mode も有効にして q でバッファを閉じられるようにする
   (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified)))
+
+(defun my-qmd-view ()
+  "polymode をやめて markdown-view-mode で表示する。戻すときは M-x my-qmd-edit。"
+  (interactive)
+  (my-markdown-view))
 
 (defun my-qmd-edit ()
   "view-mode を切って poly-quarto-mode に戻す。"
   (interactive)
   (view-mode -1)
+  (read-only-mode -1)
   (poly-quarto-mode))
 
 ;; SPC o: 見出しの一覧 (consult-outline)
@@ -457,13 +465,17 @@ q で抜けるとバッファも閉じる (変更があれば閉じない)。"
     (pm-switch-to-buffer (list nil (point) (point) (oref pm/polymode -hostmode))))
   (consult-outline (and (derived-mode-p 'markdown-mode) 6)))
 
-;; SPC v: poly-quarto-mode なら my-qmd-view、それ以外は view-mode にする
-;; ファイルのバッファは view-file と同じく q でバッファも閉じる (変更があれば閉じない)
+;; SPC v: モードに応じた閲覧用表示にする
+;;   qmd (poly-quarto-mode)  → my-qmd-view (markdown-view-mode)
+;;   それ以外の markdown 系  → markdown-view-mode
+;;   それ以外                → view-mode
+;; どれもファイルのバッファは q でバッファも閉じる (変更があれば閉じない)
 (defun my-view-current-buffer ()
   (interactive)
-  (if (bound-and-true-p poly-quarto-mode)
-      (my-qmd-view)
-    (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified))))
+  (cond
+   ((bound-and-true-p poly-quarto-mode) (my-qmd-view))
+   ((derived-mode-p 'markdown-mode) (my-markdown-view))
+   (t (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified)))))
 
 
 ;;;;
