@@ -60,6 +60,7 @@ make && sudo make install
     ess
     pyvenv
     markdown-mode
+    valign       ; markdown-view-mode で表を罫線付きに整形して表示 (GUI のみ)
     polymode
     poly-R
     poly-markdown
@@ -252,6 +253,9 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 - ファイルのバッファでは `q` で閲覧を抜けてバッファも閉じる (変更があれば閉じない)。
 - qmd は `M-x my-qmd-edit` で polymode の編集状態に戻す。
 - qmd 以外の markdown 系は、`view-mode` を抜けたとき元のメジャーモードに戻る。
+- `markdown-view-mode` では `valign` で表を罫線付きに整形して表示する
+  (表示だけで、ファイルの中身は変わらない。編集用のモードでは適用しない)。
+  GUI フレームでのみ効き、端末の `emacs -nw` では何も変わらない。
 - `view-mode` の主なキー: `SPC` / `DEL` でページ送り・戻し、`q` で終了。
 
 ### orderless の書き方
