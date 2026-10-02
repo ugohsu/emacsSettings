@@ -39,11 +39,6 @@
 ;; マウスアボイダンス
 (mouse-avoidance-mode 'banish)
 
-;; ミニバッファのデザイン
-(set-face-foreground 'minibuffer-prompt "blue4")
-(set-face-background 'minibuffer-prompt "OliveDrab1")
-(set-face-bold-p 'minibuffer-prompt t)
-
 ;; eliminate initial message and *scratch* adjust
 (setq inhibit-startup-message t)
 (setq initial-scratch-message "")
