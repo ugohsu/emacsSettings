@@ -252,6 +252,9 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 - ファイルのバッファでは `q` で閲覧を抜けてバッファも閉じる (変更があれば閉じない)。
 - qmd は `M-x my-qmd-edit` で polymode の編集状態に戻す。
 - qmd 以外の markdown 系は、`view-mode` を抜けたとき元のメジャーモードに戻る。
+- 空行のない長い段落に `**` が大量にある markdown (138KB で 3.6 秒かかった) は、
+  markdown-mode の色付けが段落の長さに対して二乗で遅くなる。`init.el` で
+  `markdown-inline-code-at-pos` の探索開始を行頭にして回避している (0.2 秒まで短縮)。
 - `view-mode` の主なキー: `SPC` / `DEL` でページ送り・戻し、`q` で終了。
 
 ### orderless の書き方

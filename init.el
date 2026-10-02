@@ -409,6 +409,14 @@
 ;; poly-markdown の autoload が .md を poly-markdown-mode に割り当てるので、
 ;; .md は通常の markdown-mode で開くように上書きする
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+;; 空行のない長い段落に ** が大量にあると、色付けが極端に遅くなる (138KB で 3.6 秒)
+;; markdown-mode は ** を 1 つ見つけるたびに、段落の先頭からインラインコードを探し直すため。
+;; 探索の開始を行頭にして、段落の長さに依存しないようにする
+;; (複数行にまたがるインラインコードは見分けられなくなるが、色付けの結果は変わらなかった)
+(with-eval-after-load 'markdown-mode
+  (define-advice markdown-inline-code-at-pos (:filter-args (args) from-line-start)
+    (pcase-let ((`(,pos ,from) args))
+      (list pos (or from (save-excursion (goto-char pos) (line-beginning-position)))))))
 
 ;; .qmd の閲覧用モード
 ;; poly-quarto-mode ではチャンクの色付けがときどき markdown のままになる (青くなる) ので、
