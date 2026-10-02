@@ -18,7 +18,7 @@
 
 
 ;; theme
-(load-theme 'wheatgrass t)
+(load-theme 'modus-operandi-tinted t)
 
 
 ;;;; --------------------------------------------------------
@@ -127,9 +127,6 @@
       scroll-step 1)
 ;;; 現在行を目立たせる
 (global-hl-line-mode)
-
-;; テーマが wheatgrass のときに hl-line とマークの色とが被ってしまう問題を修正
-;; (set-face-background 'hl-line "#222244")
 
 ;; 括弧
 ;;; 対応する括弧を光らせる。
