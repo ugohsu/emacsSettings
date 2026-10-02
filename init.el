@@ -410,12 +410,6 @@
 ;; .md は通常の markdown-mode で開くように上書きする
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-;; 表の見た目を揃える valign は、閲覧用の markdown-view-mode でだけ有効にする
-;; (表示上の整形だけで、ファイルの中身は変えない。編集時は素のソースのまま)
-;; GUI フレームでのみ効く (端末の emacs -nw では何もしない)
-(setq valign-fancy-bar t)  ; |---|---| を罫線として描画する
-(add-hook 'markdown-view-mode-hook #'valign-mode)
-
 ;; .qmd の閲覧用モード
 ;; poly-quarto-mode ではチャンクの色付けがときどき markdown のままになる (青くなる) ので、
 ;; 閲覧するときは markdown-mode に切り替え、チャンクは markdown-mode 自身に
@@ -429,8 +423,6 @@
              (eq major-mode 'markdown-view-mode)
              my-view-previous-state)
     (let ((state my-view-previous-state))
-      ;; valign のオーバーレイは自分で消す
-      (valign-mode -1)
       ;; モードを変えると buffer-local の変数もフックも消える
       (funcall (car state))
       (read-only-mode (if (cdr state) 1 -1)))))
