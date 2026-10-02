@@ -8,7 +8,7 @@
 ;; package
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/"))
+             '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
 ;; カスタムファイルは custom.el へ逃がす
@@ -57,7 +57,7 @@
 (setq-default c-basic-offset 4)
 
 ;; x-selection
-(setq x-select-enable-primary t)
+(setq select-enable-primary t)
 
 ;; my setting
 (global-set-key "\C-h" 'delete-backward-char)
@@ -83,7 +83,6 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ;; ビープ音を無くす
-(setq visible-bell t)
 (setq ring-bell-function 'ignore)
 
 ;; バックアップファイル
@@ -274,6 +273,8 @@
 ;; 【重要】Evil 本体がロードされる前にこの変数を nil に設定する必要があります
 (setq evil-want-keybinding nil)
 (setq evil-undo-system 'undo-redo)
+;; C-i (端末では TAB) を jump list の前進にしない (evil-mode より前に設定しないと効かない)
+(setq evil-want-C-i-jump nil)
 (evil-mode 1)
 ;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
 ;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
@@ -328,9 +329,6 @@
 ;; C-: は1回だけのシェルコマンド実行 (eshell-command。bash で動かしたいときは M-! の shell-command)
 (define-key evil-motion-state-map
   (kbd "C-:") 'eshell-command)
-
-;; config
-(setq evil-want-C-i-jump nil)
 
 ;; evil surround
 (global-evil-surround-mode 1)
