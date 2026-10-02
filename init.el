@@ -36,9 +36,6 @@
 ;;   (set-fontset-font t target (font-spec :family "Noto Sans Mono CJK JP")))
   (set-fontset-font t target (font-spec :family "IPAGothic")))
 
-;; カーソルの色
-(set-cursor-color "white")
-
 ;; マウスアボイダンス
 (mouse-avoidance-mode 'banish)
 
