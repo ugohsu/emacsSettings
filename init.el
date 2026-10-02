@@ -18,7 +18,7 @@
 
 
 ;; theme
-(load-theme 'ef-melissa-light t)
+(load-theme 'ef-day t)
 
 
 ;;;; --------------------------------------------------------
