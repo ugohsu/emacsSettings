@@ -53,7 +53,7 @@ make && sudo make install
     embark-consult  ; embark と consult の連携
     wgrep           ; grep バッファを直接編集して一括置換
     eat             ; Emacs 内のターミナル (bash)
-    ef-themes       ; テーマ (init.el で ef-melissa-light を使用)
+    ef-themes       ; テーマ
     
     ;; LaTeX / R / Python / Markdown
     yatex
@@ -195,6 +195,7 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 |---|---|---|
 | `SPC b` | `consult-buffer` | バッファ・最近開いたファイル (recentf)・ブックマークから選ぶ |
 | `SPC /` | `consult-line` | 現在のバッファの行をプレビューしながら検索 |
+| `SPC o` | `my-consult-outline` | 見出し (outline) の一覧からジャンプ (後述) |
 
 キーに割り当てていないコマンドは `M-x` から呼ぶ。例:
 
@@ -214,6 +215,44 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   選択中の候補はバッファにプレビューされる。Eglot の候補だけは Eglot 専用の
   補完スタイル (`eglot--dumb-flex`) で絞り込まれ、orderless は効かない。
 - `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
+
+### consult の絞り込み (narrowing)
+
+`consult-buffer` などの候補は複数の種類 (バッファ・最近開いたファイル・ブックマーク・
+プロジェクトなど) が混在しているので、種類で絞り込める。`init.el` で絞り込みキーを
+`<` にしている (`consult-narrow-key`)。
+
+- 入力の先頭で `<` を押すと、続けて押せる 1 文字の一覧が which-key で出る
+  (`which-key-mode` を有効にしているため)。例: `SPC b` → `<` → `m` でブックマークだけ、
+  `f` で最近開いたファイルだけ。`m` + `SPC` と打っても同じ。
+- 絞り込みを外すには、入力が空の状態で `DEL`。
+- `<` 自体を検索語に入れたいときは `C-q <`。
+- 絞り込みの種類は consult のコマンドごとに違う。例えば `consult-buffer` なら `b` (バッファ)
+  `f` (ファイル) `m` (ブックマーク) `p` (プロジェクト) など。一覧は `<` を押せば分かる。
+
+### 見出しの一覧 (SPC o)
+
+`SPC o` は `consult-outline` を呼ぶ `my-consult-outline`。見出しを一覧しながらジャンプできる。
+
+- markdown 系では、コードブロック内の `#` 行 (コメント) が見出し扱いにならないよう
+  レベル 6 以下に限定して始める。`DEL` で絞り込みを外すと全部見える。
+- qmd (poly-quarto-mode) でコードチャンク内にいても、ホスト側 (markdown) の見出しで探す。
+
+### 閲覧用モード (SPC v)
+
+`SPC v` はバッファを誤編集しない閲覧用表示にする (`my-view-current-buffer`)。
+モードに応じて切り替わる。
+
+| 対象 | 表示 |
+|---|---|
+| qmd (poly-quarto-mode) | polymode をやめて `markdown-view-mode` (マークアップを隠した表示) |
+| それ以外の markdown 系 | `markdown-view-mode` |
+| それ以外 | `view-mode` |
+
+- ファイルのバッファでは `q` で閲覧を抜けてバッファも閉じる (変更があれば閉じない)。
+- qmd は `M-x my-qmd-edit` で polymode の編集状態に戻す。
+- qmd 以外の markdown 系は、`view-mode` を抜けたとき元のメジャーモードに戻る。
+- `view-mode` の主なキー: `SPC` / `DEL` でページ送り・戻し、`q` で終了。
 
 ### orderless の書き方
 

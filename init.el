@@ -129,8 +129,6 @@
 
 ;; alias 設定
 (defalias 'ff 'find-file)
-(defalias 'vf 'view-file)
-(defalias 'vo 'view-file-other-window)
 
 
 ;; pdf の表示 (zathura によって開く)

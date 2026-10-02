@@ -178,3 +178,9 @@
 ;; (define-key ido-common-completion-map
 ;;   (kbd "C-p") 'ido-prev-match)
 ;; SPC メニュー: ((equal c "f") (let ((ido-mode 'file)) (ido-find-file)))
+
+;;;;
+;;;; view-file の alias (使わなくなったので init.el から移した)
+;;;;
+;; (defalias 'vf 'view-file)
+;; (defalias 'vo 'view-file-other-window)
