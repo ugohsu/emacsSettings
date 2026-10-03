@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# dired 練習用のディレクトリを作る (vimtutor の練習用ファイルにあたる)。
+# もう一度実行すると、まっさらな状態に作り直す。
+#
+# 使い方: bash setup.sh [作成先 (既定: ~/dired-tutor)]
+#
+# 作り直すときに消すのは、目印のファイル (.dired-tutor) があるディレクトリだけ。
+# 目印のない既存のディレクトリを指定したときは、何もせずに終わる。
+set -euo pipefail
+
+dest="${1:-$HOME/dired-tutor}"
+marker=".dired-tutor"
+
+if [ -e "$dest" ]; then
+    if [ -f "$dest/$marker" ]; then
+        rm -rf -- "$dest"
+    else
+        echo "$dest は練習用ディレクトリではない (目印 $marker がない) ので、何もしない。" >&2
+        exit 1
+    fi
+fi
+
+mkdir -p -- "$dest"
+cd -- "$dest"
+touch "$marker"
+
+# 中身を書いたファイルを作る: mk パス 中身
+mk() {
+    mkdir -p -- "$(dirname -- "$1")"
+    printf '%s\n' "$2" > "$1"
+}
+
+## 1-move: 移動
+mk 1-move/notes.txt "レッスン 1 のメモ"
+mk 1-move/a/b/c/deep.txt "ここまで来られたら OK"
+mk 1-move/a/b/shallow.txt "途中のファイル"
+mk 1-move/zz-last.txt "一番下のファイル"
+mkdir -p 1-move/x 1-move/y
+
+## 2-view: 表示の切り替え
+mk 2-view/new.txt "新しいファイル"
+mk 2-view/middle.txt "中くらいのファイル"
+mk 2-view/old.txt "古いファイル"
+touch -d "2020-01-01 09:00" 2-view/old.txt
+touch -d "2023-06-15 09:00" 2-view/middle.txt
+mk 2-view/.config "隠しファイル"
+mk 2-view/.history "隠しファイル"
+mk 2-view/.cache/data "隠しディレクトリの中身"
+
+## 3-mark: 印の付け方
+mk 3-mark/data-2024.csv "id,value"
+mk 3-mark/data-2025.csv "id,value"
+mk 3-mark/memo.txt "TODO: 図を差し替える"
+mk 3-mark/memo2.txt "特になし"
+mk 3-mark/plan.md "TODO: 締め切りを確認する"
+mk 3-mark/figs/fig1.png ""
+mk 3-mark/scripts/run.sh "echo run"
+
+## 4-delete: 削除
+mk 4-delete/keep.md "これは消さない"
+mk 4-delete/draft.txt "下書き"
+mk "4-delete/#draft.txt#" "自動保存ファイル"
+mk 4-delete/report.txt "レポート"
+mk "4-delete/report.txt~" "バックアップファイル"
+mk 4-delete/old1.bak "古い版"
+mk 4-delete/old2.bak "古い版"
+mk 4-delete/old3.bak "古い版"
+mk 4-delete/tmp-a.log "ログ"
+mk 4-delete/tmp-b.log "ログ"
+mk 4-delete/junk.txt "ごみ"
+
+## 5-copy-move: コピー・移動・作成
+mk 5-copy-move/src/analysis.R "library(tidyverse)"
+mk 5-copy-move/src/main.py "import pandas as pd"
+mk 5-copy-move/src/memo.md "# メモ"
+mk 5-copy-move/src/rename-me.txt "名前を変えてほしいファイル"
+mkdir -p 5-copy-move/dst
+
+## 6-rename: 名前の一括変更
+for i in 1 2 3 4 5; do
+    mk "6-rename/photos/IMG_000$i.JPG" ""
+done
+for n in 1 2 3 9 10 11; do
+    mk "6-rename/chapters/ch$n.md" "# 第 $n 章"
+done
+
+## 7-project: サブディレクトリと一括検索・置換
+mk 7-project/R/analysis.R 'df <- read_csv("data.csv") |>
+  mutate(score = old_name * 2)'
+mk 7-project/R/plot.R 'ggplot(df, aes(x = old_name, y = score)) + geom_point()'
+mk 7-project/py/main.py 'import pandas as pd
+df = pd.read_csv("data.csv").assign(score=lambda d: d["old_name"] * 2)'
+mk 7-project/docs/memo.md '列 old_name の意味を確認する'
+
+## 8-shell: シェルコマンド・圧縮・比較
+mk 8-shell/a.txt 'りんご
+みかん
+ぶどう'
+mk 8-shell/b.txt 'りんご
+バナナ
+ぶどう'
+mk 8-shell/log1.txt 'line1
+line2
+line3'
+mk 8-shell/log2.txt 'line1
+line2'
+
+echo "練習用ディレクトリを作った: $dest"
+echo "始めるには: cd $dest して C-x e (または emacs -nw $dest)"

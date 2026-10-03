@@ -493,3 +493,14 @@ ddskk には、保存時に他の Emacs の更新を読み直して合わせる
 なお recentf (`consult-buffer` の「最近開いたファイル」) も終了時に履歴ファイルを
 上書きするため、最後に終了した Emacs の履歴だけが残る。こちらは確認もエラーも
 出ず普通に終了できるので、気にしないことにしている。
+
+## dired の練習 (tutor/dired)
+
+vimtutor のように手を動かして dired の操作を覚えるための課題集を `tutor/dired/` に置いている
+(2026-10-04 追加)。キーはこの `init.el` の設定を前提にしている。
+
+```sh
+bash tutor/dired/setup.sh   # ~/dired-tutor に練習用のファイルを作る (再実行で作り直す)
+```
+
+課題は `tutor/dired/README.md` にある。
