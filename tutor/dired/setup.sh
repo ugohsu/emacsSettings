@@ -105,5 +105,17 @@ line3'
 mk 8-shell/log2.txt 'line1
 line2'
 
+## 9-combo: consult・embark と組み合わせる
+mk 9-combo/2024/jan/sales-2024-01.csv "month,amount"
+mk 9-combo/2024/jan/debug.tmp "一時ファイル"
+mk 9-combo/2024/feb/sales-2024-02.csv "month,amount"
+mk 9-combo/2024/feb/notes.md "2 月の締め切りを確認する"
+mk 9-combo/2025/mar/sales-2025-03.csv "month,amount"
+mk 9-combo/2025/mar/debug.tmp "一時ファイル"
+mk 9-combo/2025/mar/cache.tmp "一時ファイル"
+mk 9-combo/docs/guide.md "提出の締め切りは 10 月末"
+mk 9-combo/docs/faq.md "締め切りを過ぎたら連絡する"
+mkdir -p 9-combo/collected
+
 echo "練習用ディレクトリを作った: $dest"
 echo "始めるには: cd $dest して C-x e (または emacs -nw $dest)"
