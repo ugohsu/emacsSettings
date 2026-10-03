@@ -351,6 +351,18 @@
 ;; q (quit-window) で dired のバッファも消す (Emacs 31 以降で有効。30 以前では何も起きない)
 (setq quit-window-kill-buffer '(dired-mode))
 
+;; zh で隠しファイルの表示・非表示を切り替える (ranger の zh にならう)
+;; C-u o で ls のオプションを -l にするのと同じで、変わるのは今のバッファだけ
+;; (別のディレクトリに移ると元の -al に戻る)。o で日付順にしていても名前順に戻る
+(defun my-dired-toggle-dotfiles ()
+  "今の dired バッファだけ、隠しファイルの表示・非表示を切り替える。"
+  (interactive)
+  (dired-sort-other (if (equal dired-actual-switches "-l")
+                        dired-listing-switches
+                      "-l")))
+(with-eval-after-load 'dired
+  (evil-define-key 'normal dired-mode-map "zh" #'my-dired-toggle-dotfiles))
+
 ;;;;
 ;;;; eat (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
 ;;;;
