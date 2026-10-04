@@ -119,12 +119,16 @@ mk 9-combo/docs/guide.md "提出の締め切りは 10 月末"
 mk 9-combo/docs/faq.md "締め切りを過ぎたら連絡する"
 mkdir -p 9-combo/collected
 
-## 課題を各レッスンのディレクトリにコピーする (00- を付けて一覧の先頭に出す)
-# README のリンク (lessons/1-move.md など) は、コピー先の 1-move/00-lesson.md などに書き換える
-sed 's#](lessons/\([^)]*\)\.md)#](\1/00-lesson.md)#' "$tutor_dir/README.md" > 00-README.md
-for f in "$tutor_dir"/lessons/*.md; do
-    cp -- "$f" "$(basename -- "$f" .md)/00-lesson.md"
-done
+## README と全レッスンの課題を 00-tutor.md にまとめる (00- を付けて一覧の先頭に出す)
+# README のレッスンへのリンクは外し、レッスンの見出しは 1 段下げて README の節と並べる
+# (SPC o の見出しの一覧からレッスンに飛べる)。レッスンは番号順 (sort -V) につなげる
+{
+    sed 's#^- \[\(.*\)\](lessons/[^)]*\.md)$#- \1#' "$tutor_dir/README.md"
+    printf '%s\n' "$tutor_dir"/lessons/*.md | sort -V | while IFS= read -r f; do
+        printf '\n---\n\n'
+        sed -e 's/^## /### /' -e '1s/^# /## /' "$f"
+    done
+} > 00-tutor.md
 
 echo "練習用ディレクトリを作った: $dest"
 echo "始めるには: cd $dest して C-x e (または emacs -nw $dest)"
