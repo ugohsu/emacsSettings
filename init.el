@@ -167,6 +167,8 @@
 (vertico-mode 1)
 ;; 候補の表示件数 (既定は 10)。Doom Emacs の既定に合わせて 17 にする
 (setq vertico-count 17)
+;; 候補の一番下で次へ進むと一番上に戻る (逆も同じ)。Doom Emacs の既定に合わせる
+(setq vertico-cycle t)
 (marginalia-mode 1)
 ;; ミニバッファの履歴 (M-x のコマンド履歴など) をセッションをまたいで保存する
 ;; vertico は履歴順に候補を並べるので、再起動後もよく使うコマンドが上に来る
