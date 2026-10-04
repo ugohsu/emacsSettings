@@ -29,8 +29,8 @@ cd ~/dired-tutor
 
 ## レッスン一覧
 
-各レッスンの課題は `lessons/` にあり、`setup.sh` が各レッスンのディレクトリに `00-lesson.md` としてコピーする。
-練習用ディレクトリの中で、`00-lesson.md` を開きながら進められる。
+各レッスンの課題は、練習用ディレクトリでは各レッスンのディレクトリの `00-lesson.md` にある
+(リポジトリの `tutor/dired/lessons/` から `setup.sh` がコピーしたもの)。下のリンクから開ける。
 
 - [レッスン 1: 移動 (`1-move`)](lessons/1-move.md)
 - [レッスン 2: 表示の切り替え (`2-view`)](lessons/2-view.md)

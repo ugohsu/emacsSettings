@@ -120,7 +120,8 @@ mk 9-combo/docs/faq.md "締め切りを過ぎたら連絡する"
 mkdir -p 9-combo/collected
 
 ## 課題を各レッスンのディレクトリにコピーする (00- を付けて一覧の先頭に出す)
-cp -- "$tutor_dir/README.md" 00-README.md
+# README のリンク (lessons/1-move.md など) は、コピー先の 1-move/00-lesson.md などに書き換える
+sed 's#](lessons/\([^)]*\)\.md)#](\1/00-lesson.md)#' "$tutor_dir/README.md" > 00-README.md
 for f in "$tutor_dir"/lessons/*.md; do
     cp -- "$f" "$(basename -- "$f" .md)/00-lesson.md"
 done
