@@ -165,15 +165,10 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
 `ido-find-file` を、`SPC F` に `find-file` を割り当てていたが、`find-file` に
 一本化して `SPC F` は空けた (2026-09-30)。ido の設定は `archive.el` に移した。
 
-候補の表示件数は既定の 10 件。行の検索 (`SPC /` の `consult-line`) と見出しの一覧
-(`SPC o` の `consult-outline`) だけ、vertico-multiform で 20 件にしている
-(2026-10-05。以前はすべて 20 件にしていたが、端末版では画面を占めすぎるため)。
-
-- vertico-multiform はコマンド名 (`this-command`) か候補の種類 (category) で設定を分けられるが、
-  SPC メニューから呼ぶとコマンド名が `evil-mysetting-spccmd` になって分けられないので、
-  候補の種類 `consult-location` で分けている。
-- `consult-location` は `consult-mark`・`consult-global-mark`・`consult-line-multi` も同じなので、
-  これらも 20 件になる。
+候補の表示件数 (`vertico-count`) は、Doom Emacs の既定に合わせて 17 件にしている
+(vertico の既定は 10 件。2026-10-05 に 20 件から変更。端末版では 20 件だと画面を占めすぎるため)。
+`SPC /` や `SPC o` だけ件数を増やすことも考えたが、SPC メニューから呼ぶとコマンド名で
+分けられず設定が複雑になるので、SPC メニュー自体を直すときにまとめて検討する。
 
 ## orderless と consult
 

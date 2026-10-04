@@ -165,14 +165,8 @@
 ;;;; vertico + marginalia (ミニバッファ補完の縦表示と候補の注釈)
 ;;;;
 (vertico-mode 1)
-;; 候補の表示件数は既定の 10 件のまま、行の検索 (SPC / の consult-line) と
-;; 見出しの一覧 (SPC o の consult-outline) だけ 20 件にする。
-;; SPC メニューから呼ぶと this-command が evil-mysetting-spccmd になり、コマンド名では
-;; 分けられないので、候補の種類 (category) の consult-location で分ける
-;; (consult-mark・consult-global-mark・consult-line-multi も同じ種類なので 20 件になる)
-(setq vertico-multiform-categories
-      '((consult-location (vertico-count . 20))))
-(vertico-multiform-mode 1)
+;; 候補の表示件数 (既定は 10)。Doom Emacs の既定に合わせて 17 にする
+(setq vertico-count 17)
 (marginalia-mode 1)
 ;; ミニバッファの履歴 (M-x のコマンド履歴など) をセッションをまたいで保存する
 ;; vertico は履歴順に候補を並べるので、再起動後もよく使うコマンドが上に来る
