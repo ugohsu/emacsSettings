@@ -291,7 +291,7 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: scroll, f: file, v: view-mode, a: embark, d: dired, b: buffer, B: ibuffer, /: search, o: outline, ':': shell, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
+             "SPC: scroll, f: file, v: view-mode, a: embark, d: dired, [bB]: buffer (+Shift: ibuffer), /: search, o: outline, ':': shell, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "f") (call-interactively #'find-file))
           ((equal c "v") (my-view-current-buffer))
