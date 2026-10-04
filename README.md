@@ -362,6 +362,15 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
   evil では `(`・`)` で代用できるので上書きした。
 - `M-a` は embark-collect のバッファ内だけ evil-collection の
   `embark-collect-direct-action-minor-mode` が優先される。
+- **`M-h` (`embark-bindings`)**: 今のバッファで使えるキーとコマンドを一覧し、
+  絞り込んで実行もできる。`C-h` は `delete-backward-char` にしていて `C-h b` が
+  使えないため、その代わり。以前は `SPC B` に割り当てていたが、一番知りたい
+  magit では `SPC` メニューが効かないので、どこでも届く `M-h` (help) に移し、
+  `SPC B` は `ibuffer` にした (2026-10-04)。
+  - `M-h` の既定の `mark-paragraph` は evil では `vap` で代用できるので上書きした。
+    org-mode では `org-mark-element` が優先されるので効かない。
+  - ミニバッファの中では動かない (`embark-bindings` が `completing-read` を使うため、
+    `enable-recursive-minibuffers` が必要。有効にはしていない)。
 - **embark-consult**: consult と embark が両方読み込まれると自動で読み込まれるが、
   それまでは consult 検索のメニュー (`C`) が使えないため、`init.el` で embark と同時に
   `require` している。

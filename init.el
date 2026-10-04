@@ -217,6 +217,9 @@
 ;; ミニバッファでは M-e (export) で候補一覧をバッファに書き出す (M-a E と同じ)
 ;; M-e の既定の forward-sentence はミニバッファではほぼ使わない
 (keymap-set minibuffer-local-map "M-e" #'embark-export)
+;; 今のバッファで使えるキーの一覧を M-h (help) で出す (SPC メニューが効かない magit などでも使える)
+;; M-h の既定の mark-paragraph は evil では vap で代用できる
+(global-set-key (kbd "M-h") #'embark-bindings)
 ;; アクションをキーマップのヒントではなく completing-read で選ぶ
 ;; (ヒントは幅が足りず見切れるため、vertico・orderless で絞り込めるようにする)
 (setq embark-prompter #'embark-completing-read-prompter)
@@ -288,7 +291,7 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: scroll, f: file, v: view-mode, [aB]: embark, d: dired, b: buffer, /: search, o: outline, ':': shell, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
+             "SPC: scroll, f: file, v: view-mode, a: embark, d: dired, b: buffer, B: ibuffer, /: search, o: outline, ':': shell, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "f") (call-interactively #'find-file))
           ((equal c "v") (my-view-current-buffer))
@@ -296,7 +299,7 @@
           ((equal c "a") (call-interactively #'embark-act))
           ((equal c "d") (call-interactively #'dired))
           ((equal c "b") (consult-buffer))
-          ((equal c "B") (call-interactively #'embark-bindings))
+          ((equal c "B") (ibuffer))
           ((equal c "/") (consult-line))
           ((equal c "o") (my-consult-outline))
           ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
