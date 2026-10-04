@@ -503,14 +503,18 @@ ddskk には、保存時に他の Emacs の更新を読み直して合わせる
 上書きするため、最後に終了した Emacs の履歴だけが残る。こちらは確認もエラーも
 出ず普通に終了できるので、気にしないことにしている。
 
-## dired の練習 (tutor/dired)
+## dired・ibuffer の練習 (tutor/)
 
-vimtutor のように手を動かして dired の操作を覚えるための課題集を `tutor/dired/` に置いている
+vimtutor のように手を動かして dired・ibuffer の操作を覚えるための課題集を `tutor/` に置いている
 (2026-10-04 追加)。キーはこの `init.el` の設定を前提にしている。
 
 ```sh
-bash tutor/dired/setup.sh   # ~/dired-tutor に練習用のファイルを作る (再実行で作り直す)
+bash tutor/dired/setup.sh     # ~/dired-tutor に練習用のファイルを作る (再実行で作り直す)
+bash tutor/ibuffer/setup.sh   # ~/ibuffer-tutor に練習用のファイルを作る (再実行で作り直す)
+cd ~/ibuffer-tutor && emacs -nw 00-tutor.md */*   # ibuffer は練習用のファイルを全部開いて始める
 ```
 
-全体の説明は `tutor/dired/README.md`、各レッスンの課題は `tutor/dired/lessons/` にある。
-`setup.sh` が課題を各レッスンのディレクトリに `00-lesson.md` としてコピーするので、練習中はそれを開けばよい。
+全体の説明は `tutor/*/README.md`、各レッスンの課題は `tutor/*/lessons/` にある。
+`setup.sh` が README と全レッスンの課題を、練習用ディレクトリ直下の `00-tutor.md` 1 つにまとめるので、
+練習中はそれを開いて `SPC o` (見出しの一覧) でレッスンに飛べばよい (各レッスンのディレクトリには課題を置かない)。
+ibuffer の練習で絞り込みやグループを保存すると `~/.emacs.d/custom.el` に書き込まれるので、課題の最後の手順で消す。
