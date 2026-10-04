@@ -9,12 +9,12 @@ vimtutor のように、手を動かしながら ibuffer の操作を覚える�
 
 ```sh
 bash emacsSettings/tutor/ibuffer/setup.sh   # emacsSettings はこのリポジトリの場所
-cd ~/ibuffer-tutor && emacs -nw 00-tutor.md */*
+emacs -nw -l ~/ibuffer-tutor/start.el
 ```
 
-練習用のファイルがすべてバッファとして開かれた状態で Emacs が起動し、画面が 2 つに分かれる
-(上下か左右かは端末の大きさで変わる)。`SPC 1` → `SPC 3` で左右に分け直し、
-`SPC l` で右に移って `SPC B` で ibuffer を開く。左には `00-tutor.md` が出ている。
+`start.el` (`setup.sh` が作る) が練習用のファイルをすべてバッファとして開き、
+左に `00-tutor.md`、右に ibuffer を出した状態で始まる。
+(`emacs -nw */*` のようにファイルを引数で渡すと、`*Buffer List*` が出て配置も崩れるので使わない)
 
 - 練習用のディレクトリは `~/ibuffer-tutor` にできる。`bash setup.sh 作成先` で場所を変えられる。
 - 壊しても `setup.sh` をもう一度実行すれば、まっさらな状態に作り直せる。
@@ -23,7 +23,7 @@ cd ~/ibuffer-tutor && emacs -nw 00-tutor.md */*
   `SPC o` (見出しの一覧) でレッスンに飛べる (`SPC v` で閲覧用表示にすると読みやすい)。
   課題で別のバッファに切り替わってしまったら、左のウィンドウで `SPC b` から `00-tutor.md` を選んで戻る。
 - 順番どおりでなくてもよいが、レッスン 4 以降はバッファを消したり書き換えたりする。
-  バッファを消してしまったら、Emacs を終了 (`C-x C-c`) して、同じコマンドで開き直す。
+  バッファを消してしまったら、Emacs を終了 (`C-x C-c`) して、`emacs -nw -l ~/ibuffer-tutor/start.el` で開き直す。
   ファイルを書き換えて保存してしまったら、`setup.sh` を実行し直してから開き直す。
 - 一覧には練習用のファイルのほか、`00-tutor.md` 自身や `*scratch*`・`*Messages*` なども出る。
   `00-tutor.md` には課題の文字列 (`TODO` など) が書いてあるので、中身で印を付けたり絞り込んだりすると、

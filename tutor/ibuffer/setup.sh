@@ -34,7 +34,7 @@ mk() {
     printf '%s\n' "$2" > "$1"
 }
 
-# ibuffer で扱うのはバッファなので、ファイルは emacs -nw 00-tutor.md */* でまとめて開く。
+# ibuffer で扱うのはバッファなので、start.el (最後に作る) で */* のファイルをまとめて開く。
 # そのため、各ディレクトリの直下にはファイルだけを置く (サブディレクトリを作らない)。
 
 ## projA: Python のプロジェクト
@@ -107,5 +107,23 @@ mk notes/delete-me.txt '開いたあとで、ファイルだけを消す'
     done
 } > 00-tutor.md
 
+## 起動用の start.el を作る (emacs -nw -l start.el で読み込む)
+# ファイルを emacs の引数で渡すと、3 つ以上のときに *Buffer List* が出て画面の配置も
+# 決まらないので、引数では渡さずに start.el で開いて、左に 00-tutor.md、右に ibuffer を出す
+cat > start.el <<'ELISP'
+;; ibuffer tutor を始める: 練習用のファイルを全部開き、左に 00-tutor.md、右に ibuffer を出す
+;; 使い方: emacs -nw -l ~/ibuffer-tutor/start.el (どこから実行してもよい)
+;; 起動画面 (startup screen) が出ると配置が上書きされるので止める (init.el でも止めている)
+(setq inhibit-startup-screen t)
+(let ((default-directory (file-name-directory load-file-name)))
+  (dolist (file (file-expand-wildcards "*/*"))
+    (find-file-noselect file))
+  (delete-other-windows)
+  (find-file "00-tutor.md")
+  (split-window-right)
+  (other-window 1)
+  (ibuffer))
+ELISP
+
 echo "練習用ディレクトリを作った: $dest"
-echo "始めるには: cd $dest && emacs -nw 00-tutor.md */*"
+echo "始めるには: emacs -nw -l $dest/start.el"

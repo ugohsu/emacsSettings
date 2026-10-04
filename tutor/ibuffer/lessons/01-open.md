@@ -21,7 +21,10 @@ ibuffer は「たくさんのバッファを見渡して整理する」ための
 | `C-c C-a` | 一覧の自動更新 (ibuffer-auto-mode) を切り替える |
 | `q` | ibuffer を閉じる |
 
-- [ ] 右のウィンドウで `SPC B` を押して ibuffer を開く。`j` / `k` で動き、`gj` を何度も押して、
+右のウィンドウの ibuffer に `main.py`・`memo.txt`・`analysis.R` などが並んでいなければ、起動の仕方が違う。
+Emacs を終了して、`emacs -nw -l ~/ibuffer-tutor/start.el` で開き直す。
+
+- [ ] 右のウィンドウの ibuffer で、`j` / `k` で動き、`gj` を何度も押して、
       一番下まで行くと一番上のバッファに戻ることを確かめる。
 - [ ] `J` を押し、`memo` と入力して `memo.txt` を選ぶ。その行にカーソルが飛ぶ。`RET` で開き、`SPC B` で戻る。
 - [ ] `utils.py` の行で `gO` を押す。左のウィンドウに `utils.py` が出て、カーソルは ibuffer に残る。
