@@ -46,34 +46,41 @@ bash emacsSettings/tutor/ibuffer/setup.sh   # emacsSettings はこのリポジ�
 
 ## 素の Emacs とキーが違うもの
 
-evil-collection が ibuffer に付けている割り当て。evil の移動キー (`j`・`k`・`h`・`l` など) と
-ぶつからないように、素の Emacs から変わっている。
+ほとんどは evil-collection が ibuffer に付けている割り当てで、evil のキー (`j`・`k` の移動や `v` のビジュアル選択など) と
+ぶつからないように、素の Emacs から場所が変わっている。「出どころ」の列は、違いがどこで生まれているかを表す。
 
-| 動作 | 素の Emacs | この設定 |
-|---|---|---|
-| 次 / 前のバッファの行へ | `n` / `p` | `gj` / `gk` (`j` / `k` でも動ける) |
-| 絞り込み (filter) | `/ …` | `s …` |
-| 並べ替え | `s a` など | `o a` など |
-| 並べ替えを逆順にする | `s i` | `o i` |
-| バッファ名を入力して飛ぶ | `j` | `J` (`M-g`) |
-| 別のウィンドウで開く | `o` | `go` |
-| 別のウィンドウに出すだけ | `C-o` | `gO` |
-| 印の付いたバッファを並べて表示 | `v` | `A` (`gv`) |
-| 行を一覧から隠す | `k` | `K` |
-| ファイル名 / バッファ名をコピー | `w` / `B` | `yf` / `yb` |
-| 一覧を作り直す / 表示し直す | `g` / `l` | `gr` / `gR` |
-| 最近使った順の一番後ろに回す (bury) | `b` | `X` |
-| 印の反転 | `t` | `t` (`~` でもよい) |
-| 変更済みの印 (`*`) を切り替える | `~` (`M`) | `M` |
-| すべての印を外す | `U` (`* *`) | `U` (`* *` は特殊バッファに印を付ける) |
-| フィルタグループを切り取る | `C-k` | `gx` |
+- **evil**: evil 本体のキー (`j`・`k`・`v`・`/` など) が、素の Emacs の割り当てより優先される
+- **evil-collection**: evil-collection が ibuffer 用に付け直した割り当て
+- **個人設定**: このリポジトリの `init.el` で設定しているもの
+
+| 動作 | 素の Emacs | この設定 | 出どころ |
+|---|---|---|---|
+| ibuffer を開く | `M-x ibuffer` (`C-x C-b` は list-buffers) | `SPC B` (`C-x C-b`) | 個人設定 |
+| `SPC` | 次の行へ | SPC メニュー | 個人設定 (evil-collection の `SPC` を `evil-collection-key-blacklist` で止めている) |
+| 次 / 前のバッファの行へ | `n` / `p` | `gj` / `gk` (`j` / `k` でも動ける) | evil-collection (`j` / `k` は evil の行移動) |
+| 絞り込み (filter) | `/ …` | `s …` | evil-collection (`/` は evil の検索) |
+| 並べ替え | `s a` など | `o a` など | evil-collection (`s` を絞り込みに使うため) |
+| 並べ替えを逆順にする | `s i` | `o i` | evil-collection |
+| バッファ名を入力して飛ぶ | `j` (`M-g`) | `J` (`M-g`) | evil-collection |
+| 別のウィンドウで開く | `o` | `go` | evil-collection (`o` は並べ替えのプレフィックス) |
+| 別のウィンドウに出すだけ | `C-o` | `gO` | evil-collection (`C-o` は evil のジャンプを戻る) |
+| 印の付いたバッファを並べて表示 | `v` (`A`) | `A` (`gv`) | evil (`v` はビジュアル選択)。`gv` は evil-collection |
+| 行を一覧から隠す | `k` | `K` | evil-collection |
+| ファイル名 / バッファ名をコピー | `w` / `B` | `yf` / `yb` | evil-collection (`w`・`B` は evil の単語移動) |
+| 一覧を作り直す / 表示し直す | `g` / `l` | `gr` / `gR` | evil-collection |
+| 最近使った順の一番後ろに回す (bury) | `b` | `X` | evil-collection (`b` は evil の単語移動) |
+| 印の反転 | `t` | `t` (`~` でもよい) | evil-collection (`~` を足している) |
+| 変更済みの印 (`*`) を切り替える | `~` (`M`) | `M` | evil-collection (`~` を印の反転に使うため) |
+| すべての印を外す | `U` (`* *`) | `U` (`* *` は特殊バッファに印を付ける) | evil-collection |
+| フィルタグループを切り取る | `C-k` | `gx` | evil-collection |
+| 確認への答え | 変更のあるバッファを消すときなどは `yes` / `no` を入力する | いつも `y` / `n` だけで答える | 個人設定 (`yes-or-no-p` を `y-or-n-p` にしている) |
 
 ### この設定では使えない・練習しないもの
 
-- `L` (ibuffer-do-toggle-lock、バッファのロック) は、evil の `L` (画面の一番下の行へ) が優先されて届かない。
+- `L` (ibuffer-do-toggle-lock、バッファのロック) は、evil の `L` (画面の一番下の行へ) が優先されて届かない (出どころ: evil)。
   使うときは `M-x ibuffer-do-toggle-lock`。
 - 素の Emacs の `/ F` (ディレクトリで絞り込む)、`/ E` (プロセスで絞り込む)、`/ SPC` (絞り込み方を補完で選ぶ) は、
-  evil-collection が `s` に移していないので届かない。`M-x ibuffer-filter-by-directory` などで呼ぶ。
+  evil-collection が `s` に移していないので届かない (出どころ: evil-collection)。`M-x ibuffer-filter-by-directory` などで呼ぶ。
 - `.` (3 日以上表示していないバッファに印を付ける) は、練習を始めたばかりのバッファには印が付かない。
 - `P` (印刷)、`H` (別のフレームで表示)、`C-t` (タグテーブル) は扱わない。
 
