@@ -10,6 +10,8 @@ set -euo pipefail
 
 dest="${1:-$HOME/dired-tutor}"
 marker=".dired-tutor"
+# 課題 (lessons/*.md と README.md) は、このスクリプトと同じ場所から取る
+tutor_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ -e "$dest" ]; then
     if [ -f "$dest/$marker" ]; then
@@ -116,6 +118,12 @@ mk 9-combo/2025/mar/cache.tmp "一時ファイル"
 mk 9-combo/docs/guide.md "提出の締め切りは 10 月末"
 mk 9-combo/docs/faq.md "締め切りを過ぎたら連絡する"
 mkdir -p 9-combo/collected
+
+## 課題を各レッスンのディレクトリにコピーする (00- を付けて一覧の先頭に出す)
+cp -- "$tutor_dir/README.md" 00-README.md
+for f in "$tutor_dir"/lessons/*.md; do
+    cp -- "$f" "$(basename -- "$f" .md)/00-lesson.md"
+done
 
 echo "練習用ディレクトリを作った: $dest"
 echo "始めるには: cd $dest して C-x e (または emacs -nw $dest)"

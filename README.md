@@ -503,4 +503,5 @@ vimtutor のように手を動かして dired の操作を覚えるための課�
 bash tutor/dired/setup.sh   # ~/dired-tutor に練習用のファイルを作る (再実行で作り直す)
 ```
 
-課題は `tutor/dired/README.md` にある。
+全体の説明は `tutor/dired/README.md`、各レッスンの課題は `tutor/dired/lessons/` にある。
+`setup.sh` が課題を各レッスンのディレクトリに `00-lesson.md` としてコピーするので、練習中はそれを開けばよい。
