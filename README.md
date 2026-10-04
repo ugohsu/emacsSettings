@@ -511,8 +511,11 @@ vimtutor のように手を動かして dired・ibuffer の操作を覚えるた
 ```sh
 bash tutor/dired/setup.sh     # ~/dired-tutor に練習用のファイルを作る (再実行で作り直す)
 bash tutor/ibuffer/setup.sh   # ~/ibuffer-tutor に練習用のファイルを作る (再実行で作り直す)
-emacs -nw -l ~/ibuffer-tutor/start.el   # ibuffer は練習用のファイルを全部開いて始める
 ```
+
+始めるときは、起動している Emacs で `M-x load-file` → `~/dired-tutor/start.el` (ibuffer は
+`~/ibuffer-tutor/start.el`) と読み込む。左に課題、右に dired・ibuffer が出る。読み込むたびに
+練習用のバッファを開き直すので、最初からやり直すときにも使う (`emacs -nw -l …/start.el` で起動してもよい)。
 
 全体の説明は `tutor/*/README.md`、各レッスンの課題は `tutor/*/lessons/` にある。
 `setup.sh` が README と全レッスンの課題を、練習用ディレクトリ直下の `00-tutor.md` 1 つにまとめるので、

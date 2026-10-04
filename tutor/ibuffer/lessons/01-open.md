@@ -22,7 +22,7 @@ ibuffer は「たくさんのバッファを見渡して整理する」ための
 | `q` | ibuffer を閉じる |
 
 右のウィンドウの ibuffer に `main.py`・`memo.txt`・`analysis.R` などが並んでいなければ、起動の仕方が違う。
-Emacs を終了して、`emacs -nw -l ~/ibuffer-tutor/start.el` で開き直す。
+`M-x load-file` → `~/ibuffer-tutor/start.el` で読み込み直す。
 
 - [ ] 右のウィンドウの ibuffer で、`j` / `k` で動き、`gj` を何度も押して、
       一番下まで行くと一番上のバッファに戻ることを確かめる。

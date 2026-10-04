@@ -8,18 +8,21 @@ vimtutor のように、手を動かしながら dired の操作を覚えるた�
 
 ```sh
 bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジトリの場所
-cd ~/dired-tutor
 ```
 
-`C-x e` (bash の割り当て。`emacs -nw .` を実行する) で dired が開く。
+起動している Emacs で `M-x load-file` → `~/dired-tutor/start.el` と読み込む
+(Emacs を起動するところからなら `emacs -nw -l ~/dired-tutor/start.el`)。
+`start.el` (`setup.sh` が作る) が、左に `00-tutor.md`、右に練習用ディレクトリの dired を出す。
+読み込むたびに練習用のバッファ (練習用ディレクトリの中のファイルと dired) を閉じて開き直す
+(保存していない変更は、確認なしで捨てる)。`setup.sh` で作り直したあとも、もう一度読み込めばよい。
 
 - 練習用のディレクトリは `~/dired-tutor` にできる。`bash setup.sh 作成先` で場所を変えられる。
 - 壊しても `setup.sh` をもう一度実行すれば、まっさらな状態に作り直せる。
   作り直すときに消すのは、目印のファイル `.dired-tutor` があるディレクトリだけ。
 - 各レッスンは対応するディレクトリ (`1-move` など) の中でやる。順番どおりでなくてもよい。
 - 練習用ディレクトリ直下の `00-tutor.md` は、この README と全レッスンの課題を 1 つにまとめたもの。
-  `SPC 3` で左右に分け、片方で `00-tutor.md` を開いて `SPC o` (見出しの一覧) でレッスンに飛び
-  (`SPC v` で閲覧用表示にすると読みやすい)、もう片方の dired で操作すると、見ながら進められる。
+  左の `00-tutor.md` で `SPC o` (見出しの一覧) からレッスンに飛び (`SPC v` で閲覧用表示にすると読みやすい)、
+  右の dired で操作すると、見ながら進められる。
 - `x` などで確認を求められたら `y` で答える (`yes-or-no-p` を `y-or-n-p` にしているため)。
 - キーの割り当ては `M-h` (embark-bindings) か `<f1> k キー` で調べる。
   normal state では `C-h` を左移動にしているので、`C-h k` ではヘルプが開かない。

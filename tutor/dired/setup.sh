@@ -130,5 +130,31 @@ mkdir -p 9-combo/collected
     done
 } > 00-tutor.md
 
+## 始めるための start.el を作る
+# 起動している Emacs から M-x load-file で読み込む (emacs -nw -l start.el でもよい)。
+# 読み込むたびに練習用のバッファを閉じて開き直すので、最初からやり直すときにも使う
+cat > start.el <<'ELISP'
+;; dired tutor を始める -*- lexical-binding: t; -*-
+;; 左に 00-tutor.md、右に練習用ディレクトリの dired を出す
+;; 使い方: 起動している Emacs で M-x load-file → このファイル (emacs -nw -l このファイル でもよい)
+;; 練習用のバッファ (dired とファイル) は、保存していない変更を捨てて閉じてから開き直す
+;; 起動画面 (startup screen) が出ると配置が上書きされるので止める (init.el でも止めている)
+(setq inhibit-startup-screen t)
+(let ((dir (file-name-directory (or load-file-name buffer-file-name))))
+  ;; 練習用のバッファ (このディレクトリの中のファイルと dired) を、変更を捨てて閉じる
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and (or buffer-file-name (derived-mode-p 'dired-mode))
+                 (file-in-directory-p default-directory dir))
+        (set-buffer-modified-p nil)
+        (kill-buffer))))
+  (delete-other-windows)
+  (find-file (expand-file-name "00-tutor.md" dir))
+  (split-window-right)
+  (other-window 1)
+  (dired dir))
+ELISP
+
 echo "練習用ディレクトリを作った: $dest"
-echo "始めるには: cd $dest して C-x e (または emacs -nw $dest)"
+echo "始めるには: 起動している Emacs で M-x load-file → $dest/start.el"
+echo "          (または emacs -nw -l $dest/start.el)"
