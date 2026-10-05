@@ -268,46 +268,10 @@
         embark-highlight-indicator
         embark-isearch-highlight-indicator))
 
-;; embark の w は ~ で省略したパスをコピーするので、~ を展開したパスなどをコピーする関数を用意する
-;; (ディレクトリが対象のときも directory-file-name で末尾の / を除いてから扱う)
-(defun my-embark--copy (string)
-  "STRING を kill-ring にコピーして表示する。"
-  (kill-new string)
-  (message "Copied: %s" string))
-(defun my-embark-copy-full-path (file)
-  "FILE の絶対パス (~ を展開したもの) を kill-ring にコピーする。"
-  (interactive "fFile: ")
-  (my-embark--copy (expand-file-name file)))
-(defun my-embark-copy-dir-path (file)
-  "FILE が属するディレクトリの絶対パス (~ を展開したもの) を kill-ring にコピーする。"
-  (interactive "fFile: ")
-  (my-embark--copy (file-name-directory (directory-file-name (expand-file-name file)))))
-(defun my-embark-copy-file-name (file)
-  "FILE のファイル名 (ディレクトリ部分を除いたもの) を kill-ring にコピーする。"
-  (interactive "fFile: ")
-  (my-embark--copy (file-name-nondirectory (directory-file-name file))))
-;; ranger の yp・yd・yn にならい、y をコピー用のプレフィックスにする
-;; :doc は embark の一覧には出ないので、y や C の案内は ~ のヒント (my-embark-hint) に書く
-(defvar-keymap my-embark-yank-map
-  :doc "コピー: p 絶対パス, d ディレクトリ, n ファイル名"
-  "p" #'my-embark-copy-full-path
-  "d" #'my-embark-copy-dir-path
-  "n" #'my-embark-copy-file-name)
-(fset 'my-embark-yank-map my-embark-yank-map)
-;; embark の一覧ではプレフィックス (y や C) が末尾に回されて見えにくいので、
-;; 一覧の上の方に出る ~ にプレフィックスの案内を docstring として書いたコマンドを置く
-(defun my-embark-hint ()
-  "y パス類のコピー / C 検索 (f find, r ripgrep) / M-x 任意のコマンド"
-  (interactive)
-  (message "%s" (car (split-string (documentation 'my-embark-hint) "\n"))))
-;; ファイルを対象にしたときのアクションを追加する (y: コピー用プレフィックス, ~: ヒント)
-;; ~ は一覧の上に出るよう最後に設定する (押しやすいキーをふさがないよう、使いにくい ~ にしている)
 ;; embark-consult は consult が読み込まれるまで有効にならず、それまでは M-a C f などの
 ;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
 (with-eval-after-load 'embark
-  (require 'embark-consult)
-  (keymap-set embark-file-map "y" 'my-embark-yank-map)
-  (keymap-set embark-file-map "~" #'my-embark-hint))
+  (require 'embark-consult))
 
 ;;;;
 ;;;; evil
@@ -408,6 +372,39 @@
                       "-l")))
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map "zh" #'my-dired-toggle-dotfiles))
+
+;; SPC y でカーソル行のファイルのパス類をコピーする (ranger の yp・yd・yn にならう)
+;; (dired の normal state でだけ SPC メニューに y を足す。SPC のほかのキーはそのまま使える)
+(defun my-dired--copy (string)
+  "STRING を kill-ring にコピーして表示する。"
+  (kill-new string)
+  (message "Copied: %s" string))
+(defun my-dired--file-at-point ()
+  "カーソル行のファイル名を返す (ファイルのない行ではエラーにする)。"
+  (or (dired-get-filename nil t)
+      (user-error "この行にはファイルがありません")))
+(defun my-dired-copy-full-path ()
+  "カーソル行のファイルの絶対パスを kill-ring にコピーする。"
+  (interactive)
+  (my-dired--copy (expand-file-name (my-dired--file-at-point))))
+(defun my-dired-copy-dir-path ()
+  "カーソル行のファイルが属するディレクトリの絶対パスを kill-ring にコピーする。"
+  (interactive)
+  (my-dired--copy (file-name-directory
+                   (directory-file-name (expand-file-name (my-dired--file-at-point))))))
+(defun my-dired-copy-file-name ()
+  "カーソル行のファイル名を kill-ring にコピーする。"
+  (interactive)
+  (my-dired--copy (file-name-nondirectory (directory-file-name (my-dired--file-at-point)))))
+(defvar-keymap my-dired-yank-map
+  :doc "コピー: p 絶対パス, d ディレクトリ, n ファイル名"
+  "p" #'my-dired-copy-full-path
+  "d" #'my-dired-copy-dir-path
+  "n" #'my-dired-copy-file-name)
+;; 割り当てのないキーは何もしない (SPC メニューと同じ)
+(define-key my-dired-yank-map [t] #'ignore)
+(with-eval-after-load 'dired
+  (evil-define-key 'normal dired-mode-map (kbd "SPC y") my-dired-yank-map))
 
 ;;;;
 ;;;; eat (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)

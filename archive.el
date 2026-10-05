@@ -224,3 +224,52 @@
 ;;           ((equal c "3") (split-window-right)))))
 ;; (define-key evil-motion-state-map
 ;;   (kbd "SPC") 'evil-mysetting-spccmd)
+
+;;;;
+;;;; embark のファイル用アクション y (パス類のコピー) と ~ (ヒント)
+;;;; (dired の SPC y に移したため init.el から移動, 2026-10-05)
+;;;;
+;; ;; embark の w は ~ で省略したパスをコピーするので、~ を展開したパスなどをコピーする関数を用意する
+;; ;; (ディレクトリが対象のときも directory-file-name で末尾の / を除いてから扱う)
+;; (defun my-embark--copy (string)
+;;   "STRING を kill-ring にコピーして表示する。"
+;;   (kill-new string)
+;;   (message "Copied: %s" string))
+;; (defun my-embark-copy-full-path (file)
+;;   "FILE の絶対パス (~ を展開したもの) を kill-ring にコピーする。"
+;;   (interactive "fFile: ")
+;;   (my-embark--copy (expand-file-name file)))
+;; (defun my-embark-copy-dir-path (file)
+;;   "FILE が属するディレクトリの絶対パス (~ を展開したもの) を kill-ring にコピーする。"
+;;   (interactive "fFile: ")
+;;   (my-embark--copy (file-name-directory (directory-file-name (expand-file-name file)))))
+;; (defun my-embark-copy-file-name (file)
+;;   "FILE のファイル名 (ディレクトリ部分を除いたもの) を kill-ring にコピーする。"
+;;   (interactive "fFile: ")
+;;   (my-embark--copy (file-name-nondirectory (directory-file-name file))))
+;; ;; ranger の yp・yd・yn にならい、y をコピー用のプレフィックスにする
+;; ;; :doc は embark の一覧には出ないので、y や C の案内は ~ のヒント (my-embark-hint) に書く
+;; (defvar-keymap my-embark-yank-map
+;;   :doc "コピー: p 絶対パス, d ディレクトリ, n ファイル名"
+;;   "p" #'my-embark-copy-full-path
+;;   "d" #'my-embark-copy-dir-path
+;;   "n" #'my-embark-copy-file-name)
+;; (fset 'my-embark-yank-map my-embark-yank-map)
+;; ;; embark の一覧ではプレフィックス (y や C) が末尾に回されて見えにくいので、
+;; ;; 一覧の上の方に出る ~ にプレフィックスの案内を docstring として書いたコマンドを置く
+;; (defun my-embark-hint ()
+;;   "y パス類のコピー / C 検索 (f find, r ripgrep) / M-x 任意のコマンド"
+;;   (interactive)
+;;   (message "%s" (car (split-string (documentation 'my-embark-hint) "\n"))))
+;; ;; ファイルを対象にしたときのアクションを追加する (y: コピー用プレフィックス, ~: ヒント)
+;; ;; ~ は一覧の上に出るよう最後に設定する (押しやすいキーをふさがないよう、使いにくい ~ にしている)
+;; ;; embark-consult は consult が読み込まれるまで有効にならず、それまでは M-a C f などの
+;; ;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
+;; ;; ファイルを対象にしたときのアクションを追加する (y: コピー用プレフィックス, ~: ヒント)
+;; ;; ~ は一覧の上に出るよう最後に設定する (押しやすいキーをふさがないよう、使いにくい ~ にしている)
+;; ;; embark-consult は consult が読み込まれるまで有効にならず、それまでは M-a C f などの
+;; ;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
+;; (with-eval-after-load 'embark
+;;   (require 'embark-consult)
+;;   (keymap-set embark-file-map "y" 'my-embark-yank-map)
+;;   (keymap-set embark-file-map "~" #'my-embark-hint))
