@@ -540,18 +540,21 @@ ddskk には、保存時に他の Emacs の更新を読み直して合わせる
 上書きするため、最後に終了した Emacs の履歴だけが残る。こちらは確認もエラーも
 出ず普通に終了できるので、気にしないことにしている。
 
-## dired・ibuffer の練習 (tutor/)
+## dired・ibuffer・シェルコマンドの練習 (tutor/)
 
-vimtutor のように手を動かして dired・ibuffer の操作を覚えるための課題集を `tutor/` に置いている
-(2026-10-04 追加)。キーはこの `init.el` の設定を前提にしている。
+vimtutor のように手を動かして dired・ibuffer の操作と、Emacs からシェルコマンドを使う操作
+(evil の `:!`・`!` と dired の `!`・`&` など) を覚えるための課題集を `tutor/` に置いている
+(2026-10-04 追加、シェルコマンドは 2026-10-05 追加)。キーはこの `init.el` の設定を前提にしている。
 
 ```sh
 bash tutor/dired/setup.sh     # ~/dired-tutor に練習用のファイルを作る (再実行で作り直す)
 bash tutor/ibuffer/setup.sh   # ~/ibuffer-tutor に練習用のファイルを作る (再実行で作り直す)
+bash tutor/shell/setup.sh     # ~/shell-tutor に練習用のファイルを作る (再実行で作り直す)
 ```
 
 始めるときは、起動している Emacs で `M-x load-file` → `~/dired-tutor/start.el` (ibuffer は
-`~/ibuffer-tutor/start.el`) と読み込む。左に課題、右に dired・ibuffer が出る。読み込むたびに
+`~/ibuffer-tutor/start.el`、シェルコマンドは `~/shell-tutor/start.el`) と読み込む。
+左に課題、右に dired・ibuffer が出る (シェルコマンドは dired)。読み込むたびに
 練習用のバッファを開き直すので、最初からやり直すときにも使う (`emacs -nw -l …/start.el` で起動してもよい)。
 
 全体の説明は `tutor/*/README.md`、各レッスンの課題は `tutor/*/lessons/` にある。

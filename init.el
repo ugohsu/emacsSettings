@@ -310,9 +310,6 @@
   "/" #'consult-line
   "o" #'my-consult-outline
   ":" #'my-eat-new-other-window
-  ;; 1回だけのシェルコマンド実行 (bash で動かしたいときは M-! の shell-command)
-  ;; (以前は C-: に割り当てていたが、-nw の端末では C-: が届かないのでこちらに移した)
-  ";" #'eshell-command
   "h" #'evil-window-left
   "j" #'evil-window-down
   "k" #'evil-window-up

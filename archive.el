@@ -286,3 +286,12 @@
 ;;       '(embark-minimal-indicator
 ;;         embark-highlight-indicator
 ;;         embark-isearch-highlight-indicator))
+
+;;;;
+;;;; SPC ; の eshell-command
+;;;; (bash の文法が使える evil の :! と dired の ! を使うことにしたため init.el から移動, 2026-10-05)
+;;;;
+;; my-spc-map の中:
+;;   ;; 1回だけのシェルコマンド実行 (bash で動かしたいときは M-! の shell-command)
+;;   ;; (以前は C-: に割り当てていたが、-nw の端末では C-: が届かないのでこちらに移した)
+;;   ";" #'eshell-command
