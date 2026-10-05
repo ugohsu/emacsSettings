@@ -191,14 +191,14 @@
 ;;;;
 ;; consult-line・consult-outline の候補の種類 (consult-location) でだけ、orderless の照合に
 ;; migemo を足す (SPC メニューから呼ぶとコマンド名では分けられないので、候補の種類で分ける)。
-;; cmigemo と辞書がない環境では何もしない
+;; cmigemo・辞書・migemo パッケージのどれかがない環境では何もしない (普通の orderless で絞り込む)
 (defvar my-migemo-dictionary
   (seq-find #'file-exists-p
             '("/usr/share/cmigemo/utf-8/migemo-dict"         ; Debian・Ubuntu (apt install cmigemo)
               "/opt/homebrew/share/migemo/utf-8/migemo-dict" ; macOS の Homebrew (Apple Silicon)
               "/usr/local/share/migemo/utf-8/migemo-dict"))  ; macOS の Homebrew (Intel) など
   "cmigemo の辞書の場所。見つからなければ nil。")
-(when (and my-migemo-dictionary (executable-find "cmigemo"))
+(when (and my-migemo-dictionary (executable-find "cmigemo") (locate-library "migemo"))
   (require 'orderless)
   (setq migemo-dictionary my-migemo-dictionary
         migemo-user-dictionary nil

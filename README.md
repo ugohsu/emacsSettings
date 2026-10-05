@@ -367,7 +367,8 @@ sudo apt install cmigemo   # Debian・Ubuntu。macOS は brew install cmigemo
 - **isearch では使わない**: isearch は skk-isearch のまま。migemo.el は読み込まれると isearch の検索関数を
   書き換えるので、`init.el` で元に戻している。
 - **辞書**: `init.el` で、Debian (`/usr/share/cmigemo/utf-8/migemo-dict`) と macOS の Homebrew の場所を
-  順に探す。cmigemo か辞書が見つからない環境では何もしない (local.el の設定は不要)。
+  順に探す。cmigemo・辞書・migemo パッケージのどれかがない環境では何もせず、普通の orderless で
+  絞り込む (エラーにはならない。local.el の設定は不要)。
 - **重さ**: migemo.el と cmigemo は、最初に `SPC /` などで使ったときに読み込み・起動する
   (起動時間には影響しない)。1 文字打つごとに cmigemo に変換を頼むが、体感できる遅さにはならない。
 - 短いローマ字 (`ka` など) は関係のない語にも大量に一致するので、2 文字以上や、スペースで区切った
