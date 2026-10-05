@@ -273,3 +273,16 @@
 ;;   (require 'embark-consult)
 ;;   (keymap-set embark-file-map "y" 'my-embark-yank-map)
 ;;   (keymap-set embark-file-map "~" #'my-embark-hint))
+
+;;;;
+;;;; embark のアクションを completing-read で選ぶ設定
+;;;; (標準のキー押下型に戻し、? で completing-read に切り替えるようにしたため init.el から移動, 2026-10-05)
+;;;;
+;; ;; アクションをキーマップのヒントではなく completing-read で選ぶ
+;; ;; (ヒントは幅が足りず見切れるため、vertico・orderless で絞り込めるようにする)
+;; (setq embark-prompter #'embark-completing-read-prompter)
+;; ;; 標準の詳細ヒント (*Embark Actions*) は completing-read の一覧と二重になるので外す
+;; (setq embark-indicators
+;;       '(embark-minimal-indicator
+;;         embark-highlight-indicator
+;;         embark-isearch-highlight-indicator))

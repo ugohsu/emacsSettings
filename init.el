@@ -259,14 +259,11 @@
 ;; 今のバッファで使えるキーの一覧を M-h (help) で出す (SPC メニューが効かない magit などでも使える)
 ;; M-h の既定の mark-paragraph は evil では vap で代用できる
 (global-set-key (kbd "M-h") #'embark-bindings)
-;; アクションをキーマップのヒントではなく completing-read で選ぶ
-;; (ヒントは幅が足りず見切れるため、vertico・orderless で絞り込めるようにする)
-(setq embark-prompter #'embark-completing-read-prompter)
-;; 標準の詳細ヒント (*Embark Actions*) は completing-read の一覧と二重になるので外す
-(setq embark-indicators
-      '(embark-minimal-indicator
-        embark-highlight-indicator
-        embark-isearch-highlight-indicator))
+;; アクションは標準どおりキーを押して選ぶ (少し待つと *Embark Actions* に一覧が出る)。
+;; ? を押すと completing-read の一覧に切り替わり、vertico・orderless で絞り込める
+;; (標準の C-h は global で delete-backward-char にしているので、押しやすい ? にする。
+;; C などのプレフィックスのあとは ? ではなく C-h で、その中のコマンドを絞り込める)
+(setq embark-help-key "?")
 
 ;; embark-consult は consult が読み込まれるまで有効にならず、それまでは M-a C f などの
 ;; consult 用メニュー (C) が使えないので、embark と同時に読み込む
