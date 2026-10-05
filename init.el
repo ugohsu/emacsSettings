@@ -17,24 +17,24 @@
 ;; 環境固有の設定 (local.el) は init.el の設定を上書きできるよう末尾で読み込む
 
 
-;;;; --------------------------------------------------------
-;;;; テーマ・フォント設定 (GUI 版だけ):
-;;;; --------------------------------------------------------
-;; 端末版 (emacs -nw) では設定せず、端末 (tmux のほかのペインなど) と同じ色・フォントのままにする
-(when (display-graphic-p)
-  ;; theme
-  (load-theme 'ef-day t)
+;; theme
+(load-theme 'ef-day t)
 
-  ;; 1. 英字フォントを標準に設定
-  (set-face-attribute 'default nil :family "Ricty Diminished Discord" :height 150)
-  ;; (set-face-attribute 'default nil :family "Inconsolata" :height 150)
-  ;; (set-face-attribute 'default nil :family  "Noto Sans Mono CJK JP" :height 120)
-  ;; (set-face-attribute 'default nil :family  "IPAGothic" :height 150)
 
-  ;; 2. 日本語フォントを上書き設定
-  (dolist (target '(japanese-jisx0208 kana han symbol cjk-misc bopomofo))
-    ;; (set-fontset-font t target (font-spec :family "Noto Sans Mono CJK JP")))
-    (set-fontset-font t target (font-spec :family "IPAGothic"))))
+;;;; --------------------------------------------------------
+;;;; フォント設定:
+;;;; --------------------------------------------------------
+
+;; 1. 英字フォントを標準に設定
+(set-face-attribute 'default nil :family "Ricty Diminished Discord" :height 150)
+;; (set-face-attribute 'default nil :family "Inconsolata" :height 150)
+;; (set-face-attribute 'default nil :family  "Noto Sans Mono CJK JP" :height 120)
+;; (set-face-attribute 'default nil :family  "IPAGothic" :height 150)
+
+;; 2. 日本語フォントを上書き設定
+(dolist (target '(japanese-jisx0208 kana han symbol cjk-misc bopomofo))
+;;   (set-fontset-font t target (font-spec :family "Noto Sans Mono CJK JP")))
+  (set-fontset-font t target (font-spec :family "IPAGothic")))
 
 ;; マウスアボイダンス
 (mouse-avoidance-mode 'banish)
