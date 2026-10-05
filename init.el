@@ -505,6 +505,10 @@ RESTORE が non-nil なら、view-mode を抜けたときに元のモードへ�
       (setq my-view-previous-state state)
       (add-hook 'view-mode-hook #'my-markdown-view-restore nil t)))
   (setq-local markdown-fontify-code-blocks-natively t)
+  ;; 相対行番号は隠れた行 (```{python} など) も数えるので、[数字] j・k も隠れた行を
+  ;; 数えるようにして、見えている番号どおりに移動できるようにする
+  ;; (モードを戻すと buffer-local の変数は消えるので、編集用の表示では元どおり)
+  (setq-local line-move-ignore-invisible nil)
   (font-lock-update)
   ;; markdown-view-mode は read-only-mode にするだけで q では抜けられないので、
   ;; view-mode も有効にして q でバッファを閉じられるようにする
