@@ -17,8 +17,8 @@
 ;; 環境固有の設定 (local.el) は init.el の設定を上書きできるよう末尾で読み込む
 
 
-;; theme (端末版 emacs -nw では、端末になじむ ef-autumn にする)
-(load-theme (if (display-graphic-p) 'ef-day 'ef-autumn) t)
+;; theme (環境ごとに変えたいときは local.el で上書きする)
+(load-theme 'ef-day t)
 
 
 ;;;; --------------------------------------------------------
