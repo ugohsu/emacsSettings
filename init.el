@@ -244,6 +244,8 @@
 ;;;;
 ;; consult-buffer で < を押したときの絞り込みの一覧もこれで出る
 (setq which-key-idle-delay 0.5)
+;; 一度一覧が出たあとは、続けて押したプレフィックスの一覧をすぐに出す
+(setq which-key-idle-secondary-delay 0)
 (which-key-mode 1)
 
 ;;;;
