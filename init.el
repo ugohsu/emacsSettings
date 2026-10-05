@@ -17,8 +17,8 @@
 ;; 環境固有の設定 (local.el) は init.el の設定を上書きできるよう末尾で読み込む
 
 
-;; theme
-(load-theme 'ef-day t)
+;; theme (端末版 emacs -nw では、端末になじむ ef-autumn にする)
+(load-theme (if (display-graphic-p) 'ef-day 'ef-autumn) t)
 
 
 ;;;; --------------------------------------------------------
@@ -46,8 +46,8 @@
 ;; frame-maximize
 ;; (set-frame-parameter nil 'fullscreen 'maximized)
 
-;; yes or y
-(defalias 'yes-or-no-p 'y-or-n-p)
+;; yes or y (yes-or-no-p の確認にも y / n だけで答える。Emacs 28 以降)
+(setq use-short-answers t)
 
 ;; シンボリックリンクの読み込みを許可（確認しない）
 (setq vc-follow-symlinks t)

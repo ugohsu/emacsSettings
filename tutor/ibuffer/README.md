@@ -38,7 +38,7 @@ bash emacsSettings/tutor/ibuffer/setup.sh   # emacsSettings はこのリポジ�
 - ibuffer の並べ替え・絞り込み・隠した行は、`*Ibuffer*` バッファに残る
   (`q` で閉じても、次に `SPC B` で開くと元のまま)。全部を元に戻すには、ibuffer の中で
   `M-x kill-current-buffer` を実行してから、`SPC B` で開き直す (`start.el` を読み込み直してもよい)。
-- `D` などで確認を求められたら `y` で答える (`yes-or-no-p` を `y-or-n-p` にしているため)。
+- `D` などで確認を求められたら `y` で答える (`use-short-answers` を `t` にしているため)。
 - キーの割り当ては `M-h` (embark-bindings) か `<f1> k キー` で調べる。
   `<f1> m` (describe-mode) の説明は素の Emacs のキーで書かれているので、この設定とは食い違う。
 - **注意**: 絞り込みやグループを保存する操作 (`s s`・`s S`) は、`~/.emacs.d/custom.el` に書き込む
@@ -73,7 +73,7 @@ bash emacsSettings/tutor/ibuffer/setup.sh   # emacsSettings はこのリポジ�
 | 変更済みの印 (`*`) を切り替える | `~` (`M`) | `M` | evil-collection (`~` を印の反転に使うため) |
 | すべての印を外す | `U` (`* *`) | `U` (`* *` は特殊バッファに印を付ける) | evil-collection |
 | フィルタグループを切り取る | `C-k` | `gx` | evil-collection |
-| 確認への答え | 変更のあるバッファを消すときなどは `yes` / `no` を入力する | いつも `y` / `n` だけで答える | 個人設定 (`yes-or-no-p` を `y-or-n-p` にしている) |
+| 確認への答え | 変更のあるバッファを消すときなどは `yes` / `no` を入力する | いつも `y` / `n` だけで答える | 個人設定 (`use-short-answers` を `t` にしている) |
 
 ### この設定では使えない・練習しないもの
 

@@ -54,7 +54,7 @@ make && sudo make install
     wgrep           ; grep バッファを直接編集して一括置換
     migemo          ; ローマ字のまま日本語を検索 (SPC / と SPC o。cmigemo が必要)
     eat             ; Emacs 内のターミナル (bash)
-    ef-themes       ; テーマ
+    ef-themes       ; テーマ (GUI 版は ef-day、端末版は ef-autumn)
     
     ;; LaTeX / R / Python / Markdown
     yatex

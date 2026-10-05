@@ -24,7 +24,7 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
   左の `00-tutor.md` で `SPC o` (見出しの一覧) からレッスンに飛び、右の dired で操作すると、見ながら進められる。
   `00-tutor.md` は閲覧用表示 (`SPC v` と同じ) で開く。`q` で抜けるとバッファも閉じるので、
   チェックを付けるなど書き込むときは、`M-x view-mode` で閲覧用表示だけを抜ける。
-- `x` などで確認を求められたら `y` で答える (`yes-or-no-p` を `y-or-n-p` にしているため)。
+- `x` などで確認を求められたら `y` で答える (`use-short-answers` を `t` にしているため)。
 - キーの割り当ては `M-h` (embark-bindings) か `<f1> k キー` で調べる。
   normal state では `C-h` を左移動にしているので、`C-h k` ではヘルプが開かない。
   `g?` (dired-summary) は決め打ちの一覧を出すだけで、この設定の割り当て (`f`、`o`、`h` など) とは食い違うので使わない。
@@ -72,7 +72,7 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 | 別のディレクトリに移ったとき | 元のディレクトリの dired バッファが残る | 元のバッファを閉じる (`dired-kill-when-opening-new-dired-buffer`) |
 | `q` で閉じたとき | ウィンドウを閉じるだけで、バッファは残る | バッファも閉じる (`quit-window-kill-buffer`) |
 | `C` (コピー)・`R` (移動) の送り先の初期値 | 今のディレクトリ | dired を 2 つ並べているときは、もう一方のディレクトリ (`dired-dwim-target`) |
-| 削除などの確認 | `yes` / `no` を入力する | `y` / `n` だけで答える (`yes-or-no-p` を `y-or-n-p` にしている) |
+| 削除などの確認 | `yes` / `no` を入力する | `y` / `n` だけで答える (`use-short-answers` を `t` にしている) |
 | 長い行 | 折り返す | 折り返さない (`dired-mode-hook` で `truncate-lines`) |
 
 ---
