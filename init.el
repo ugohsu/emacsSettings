@@ -343,10 +343,19 @@
 ;;;; dired-mode
 ;;;;
 
+;; f はファイル名での検索。fd (Debian 系では fdfind) が入っていれば consult-fd、
+;; なければ consult-find を使う。押したときに調べるので、TRAMP 先でもその先の有無で決まる
+(defun my-dired-find-file-by-name ()
+  "fd があれば `consult-fd'、なければ `consult-find' でファイルを探す。"
+  (interactive)
+  (if (or (executable-find "fd" 'remote) (executable-find "fdfind" 'remote))
+      (call-interactively #'consult-fd)
+    (call-interactively #'consult-find)))
+
 ;; h・l は ranger のように親ディレクトリへ戻る・ディレクトリに入る (ファイルなら開く) にする
 ;; (dired では行内の左右移動はほぼ使わないので上書きする)
 (with-eval-after-load 'dired
-  (evil-define-key 'normal dired-mode-map "f" #'consult-find)
+  (evil-define-key 'normal dired-mode-map "f" #'my-dired-find-file-by-name)
   (evil-define-key 'normal dired-mode-map "h" #'dired-up-directory)
   (evil-define-key 'normal dired-mode-map "l" #'dired-find-file))
 ;; 移動時にバッファを閉じる
