@@ -52,6 +52,7 @@ make && sudo make install
     embark          ; 補完候補などにアクションを実行する
     embark-consult  ; embark と consult の連携
     wgrep           ; grep バッファを直接編集して一括置換
+    migemo          ; ローマ字のまま日本語を検索 (SPC / と SPC o。cmigemo が必要)
     eat             ; Emacs 内のターミナル (bash)
     ef-themes       ; テーマ
     
@@ -347,6 +348,31 @@ rg のオプションとして渡される。
   ファイルは飛ばされたまま)。全部を対象にするなら `-uu` を付ける。
 - `find . -iname '*.hoge' | xargs grep hogehoge` は、シェルでも
   `rg hogehoge --iglob '*.hoge'` で書ける (rg は既定で再帰的に検索する)。
+
+## migemo (SPC / と SPC o で日本語をローマ字のまま検索する)
+
+行の検索 (`SPC /` の `consult-line`) と見出しの一覧 (`SPC o` の `consult-outline`) では、
+[migemo](https://github.com/emacs-jp/migemo) で、ローマ字の入力をかな・漢字にも一致させている
+(2026-10-05 導入)。例: `kanji` で「漢字」「かんじ」「カンジ」、`shime` で「締め切り」に一致する。
+SKK で入力するのと違って、入力モードの切り替えも変換もいらず、打っている途中から絞り込まれる。
+
+```sh
+sudo apt install cmigemo   # Debian・Ubuntu。macOS は brew install cmigemo
+```
+
+- **効かせる範囲**: 候補の種類 `consult-location` (consult-line・consult-outline。consult-mark・
+  consult-global-mark・consult-line-multi も同じ種類) の補完でだけ、orderless の照合に migemo を足している
+  (`completion-category-overrides`)。`M-x` や `SPC b` などには影響しない。SPC メニューから呼ぶと
+  コマンド名では分けられないので、候補の種類で分けている。
+- **isearch では使わない**: isearch は skk-isearch のまま。migemo.el は読み込まれると isearch の検索関数を
+  書き換えるので、`init.el` で元に戻している。
+- **辞書**: `init.el` で、Debian (`/usr/share/cmigemo/utf-8/migemo-dict`) と macOS の Homebrew の場所を
+  順に探す。cmigemo か辞書が見つからない環境では何もしない (local.el の設定は不要)。
+- **重さ**: migemo.el と cmigemo は、最初に `SPC /` などで使ったときに読み込み・起動する
+  (起動時間には影響しない)。1 文字打つごとに cmigemo に変換を頼むが、体感できる遅さにはならない。
+- 短いローマ字 (`ka` など) は関係のない語にも大量に一致するので、2 文字以上や、スペースで区切った
+  複数の語で絞り込む。cmigemo の辞書にない語 (SKK の個人辞書の語など) には一致しない。
+- Debian の `libmigemo-dev` は C のプログラムから migemo を使うためのもので、Emacs では不要。
 
 ## embark (+ embark-consult, wgrep)
 

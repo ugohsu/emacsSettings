@@ -187,6 +187,43 @@
       completion-category-overrides '((file (styles basic partial-completion))))
 
 ;;;;
+;;;; migemo (ローマ字のまま日本語に一致させる。SPC / と SPC o だけで使う)
+;;;;
+;; consult-line・consult-outline の候補の種類 (consult-location) でだけ、orderless の照合に
+;; migemo を足す (SPC メニューから呼ぶとコマンド名では分けられないので、候補の種類で分ける)。
+;; cmigemo と辞書がない環境では何もしない
+(defvar my-migemo-dictionary
+  (seq-find #'file-exists-p
+            '("/usr/share/cmigemo/utf-8/migemo-dict"         ; Debian・Ubuntu (apt install cmigemo)
+              "/opt/homebrew/share/migemo/utf-8/migemo-dict" ; macOS の Homebrew (Apple Silicon)
+              "/usr/local/share/migemo/utf-8/migemo-dict"))  ; macOS の Homebrew (Intel) など
+  "cmigemo の辞書の場所。見つからなければ nil。")
+(when (and my-migemo-dictionary (executable-find "cmigemo"))
+  (require 'orderless)
+  (setq migemo-dictionary my-migemo-dictionary
+        migemo-user-dictionary nil
+        migemo-regex-dictionary nil
+        ;; isearch では migemo を使わない (isearch は skk-isearch のまま)
+        migemo-isearch-enable-p nil
+        migemo-use-default-isearch-keybinding nil)
+  ;; migemo.el は読み込まれると isearch の検索関数を自分のものに書き換えるので、元に戻す
+  (with-eval-after-load 'migemo
+    (setq isearch-search-fun-function #'isearch-search-fun-default))
+  (defun my-orderless-migemo (component)
+    "COMPONENT (ローマ字) を、migemo でかな・漢字にも一致する正規表現にする。"
+    ;; 最初に使うときに migemo.el を読み込む (cmigemo もそのとき起動する)
+    (require 'migemo)
+    (let ((pattern (migemo-get-pattern component)))
+      (unless (string-empty-p pattern)
+        (condition-case nil
+            (progn (string-match-p pattern "") pattern)
+          (invalid-regexp nil)))))
+  (orderless-define-completion-style my-orderless-migemo
+    (orderless-matching-styles '(orderless-literal orderless-regexp my-orderless-migemo)))
+  (add-to-list 'completion-category-overrides
+               '(consult-location (styles my-orderless-migemo))))
+
+;;;;
 ;;;; consult (検索・バッファ切替などの補完コマンド集)
 ;;;;
 ;; consult-buffer で最近開いたファイルも候補に出すため recentf を有効にする
