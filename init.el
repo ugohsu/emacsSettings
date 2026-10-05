@@ -319,51 +319,55 @@
 (setq evil-want-C-i-jump nil)
 (evil-mode 1)
 ;; evil-collection (各モードのキーバインドを Evil 風に一括設定)
-;; SPC キーは自分の設定 (evil-mysetting-spccmd) を優先するため、
+;; SPC キーは自分の設定 (my-spc-map) を優先するため、
 ;; evil-collection による上書きを禁止する
 (setq evil-collection-key-blacklist '("SPC"))
 (setq evil-collection-repl-submit-state 'insert)
 (evil-collection-init)
 
 ;; function
-(defun evil-mysetting-spccmd ()
+;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
+;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
+;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
+(defun my-eat-new-other-window ()
   (interactive)
-  (let ((c (char-to-string
-            (read-char
-             "SPC: scroll, f: file, v: view-mode, a: embark, d: dired, [bB]: buffer/ibuffer, /: search, o: outline, ':': shell, ';': eshell-command, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
-    (cond ((equal c " ") (scroll-up-command))
-          ((equal c "f") (call-interactively #'find-file))
-          ((equal c "v") (my-view-current-buffer))
-          ;; カーソル位置の対象に embark のアクションを実行 (ミニバッファの補完中は M-a)
-          ((equal c "a") (call-interactively #'embark-act))
-          ((equal c "d") (call-interactively #'dired))
-          ((equal c "b") (consult-buffer))
-          ((equal c "B") (ibuffer))
-          ((equal c "/") (consult-line))
-          ((equal c "o") (my-consult-outline))
-          ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
-          ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
-          ;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
-          ((equal c ":") (eat-other-window nil '(4)))
-          ;; 1回だけのシェルコマンド実行 (bash で動かしたいときは M-! の shell-command)
-          ;; (以前は C-: に割り当てていたが、-nw の端末では C-: が届かないのでこちらに移した)
-          ((equal c ";") (call-interactively #'eshell-command))
-          ((equal c "h") (evil-window-left 1))
-          ((equal c "j") (evil-window-down 1))
-          ((equal c "k") (evil-window-up 1))
-          ((equal c "l") (evil-window-right 1))
-          ((equal c "H") (evil-window-move-far-left))
-          ((equal c "J") (evil-window-move-very-bottom))
-          ((equal c "K") (evil-window-move-very-top))
-          ((equal c "L") (evil-window-move-far-right))
-          ((equal c "0") (delete-window))
-          ((equal c "1") (delete-other-windows))
-          ((equal c "2") (split-window-below))
-          ((equal c "3") (split-window-right)))))
+  (eat-other-window nil '(4)))
+
+;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
+(defvar-keymap my-spc-map
+  :doc "SPC に続けて押すキー"
+  "SPC" #'scroll-up-command
+  "f" #'find-file
+  "v" #'my-view-current-buffer
+  ;; カーソル位置の対象に embark のアクションを実行 (ミニバッファの補完中は M-a)
+  "a" #'embark-act
+  "d" #'dired
+  "b" #'consult-buffer
+  "B" #'ibuffer
+  "/" #'consult-line
+  "o" #'my-consult-outline
+  ":" #'my-eat-new-other-window
+  ;; 1回だけのシェルコマンド実行 (bash で動かしたいときは M-! の shell-command)
+  ;; (以前は C-: に割り当てていたが、-nw の端末では C-: が届かないのでこちらに移した)
+  ";" #'eshell-command
+  "h" #'evil-window-left
+  "j" #'evil-window-down
+  "k" #'evil-window-up
+  "l" #'evil-window-right
+  "H" #'evil-window-move-far-left
+  "J" #'evil-window-move-very-bottom
+  "K" #'evil-window-move-very-top
+  "L" #'evil-window-move-far-right
+  "0" #'delete-window
+  "1" #'delete-other-windows
+  "2" #'split-window-below
+  "3" #'split-window-right)
+;; 割り当てのないキーは何もしない (read-char 版と同じく、undefined のエラーを出さない)
+(define-key my-spc-map [t] #'ignore)
 
 ;; keymap
 (define-key evil-motion-state-map
-  (kbd "SPC") 'evil-mysetting-spccmd)
+  (kbd "SPC") my-spc-map)
 (define-key evil-motion-state-map
   (kbd "S-SPC") 'scroll-down-command)
 ;; C-{ (spconv) は site-lisp/yatex_ess.el に移動

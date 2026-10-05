@@ -184,3 +184,43 @@
 ;;;;
 ;; (defalias 'vf 'view-file)
 ;; (defalias 'vo 'view-file-other-window)
+
+;;;;
+;;;; SPC メニュー (read-char 版。キーマップ my-spc-map に置き換えたため init.el から移動, 2026-10-05)
+;;;;
+;; (defun evil-mysetting-spccmd ()
+;;   (interactive)
+;;   (let ((c (char-to-string
+;;             (read-char
+;;              "SPC: scroll, f: file, v: view-mode, a: embark, d: dired, [bB]: buffer/ibuffer, /: search, o: outline, ':': shell, ';': eshell-command, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
+;;     (cond ((equal c " ") (scroll-up-command))
+;;           ((equal c "f") (call-interactively #'find-file))
+;;           ((equal c "v") (my-view-current-buffer))
+;;           ;; カーソル位置の対象に embark のアクションを実行 (ミニバッファの補完中は M-a)
+;;           ((equal c "a") (call-interactively #'embark-act))
+;;           ((equal c "d") (call-interactively #'dired))
+;;           ((equal c "b") (consult-buffer))
+;;           ((equal c "B") (ibuffer))
+;;           ((equal c "/") (consult-line))
+;;           ((equal c "o") (my-consult-outline))
+;;           ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
+;;           ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
+;;           ;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
+;;           ((equal c ":") (eat-other-window nil '(4)))
+;;           ;; 1回だけのシェルコマンド実行 (bash で動かしたいときは M-! の shell-command)
+;;           ;; (以前は C-: に割り当てていたが、-nw の端末では C-: が届かないのでこちらに移した)
+;;           ((equal c ";") (call-interactively #'eshell-command))
+;;           ((equal c "h") (evil-window-left 1))
+;;           ((equal c "j") (evil-window-down 1))
+;;           ((equal c "k") (evil-window-up 1))
+;;           ((equal c "l") (evil-window-right 1))
+;;           ((equal c "H") (evil-window-move-far-left))
+;;           ((equal c "J") (evil-window-move-very-bottom))
+;;           ((equal c "K") (evil-window-move-very-top))
+;;           ((equal c "L") (evil-window-move-far-right))
+;;           ((equal c "0") (delete-window))
+;;           ((equal c "1") (delete-other-windows))
+;;           ((equal c "2") (split-window-below))
+;;           ((equal c "3") (split-window-right)))))
+;; (define-key evil-motion-state-map
+;;   (kbd "SPC") 'evil-mysetting-spccmd)
