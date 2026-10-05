@@ -330,7 +330,7 @@
   (interactive)
   (let ((c (char-to-string
             (read-char
-             "SPC: scroll, f: file, v: view-mode, a: embark, d: dired, [bB]: buffer/ibuffer, /: search, o: outline, ':': shell, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
+             "SPC: scroll, f: file, v: view-mode, a: embark, d: dired, [bB]: buffer/ibuffer, /: search, o: outline, ':': shell, ';': eshell-command, [hjkl]: window (+Shift: move), [0123]: C-x 0-3")))) ;; メッセージを変更
     (cond ((equal c " ") (scroll-up-command))
           ((equal c "f") (call-interactively #'find-file))
           ((equal c "v") (my-view-current-buffer))
@@ -345,6 +345,9 @@
           ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
           ;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
           ((equal c ":") (eat-other-window nil '(4)))
+          ;; 1回だけのシェルコマンド実行 (bash で動かしたいときは M-! の shell-command)
+          ;; (以前は C-: に割り当てていたが、-nw の端末では C-: が届かないのでこちらに移した)
+          ((equal c ";") (call-interactively #'eshell-command))
           ((equal c "h") (evil-window-left 1))
           ((equal c "j") (evil-window-down 1))
           ((equal c "k") (evil-window-up 1))
@@ -368,9 +371,6 @@
 ;; 左移動にする (insert state では global のまま backspace として効く)
 (define-key evil-motion-state-map
   (kbd "C-h") 'evil-backward-char)
-;; C-: は1回だけのシェルコマンド実行 (eshell-command。bash で動かしたいときは M-! の shell-command)
-(define-key evil-motion-state-map
-  (kbd "C-:") 'eshell-command)
 
 ;; evil surround
 (global-evil-surround-mode 1)
