@@ -50,13 +50,8 @@
                       dirs '((category . file)
                              (display-sort-function . identity)))
                      nil t)))
-(defun my-dired-zoxide-jump ()
-  "zoxide に記録されたディレクトリを選び、今の dired バッファをそこに切り替える。"
-  (interactive)
-  (let ((dir (my-zoxide-read-dir)))
-    (my-zoxide-add dir)
-    (find-alternate-file dir)))
 ;; SPC z はどのバッファからでも使う。今のバッファは残し、選んだ場所を dired で開く
+;; dired の zz も同じにする (飛んだ先で少し作業して、SPC b で元の dired に戻れるように)
 (defun my-zoxide-dired ()
   "zoxide に記録されたディレクトリを選び、dired で開く。"
   (interactive)
@@ -64,7 +59,7 @@
     (my-zoxide-add dir)
     (dired dir)))
 (with-eval-after-load 'dired
-  (evil-define-key 'normal dired-mode-map "zz" #'my-dired-zoxide-jump))
+  (evil-define-key 'normal dired-mode-map "zz" #'my-zoxide-dired))
 
 (provide 'my-zoxide)
 ;;; my-zoxide.el ends here
