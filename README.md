@@ -567,6 +567,31 @@ dired の外からも使えるよう、`SPC z` でも同じ候補から選べる
 consult-dir (別作者のパッケージ) も検討したが、zoxide の候補元と飛んだ先の記録は結局自分で書くので
 短くならず、見送った。dired の `C`・`R` の送り先プロンプトに候補を差し込みたくなったら、改めて検討する。
 
+## emacs-cd (終了したときの場所にシェルを cd する)
+
+ranger-cd にならい、`emacs -nw` で開いて、終了したときにいた場所へ元のシェルを `cd` させる
+(2026-10-06 追加)。それまでの `SPC y d` → `C-x C-c` → `cd` → 貼り付け、の手間をなくすため。
+設定は `emacs-cd/` にまとめ、`init.el` は変えていない。
+
+- `emacs-cd/emacs-cd.bash`: シェル関数 `emacs-cd` と、`C-x e` の割り当て (bash 標準の
+  call-last-kbd-macro を上書き)。`~/.bashrc` から読み込む:
+  ```bash
+  . /path/to/emacsSettings/emacs-cd/emacs-cd.bash
+  ```
+  引数を省くと今のディレクトリを dired で開く。引数はそのまま `emacs` に渡す。
+- `emacs-cd/emacs-cd.el`: `emacs-cd` が `emacs -nw -l` で読み込む (この Emacs だけの設定)。
+  - 終了するとき (`kill-emacs-hook`) に、選んでいるウィンドウの `default-directory` を
+    環境変数 `EMACS_CD_FILE` のファイルに書き出す。`q` 以外の `C-x C-c` などで抜けても cd する。
+    TRAMP 先にいるときは書き出さない。
+  - dired の `q` は、ウィンドウが1つなら終了し、分割しているときは今までどおり `quit-window`
+    (ranger の `q` が、タブが残っているうちはタブを閉じるのにならう。2画面コピーの最中の誤爆よけ)。
+    dired 以外の `q` は evil のマクロ記録のまま。
+
+emacsclient (デーモン) は使わない。デーモンは1つの Emacs を共有するので、emacs-cd 用の設定だけを
+分けて読むことができず、フレームごとの分岐が要るため。起動は 0.5 秒ほど (`emacs-init-time`) で
+ranger と同じくらいなので、毎回起動しても気にならない。emacsclient をまだ使っていないクライアント
+マシンでも、同じ形で使える。
+
 ## dired・ibuffer・シェルコマンドの練習 (tutor/)
 
 vimtutor のように手を動かして dired・ibuffer の操作と、Emacs からシェルコマンドを使う操作
