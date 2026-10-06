@@ -5,10 +5,9 @@ dired だけでは手間のかかる「あちこちのディレクトリに散�
 
 | キー | 動作 |
 |---|---|
-| `f` → `M-e` | `consult-find` で探した結果を dired の一覧に書き出す (embark-export) |
+| `f` → `M-e` | `f` (`consult-fd` か `consult-find`) で探した結果を dired の一覧に書き出す (embark-export) |
 | `SPC a` | カーソル行のファイルやディレクトリに embark のアクションを実行する |
 | `SPC a` → `C r` | カーソル行のディレクトリの中だけを `consult-ripgrep` で検索する |
-| `SPC a` → `y p` / `y d` / `y n` | 絶対パス / ディレクトリ / ファイル名をコピーする (自分の embark 設定) |
 | `M-a` | ミニバッファの補完中に、選択中の候補に embark のアクションを実行する |
 | `M-a` → `j` | 候補のファイルの場所を dired で開き、その行にカーソルを置く |
 | `M-a` → `r` / `d` | 候補のファイルの名前を変える / 消す (dired を開かずに) |

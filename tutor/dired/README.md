@@ -44,7 +44,7 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 | 次 / 前のディレクトリの行へ | `>` / `<` | `]]` / `[[` (`gj` / `gk`、`>` / `<` でも) | evil-collection |
 | 親ディレクトリへ | `^` | `h` (`^`・`-` でも) | 個人設定 (`h`)。`-` は evil-collection |
 | ファイルを開く・ディレクトリに入る | `RET` (`f`・`e`) | `RET`・`l` | 個人設定 (`l`)。`e` は evil の単語移動 |
-| ファイルを名前で探す | (なし) | `f` (consult-find) | 個人設定 (素の `f` はファイルを開く) |
+| ファイルを名前で探す | (なし) | `f` (consult-fd。fd がなければ consult-find) | 個人設定 (素の `f` はファイルを開く) |
 | 別のウィンドウで開く | `o` | `go` | evil-collection (`o` は並べ替え) |
 | 閲覧用に開く (view-mode) | `v` | `gO` | evil-collection (`v` は evil のビジュアル選択) |
 | 別のウィンドウに出すだけ | `C-o` | (なし) | evil (`C-o` はジャンプを戻る) |
