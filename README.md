@@ -544,6 +544,8 @@ ddskk には、保存時に他の Emacs の更新を読み直して合わせる
 
 ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zoxide query -l` の
 候補から選んで、今の dired バッファをそのディレクトリに切り替える (2026-10-06 追加)。
+設定は `site-lisp/my-zoxide.el` にまとめ、`init.el` から `require` している
+(`SPC d`・`SPC :` の割り当ては `init.el` の SPC メニューにある)。
 絞り込みは fzf ではなく vertico・orderless。候補は zoxide の並び (よく使う順) のまま出す
 (`display-sort-function` を `identity` にして、vertico の並べ替えを止めている)。
 
