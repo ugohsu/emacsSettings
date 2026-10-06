@@ -547,8 +547,16 @@ ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zox
 絞り込みは fzf ではなく vertico・orderless。候補は zoxide の並び (よく使う順) のまま出す
 (`display-sort-function` を `identity` にして、vertico の並べ替えを止めている)。
 
-`zoxide add` で記録するのは、ファイルを開いたときのそのディレクトリ (`find-file-hook`) と、
-`zz` で飛んだ先だけ。`h`・`l` で歩き回っただけのディレクトリは記録しない (ranger 側と同じ方針)。
+`zoxide add` で記録するのは、その場所で作業したときだけ。`h`・`l` で歩き回っただけの
+ディレクトリは記録しない (ranger 側と同じ方針)。
+
+- ファイルを開いたときのそのディレクトリ (`find-file-hook`)
+- `zz` で飛んだ先
+- `SPC :` で eat を開いた場所 (どのバッファからでも。eat の中の bash の zoxide フックは
+  `cd` したときにしか記録しないので、開いた場所はこちらで記録する)
+- dired の上での `!`・`&` (`dired-do-shell-command` への advice。`&` も中でこれを呼ぶ)
+- dired の上での `:!` (`evil-shell-command` への advice。ほかのバッファでの `:!` は、
+  ファイルを開いた時点で記録済みなので数えない)
 `call-process` の出力先を `0` にして、終わるのを待たずに呼ぶ。zoxide がないときと TRAMP 先では何もしない。
 
 consult-dir (別作者のパッケージ) も検討したが、zoxide の候補元と飛んだ先の記録は結局自分で書くので

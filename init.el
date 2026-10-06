@@ -292,8 +292,10 @@
 ;; 押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
 ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
 ;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
+;; eat を開いた場所は大事な作業場所なので zoxide に記録する (my-zoxide-add は dired の節で定義)
 (defun my-eat-new-other-window ()
   (interactive)
+  (my-zoxide-add default-directory)
   (eat-other-window nil '(4)))
 
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
@@ -412,7 +414,8 @@
   (evil-define-key 'normal dired-mode-map (kbd "SPC y") my-dired-yank-map))
 
 ;; zz で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless)
-;; 記録するのは、ファイルを開いたときのそのディレクトリと、zz で飛んだ先だけにする
+;; 記録するのは、その場所で作業したときだけにする: ファイルを開いたときのそのディレクトリ、
+;; zz で飛んだ先、SPC : で eat を開いた場所 (eat の節)、dired の上での !・&・:!
 ;; (h・l で歩き回っただけのディレクトリは記録しない。ranger 側と同じ方針)
 ;; zoxide がないときと TRAMP 先では何もしない
 (defun my-zoxide-add (dir)
@@ -424,6 +427,14 @@
   (when buffer-file-name
     (my-zoxide-add (file-name-directory buffer-file-name))))
 (add-hook 'find-file-hook #'my-zoxide-add-file-dir)
+;; dired の ! と & (& は中で dired-do-shell-command を呼ぶので、これ1つで両方が記録される)
+(defun my-zoxide-add-dired-dir (&rest _)
+  "dired の上なら、今のディレクトリを zoxide に記録する (advice 用)。"
+  (when (derived-mode-p 'dired-mode)
+    (my-zoxide-add default-directory)))
+(advice-add 'dired-do-shell-command :before #'my-zoxide-add-dired-dir)
+;; evil の :! は dired の上で使ったときだけ記録する (ほかのバッファでは、ファイルを開いた時点で記録済み)
+(advice-add 'evil-shell-command :before #'my-zoxide-add-dired-dir)
 (defun my-dired-zoxide-jump ()
   "zoxide に記録されたディレクトリを選び、今の dired バッファをそこに切り替える。"
   (interactive)
