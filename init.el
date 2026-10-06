@@ -306,7 +306,7 @@
   "v" #'my-view-current-buffer
   ;; カーソル位置の対象に embark のアクションを実行 (ミニバッファの補完中は M-a)
   "a" #'embark-act
-  "d" #'dired
+  "d" #'my-dired-and-zoxide-add
   "b" #'consult-buffer
   "B" #'ibuffer
   "/" #'consult-line
@@ -415,7 +415,7 @@
 
 ;; zz で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless)
 ;; 記録するのは、その場所で作業したときだけにする: ファイルを開いたときのそのディレクトリ、
-;; zz で飛んだ先、SPC : で eat を開いた場所 (eat の節)、dired の上での !・&・:!
+;; zz・SPC d で開いた場所、SPC : で eat を開いた場所 (eat の節)、dired の上での !・&・:!
 ;; (h・l で歩き回っただけのディレクトリは記録しない。ranger 側と同じ方針)
 ;; zoxide がないときと TRAMP 先では何もしない
 (defun my-zoxide-add (dir)
@@ -427,6 +427,12 @@
   (when buffer-file-name
     (my-zoxide-add (file-name-directory buffer-file-name))))
 (add-hook 'find-file-hook #'my-zoxide-add-file-dir)
+;; SPC d は場所を指定して開くので記録する (h・l は dired コマンドを通らないので記録されない)
+(defun my-dired-and-zoxide-add ()
+  "`dired' で開き、開いたディレクトリを zoxide に記録する。"
+  (interactive)
+  (call-interactively #'dired)
+  (my-zoxide-add default-directory))
 ;; dired の ! と & (& は中で dired-do-shell-command を呼ぶので、これ1つで両方が記録される)
 (defun my-zoxide-add-dired-dir (&rest _)
   "dired の上なら、今のディレクトリを zoxide に記録する (advice 用)。"

@@ -551,7 +551,8 @@ ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zox
 ディレクトリは記録しない (ranger 側と同じ方針)。
 
 - ファイルを開いたときのそのディレクトリ (`find-file-hook`)
-- `zz` で飛んだ先
+- `zz` で飛んだ先と、`SPC d` で開いた場所 (`SPC d` は `dired` を包んだ関数に割り当てている。
+  `h`・`l` は `dired` コマンドを通らないので記録されない)
 - `SPC :` で eat を開いた場所 (どのバッファからでも。eat の中の bash の zoxide フックは
   `cd` したときにしか記録しないので、開いた場所はこちらで記録する)
 - dired の上での `!`・`&` (`dired-do-shell-command` への advice。`&` も中でこれを呼ぶ)
