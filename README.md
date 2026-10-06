@@ -540,6 +540,20 @@ ddskk には、保存時に他の Emacs の更新を読み直して合わせる
 上書きするため、最後に終了した Emacs の履歴だけが残る。こちらは確認もエラーも
 出ず普通に終了できるので、気にしないことにしている。
 
+## dired の zz (zoxide でよく行くディレクトリへ飛ぶ)
+
+ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zoxide query -l` の
+候補から選んで、今の dired バッファをそのディレクトリに切り替える (2026-10-06 追加)。
+絞り込みは fzf ではなく vertico・orderless。候補は zoxide の並び (よく使う順) のまま出す
+(`display-sort-function` を `identity` にして、vertico の並べ替えを止めている)。
+
+`zoxide add` で記録するのは、ファイルを開いたときのそのディレクトリ (`find-file-hook`) と、
+`zz` で飛んだ先だけ。`h`・`l` で歩き回っただけのディレクトリは記録しない (ranger 側と同じ方針)。
+`call-process` の出力先を `0` にして、終わるのを待たずに呼ぶ。zoxide がないときと TRAMP 先では何もしない。
+
+consult-dir (別作者のパッケージ) も検討したが、zoxide の候補元と飛んだ先の記録は結局自分で書くので
+短くならず、見送った。dired の `C`・`R` の送り先プロンプトに候補を差し込みたくなったら、改めて検討する。
+
 ## dired・ibuffer・シェルコマンドの練習 (tutor/)
 
 vimtutor のように手を動かして dired・ibuffer の操作と、Emacs からシェルコマンドを使う操作

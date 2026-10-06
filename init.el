@@ -411,6 +411,43 @@
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map (kbd "SPC y") my-dired-yank-map))
 
+;; zz で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless)
+;; 記録するのは、ファイルを開いたときのそのディレクトリと、zz で飛んだ先だけにする
+;; (h・l で歩き回っただけのディレクトリは記録しない。ranger 側と同じ方針)
+;; zoxide がないときと TRAMP 先では何もしない
+(defun my-zoxide-add (dir)
+  "DIR を zoxide に記録する (終わるのを待たない)。"
+  (when (and (executable-find "zoxide") (not (file-remote-p dir)))
+    (call-process "zoxide" nil 0 nil "add" (expand-file-name dir))))
+(defun my-zoxide-add-file-dir ()
+  "開いたファイルのディレクトリを zoxide に記録する。"
+  (when buffer-file-name
+    (my-zoxide-add (file-name-directory buffer-file-name))))
+(add-hook 'find-file-hook #'my-zoxide-add-file-dir)
+(defun my-dired-zoxide-jump ()
+  "zoxide に記録されたディレクトリを選び、今の dired バッファをそこに切り替える。"
+  (interactive)
+  (unless (executable-find "zoxide")
+    (user-error "zoxide がありません"))
+  (when (file-remote-p default-directory)
+    (user-error "TRAMP 先では使えません"))
+  (let ((dirs (mapcar #'abbreviate-file-name
+                      (process-lines-ignore-status
+                       "zoxide" "query" "-l"
+                       "--exclude" (directory-file-name (expand-file-name default-directory))))))
+    (unless dirs
+      (user-error "zoxide に記録されたディレクトリがありません"))
+    ;; zoxide の並び (よく使う順) のまま出す (vertico に並べ替えさせない)
+    (let ((dir (completing-read "zoxide: "
+                                (completion-table-with-metadata
+                                 dirs '((category . file)
+                                        (display-sort-function . identity)))
+                                nil t)))
+      (my-zoxide-add dir)
+      (find-alternate-file dir))))
+(with-eval-after-load 'dired
+  (evil-define-key 'normal dired-mode-map "zz" #'my-dired-zoxide-jump))
+
 ;;;;
 ;;;; eat (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
 ;;;;

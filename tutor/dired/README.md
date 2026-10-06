@@ -51,6 +51,7 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 | 並べ替え (名前順 ↔ 日付順) | `s` | `o` (`C-u o` でオプションを編集) | evil-collection (`s` を行を隠すのに使うため) |
 | 行を一覧から隠す | `k` | `s` | evil-collection (`k` は evil の行移動) |
 | 隠しファイルの表示を切り替える | (なし) | `zh` | 個人設定 |
+| よく行くディレクトリへ飛ぶ (zoxide) | (なし) | `zz` | 個人設定 (evil の `zz` は今の行を画面の中央へ) |
 | サブディレクトリをこのバッファに挿入 | `i` | `I` | evil-collection (`i` は wdired。素の `I` は Info で開く) |
 | ファイル名を直接編集する (wdired) | `C-x C-q` | `i` (`C-x C-q` でも) | evil-collection |
 | ファイル名をコピー | `w` | `Y` | evil-collection (`w` は evil の単語移動。素の `Y` は相対シンボリックリンク) |
