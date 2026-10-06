@@ -540,12 +540,14 @@ ddskk には、保存時に他の Emacs の更新を読み直して合わせる
 上書きするため、最後に終了した Emacs の履歴だけが残る。こちらは確認もエラーも
 出ず普通に終了できるので、気にしないことにしている。
 
-## dired の zz (zoxide でよく行くディレクトリへ飛ぶ)
+## dired の zz・SPC z (zoxide でよく行くディレクトリへ飛ぶ)
 
 ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zoxide query -l` の
 候補から選んで、今の dired バッファをそのディレクトリに切り替える (2026-10-06 追加)。
 設定は `site-lisp/my-zoxide.el` にまとめ、`init.el` から `require` している
-(`SPC d`・`SPC :` の割り当ては `init.el` の SPC メニューにある)。
+(`SPC d`・`SPC :`・`SPC z` の割り当ては `init.el` の SPC メニューにある)。
+dired の外からも使えるよう、`SPC z` でも同じ候補から選べる (2026-10-06 追加)。こちらは今のバッファを
+残し、選んだディレクトリを dired で開く。
 絞り込みは fzf ではなく vertico・orderless。候補は zoxide の並び (よく使う順) のまま出す
 (`display-sort-function` を `identity` にして、vertico の並べ替えを止めている)。
 
@@ -553,7 +555,7 @@ ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zox
 ディレクトリは記録しない (ranger 側と同じ方針)。
 
 - ファイルを開いたときのそのディレクトリ (`find-file-hook`)
-- `zz` で飛んだ先と、`SPC d` で開いた場所 (`SPC d` は `dired` を包んだ関数に割り当てている。
+- `zz`・`SPC z` で飛んだ先と、`SPC d` で開いた場所 (`SPC d` は `dired` を包んだ関数に割り当てている。
   `h`・`l` は `dired` コマンドを通らないので記録されない)
 - `SPC :` で eat を開いた場所 (どのバッファからでも。eat の中の bash の zoxide フックは
   `cd` したときにしか記録しないので、開いた場所はこちらで記録する)

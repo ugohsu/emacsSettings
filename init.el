@@ -307,6 +307,8 @@
   ;; カーソル位置の対象に embark のアクションを実行 (ミニバッファの補完中は M-a)
   "a" #'embark-act
   "d" #'my-dired-and-zoxide-add
+  ;; zoxide に記録されたディレクトリを選んで dired で開く (site-lisp/my-zoxide.el)
+  "z" #'my-zoxide-dired
   "b" #'consult-buffer
   "B" #'ibuffer
   "/" #'consult-line
@@ -414,7 +416,7 @@
   (evil-define-key 'normal dired-mode-map (kbd "SPC y") my-dired-yank-map))
 
 ;; zz で zoxide に記録されたディレクトリへ飛ぶ。ファイルを開いた場所などを zoxide に記録する
-;; (中身は site-lisp/my-zoxide.el。SPC d・SPC : からも、そこにある関数を呼ぶ)
+;; (中身は site-lisp/my-zoxide.el。SPC d・SPC :・SPC z からも、そこにある関数を呼ぶ)
 (require 'my-zoxide)
 
 ;;;;

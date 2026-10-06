@@ -1,12 +1,12 @@
-;;; my-zoxide.el --- dired の zz と、作業した場所の zoxide への記録  -*- lexical-binding: t; -*-
+;;; my-zoxide.el --- dired の zz・SPC z と、作業した場所の zoxide への記録  -*- lexical-binding: t; -*-
 
 ;; init.el から (require 'my-zoxide) で読み込む。evil を読み込んだ後に読むこと。
-;; SPC d・SPC : の割り当ては init.el の SPC メニュー (my-spc-map) にある。
-;; zoxide がないマシンでは、記録は何もせず、zz はメッセージを出すだけにする。
+;; SPC d・SPC :・SPC z の割り当ては init.el の SPC メニュー (my-spc-map) にある。
+;; zoxide がないマシンでは、記録は何もせず、zz・SPC z はメッセージを出すだけにする。
 
-;; zz で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless)
+;; zz (dired の中) と SPC z (どこからでも) で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless)
 ;; 記録するのは、その場所で作業したときだけにする: ファイルを開いたときのそのディレクトリ、
-;; zz・SPC d で開いた場所、SPC : で eat を開いた場所 (init.el の eat の節)、dired の上での !・&・:!
+;; zz・SPC z・SPC d で開いた場所、SPC : で eat を開いた場所 (init.el の eat の節)、dired の上での !・&・:!
 ;; (h・l で歩き回っただけのディレクトリは記録しない。ranger 側と同じ方針)
 ;; zoxide がないときと TRAMP 先では何もしない
 (defun my-zoxide-add (dir)
@@ -32,9 +32,8 @@
 (advice-add 'dired-do-shell-command :before #'my-zoxide-add-dired-dir)
 ;; evil の :! は dired の上で使ったときだけ記録する (ほかのバッファでは、ファイルを開いた時点で記録済み)
 (advice-add 'evil-shell-command :before #'my-zoxide-add-dired-dir)
-(defun my-dired-zoxide-jump ()
-  "zoxide に記録されたディレクトリを選び、今の dired バッファをそこに切り替える。"
-  (interactive)
+(defun my-zoxide-read-dir ()
+  "zoxide に記録されたディレクトリを選んで返す (今いるディレクトリは除く)。"
   (unless (executable-find "zoxide")
     (user-error "zoxide がありません"))
   (when (file-remote-p default-directory)
@@ -46,13 +45,24 @@
     (unless dirs
       (user-error "zoxide に記録されたディレクトリがありません"))
     ;; zoxide の並び (よく使う順) のまま出す (vertico に並べ替えさせない)
-    (let ((dir (completing-read "zoxide: "
-                                (completion-table-with-metadata
-                                 dirs '((category . file)
-                                        (display-sort-function . identity)))
-                                nil t)))
-      (my-zoxide-add dir)
-      (find-alternate-file dir))))
+    (completing-read "zoxide: "
+                     (completion-table-with-metadata
+                      dirs '((category . file)
+                             (display-sort-function . identity)))
+                     nil t)))
+(defun my-dired-zoxide-jump ()
+  "zoxide に記録されたディレクトリを選び、今の dired バッファをそこに切り替える。"
+  (interactive)
+  (let ((dir (my-zoxide-read-dir)))
+    (my-zoxide-add dir)
+    (find-alternate-file dir)))
+;; SPC z はどのバッファからでも使う。今のバッファは残し、選んだ場所を dired で開く
+(defun my-zoxide-dired ()
+  "zoxide に記録されたディレクトリを選び、dired で開く。"
+  (interactive)
+  (let ((dir (my-zoxide-read-dir)))
+    (my-zoxide-add dir)
+    (dired dir)))
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map "zz" #'my-dired-zoxide-jump))
 
