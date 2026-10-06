@@ -340,6 +340,37 @@
 (define-key evil-motion-state-map
   (kbd "C-h") 'evil-backward-char)
 
+;; コマンドラインウィンドウ (: の中の C-f や q:) で C-c を押すと、カーソル行を持って
+;; : のコマンドラインに戻る (vim の cmdwin の C-c にならう)。evil には RET (すぐに実行) しかなく、
+;; コマンドラインウィンドウでは補完も効かないので、戻ってから TAB で補完できるようにする
+(defun my-evil-command-window-edit ()
+  "カーソル行を持って、コマンドラインウィンドウを開く前のコマンドラインに戻る。"
+  (interactive)
+  (let ((line (buffer-substring-no-properties
+               (line-beginning-position) (line-end-position)))
+        (buffer evil-command-window-current-buffer)
+        (execute-fn evil-command-window-execute-fn))
+    ;; window の delete-window パラメータ (ミニバッファに戻る処理) は通さずに閉じる
+    (let ((ignore-window-parameters t))
+      (ignore-errors (kill-buffer-and-window)))
+    (unless (buffer-live-p buffer)
+      (user-error "元のバッファがもうありません"))
+    (cond
+     ;; : や / の中の C-f で開いたとき: そのミニバッファの中身を書き換える
+     ((minibufferp buffer)
+      (select-window (active-minibuffer-window))
+      (delete-minibuffer-contents)
+      (insert line))
+     ;; normal state の q: で開いたとき: その行を入れた : を開く
+     ((eq execute-fn #'evil-command-window-ex-execute)
+      (when-let* ((window (get-buffer-window buffer)))
+        (select-window window))
+      (with-current-buffer buffer
+        (evil-ex line)))
+     (t (user-error "このコマンドラインウィンドウからは戻れません (RET で実行する)")))))
+(evil-define-key* '(normal insert) evil-command-window-mode-map
+  (kbd "C-c") #'my-evil-command-window-edit)
+
 ;; evil surround
 (global-evil-surround-mode 1)
 
