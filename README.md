@@ -573,8 +573,8 @@ ranger-cd にならい、`emacs -nw` で開いて、終了したときにいた�
 (2026-10-06 追加)。それまでの `SPC y d` → `C-x C-c` → `cd` → 貼り付け、の手間をなくすため。
 設定は `emacs-cd/` にまとめ、`init.el` は変えていない。
 
-- `emacs-cd/emacs-cd.bash`: シェル関数 `emacs-cd` と、`C-x e` の割り当て (bash 標準の
-  call-last-kbd-macro を上書き)。`~/.bashrc` から読み込む:
+- `emacs-cd/emacs-cd.bash`: シェル関数 `emacs-cd` と、`C-x d` の割り当て (ranger-cd は
+  `C-x r` に移した)。`~/.bashrc` から読み込む:
   ```bash
   . /path/to/emacsSettings/emacs-cd/emacs-cd.bash
   ```

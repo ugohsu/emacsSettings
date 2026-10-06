@@ -16,7 +16,7 @@ emacs-cd() {
     fi
 }
 
-# C-x e で emacs-cd を起動する (bash 標準の call-last-kbd-macro を上書き)
+# C-x d で emacs-cd を起動する (ranger-cd は C-x r)
 if [[ $- == *i* ]]; then
-    bind '"\C-xe":"emacs-cd\C-m"'
+    bind '"\C-xd":"emacs-cd\C-m"'
 fi
