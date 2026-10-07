@@ -456,8 +456,11 @@
 ;; eshell から乗り換えた (2026-09-26)。eshell の設定は archive.el に移した
 ;; eat は C-h をターミナルに送らないので、insert state でだけ ^H として bash に送り
 ;; backspace として効かせる (normal state では evil の左移動のまま)
+;; ただし line mode (C-c C-l。SKK で日本語を打つときに使う) では、入力欄は Emacs のテキストなので、
+;; C-h は bash に送らず Emacs の文字を消す (line mode のキーマップは eat-mode-map より優先される)
 (with-eval-after-load 'eat
-  (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input))
+  (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input)
+  (evil-define-key 'insert eat-line-mode-map (kbd "C-h") #'delete-backward-char))
 
 ;;;;
 ;;;; python

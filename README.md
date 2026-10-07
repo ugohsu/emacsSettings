@@ -449,6 +449,10 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
 - `C-h` は insert state では ^H として bash に送り、backspace として効かせている
   (`init.el` の eat の節)。normal state では vim と同じく左移動 (evil の節で
   `evil-motion-state-map` に設定。普通のバッファでも同じ)。
+- SKK で日本語を打つときは、`C-c C-l` で line mode にする (`C-c C-j` で元の semi-char mode に戻る)。
+  semi-char mode では打ったキーがそのまま bash に送られ、SKK が変換中の文字を置く場所がないため。
+  line mode ではプロンプトの後ろが普通のテキストになり、`RET` で bash に送る。
+  line mode の insert state では `C-h` を bash に送らず、Emacs の文字を消す (2026-10-07 追加)。
 - Emacs を終了すると、eat で動かしていたプロセス (`jupyter lab` など) も止まる。
 - ESC は evil の normal state に入る (evil-collection の既定)。normal state では
   `SPC` メニューなど普段のキーが使える。
