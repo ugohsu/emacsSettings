@@ -494,7 +494,8 @@
 (setq python-shell-interpreter "python3")
 
 ;; Eglot の設定
-(require 'eglot)
+;; eglot は起動時には読み込まない (起動の 2 割ほどを占めていた)。eglot-ensure は autoload なので、
+;; Python のファイルを開いたときに初めて読み込まれる
 (add-hook 'python-mode-hook 'eglot-ensure)
 
 ;;;;
