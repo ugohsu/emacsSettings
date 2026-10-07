@@ -335,6 +335,9 @@
   "3" #'split-window-right)
 ;; 割り当てのないキーは何もしない (read-char 版と同じく、undefined のエラーを出さない)
 (define-key my-spc-map [t] #'ignore)
+;; ただし C-h は割り当てなしのままにして、which-key のページ送りなど (prefix-help-command) を使えるようにする
+;; (nil を明示すると [t] より優先される)
+(define-key my-spc-map (kbd "C-h") nil)
 
 ;; keymap
 (define-key evil-motion-state-map
@@ -450,6 +453,7 @@
   "n" #'my-dired-copy-file-name)
 ;; 割り当てのないキーは何もしない (SPC メニューと同じ)
 (define-key my-dired-yank-map [t] #'ignore)
+(define-key my-dired-yank-map (kbd "C-h") nil)
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map (kbd "SPC y") my-dired-yank-map))
 
