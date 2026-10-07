@@ -314,8 +314,6 @@
   "/" #'consult-line
   "o" #'my-consult-outline
   ":" #'my-eat-new-other-window
-  ;; eat の中で、SKK で打った日本語を入力行に送る (eat の節)
-  "i" #'my-eat-send-string
   "h" #'evil-window-left
   "j" #'evil-window-down
   "k" #'evil-window-up
@@ -458,22 +456,18 @@
 ;; eshell から乗り換えた (2026-09-26)。eshell の設定は archive.el に移した
 ;; eat は C-h をターミナルに送らないので、insert state でだけ ^H として bash に送り
 ;; backspace として効かせる (normal state では evil の左移動のまま)
-;; ただし line mode (C-c C-l。SKK で日本語を打つときに使う) では、入力欄は Emacs のテキストなので、
-;; C-h は bash に送らず Emacs の文字を消す (line mode のキーマップは eat-mode-map より優先される)
 (with-eval-after-load 'eat
-  (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input)
-  (evil-define-key 'insert eat-line-mode-map (kbd "C-h") #'delete-backward-char))
+  (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input))
 
-;; SPC i: ミニバッファで打った文字列を eat の入力行 (カーソル位置) に送る。
-;; eat の semi-char mode では SKK が使えないので、日本語はミニバッファで打つ
+;; SPC i (eat の normal state でだけ): ミニバッファで打った文字列を eat の入力行 (カーソル位置) に送る。
+;; eat では SKK が使えないので、日本語はミニバッファで打つ
 ;; (SKK のひらがなモードで始める。送ったあとは insert state に戻り、続けて打つか RET で実行する)
+;; (dired の SPC y と同じく、eat の normal state でだけ SPC メニューに i を足す)
 (defvar my-eat-send-string-history nil
   "`my-eat-send-string' で送った文字列の履歴 (savehist で保存される)。")
 (defun my-eat-send-string ()
   "ミニバッファで SKK のひらがなモードから文字列を打ち、eat の入力行に送る。"
   (interactive)
-  (unless (and (derived-mode-p 'eat-mode) (bound-and-true-p eat-terminal))
-    (user-error "eat のバッファで使ってください"))
   (let* ((minibuf nil)
          (string
           (minibuffer-with-setup-hook
@@ -481,7 +475,7 @@
                 (setq minibuf (current-buffer))
                 (skk-mode 1))
             (unwind-protect
-                (read-string "eat に送る: " nil 'my-eat-send-string-history)
+                (read-string "eat: " nil 'my-eat-send-string-history)
               ;; ミニバッファのバッファは使い回されるので、SKK を切っておく
               ;; (切らないと、次の M-x なども SKK のひらがなモードで始まる)
               (when (buffer-live-p minibuf)
@@ -490,6 +484,8 @@
       ;; eat-yank と同じく、bracketed paste として送る (bash がキー操作として解釈しない)
       (eat-term-send-string-as-yank eat-terminal string))
     (evil-insert-state)))
+(with-eval-after-load 'eat
+  (evil-define-key 'normal eat-mode-map (kbd "SPC i") #'my-eat-send-string))
 
 ;;;;
 ;;;; python
