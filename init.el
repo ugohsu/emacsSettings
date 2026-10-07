@@ -1,5 +1,12 @@
 ;;; -*- lexical-binding: t; -*-
 
+;; 起動中だけガベージコレクションをほぼ止めて、読み込みを速くする
+;; (起動が終わったら元の値に戻す)
+(let ((default gc-cons-threshold))
+  (setq gc-cons-threshold most-positive-fixnum)
+  (add-hook 'emacs-startup-hook
+            (lambda () (setq gc-cons-threshold default))))
+
 ;; ロードパス
 (add-to-list 'load-path "~/.emacs.d/site-lisp")
 (setenv "PATH" (concat "$HOME/controls/scripts:$HOME/.local/bin:" (getenv "PATH")))
