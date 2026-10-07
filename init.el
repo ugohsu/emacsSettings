@@ -314,6 +314,8 @@
   "/" #'consult-line
   "o" #'my-consult-outline
   ":" #'my-eat-new-other-window
+  ;; eat の中で、SKK で打った日本語を入力行に送る (eat の節)
+  "i" #'my-eat-send-string
   "h" #'evil-window-left
   "j" #'evil-window-down
   "k" #'evil-window-up
@@ -461,6 +463,33 @@
 (with-eval-after-load 'eat
   (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input)
   (evil-define-key 'insert eat-line-mode-map (kbd "C-h") #'delete-backward-char))
+
+;; SPC i: ミニバッファで打った文字列を eat の入力行 (カーソル位置) に送る。
+;; eat の semi-char mode では SKK が使えないので、日本語はミニバッファで打つ
+;; (SKK のひらがなモードで始める。送ったあとは insert state に戻り、続けて打つか RET で実行する)
+(defvar my-eat-send-string-history nil
+  "`my-eat-send-string' で送った文字列の履歴 (savehist で保存される)。")
+(defun my-eat-send-string ()
+  "ミニバッファで SKK のひらがなモードから文字列を打ち、eat の入力行に送る。"
+  (interactive)
+  (unless (and (derived-mode-p 'eat-mode) (bound-and-true-p eat-terminal))
+    (user-error "eat のバッファで使ってください"))
+  (let* ((minibuf nil)
+         (string
+          (minibuffer-with-setup-hook
+              (lambda ()
+                (setq minibuf (current-buffer))
+                (skk-mode 1))
+            (unwind-protect
+                (read-string "eat に送る: " nil 'my-eat-send-string-history)
+              ;; ミニバッファのバッファは使い回されるので、SKK を切っておく
+              ;; (切らないと、次の M-x なども SKK のひらがなモードで始まる)
+              (when (buffer-live-p minibuf)
+                (with-current-buffer minibuf (skk-mode -1)))))))
+    (unless (string-empty-p string)
+      ;; eat-yank と同じく、bracketed paste として送る (bash がキー操作として解釈しない)
+      (eat-term-send-string-as-yank eat-terminal string))
+    (evil-insert-state)))
 
 ;;;;
 ;;;; python

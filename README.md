@@ -435,6 +435,7 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
 | キー | 内容 |
 |---|---|
 | `SPC :` | 今のバッファのディレクトリで、新しい eat のシェルを別ウィンドウに開く (押すたびに別のシェル) |
+| `SPC i` | eat の中で、ミニバッファに打った文字列を入力行に送る (SKK のひらがなモードで始まる) |
 | `:!` (evil)・`M-!` | 1回だけシェルコマンドを実行 (bash で動く。使い方は `tutor/shell`) |
 
 - `.qmd` などを編集中に `SPC :` を押せば、同じディレクトリでシェルが開く。
@@ -449,9 +450,14 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
 - `C-h` は insert state では ^H として bash に送り、backspace として効かせている
   (`init.el` の eat の節)。normal state では vim と同じく左移動 (evil の節で
   `evil-motion-state-map` に設定。普通のバッファでも同じ)。
-- SKK で日本語を打つときは、`C-c C-l` で line mode にする (`C-c C-j` で元の semi-char mode に戻る)。
-  semi-char mode では打ったキーがそのまま bash に送られ、SKK が変換中の文字を置く場所がないため。
+- 日本語は `SPC i` (normal state で) で打つ (2026-10-07 追加)。eat の普段の semi-char mode では、
+  打ったキーがそのまま bash に送られ、SKK が変換中の文字を置く場所がないため。
+  ミニバッファが SKK のひらがなモードで開き、`RET` で eat の入力行のカーソル位置に送って
+  insert state に戻る (続けて打つか、`RET` で実行する)。送った文字列は履歴に残り、`M-p` で呼び出せる。
+  SKK は変換中 (▼) に `RET` を押すと、確定と同時に送る。
+- line mode (`C-c C-l`。`C-c C-j` で元の semi-char mode に戻る) でも SKK で打てる。
   line mode ではプロンプトの後ろが普通のテキストになり、`RET` で bash に送る。
+  ただし bash の補完や `C-w` などが効かず、モードの切り替えも手間なので、ふだんは `SPC i` を使う。
   line mode の insert state では `C-h` を bash に送らず、Emacs の文字を消す (2026-10-07 追加)。
 - Emacs を終了すると、eat で動かしていたプロセス (`jupyter lab` など) も止まる。
 - ESC は evil の normal state に入る (evil-collection の既定)。normal state では
