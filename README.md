@@ -3,7 +3,7 @@
 ## Emacs のビルド
 
 ```bash
-sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev libgccjit-14-dev
+sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev libsqlite3-dev libgccjit-14-dev
 ./configure --with-x-toolkit=gtk3 --without-toolkit-scroll-bars --without-xaw3d --without-xim --without-rsvg --without-xpm --without-tiff --without-gpm --with-wide-int 
 make && sudo make install
 ```
@@ -15,6 +15,14 @@ make && sudo make install
   この状態で `eww` を使うと `error in process filter: Symbol's function definition is void: libxml-parse-html-region`
   というエラーになる(2026-09-18に発覚。当時のビルド(`/home/ugos/progfile/emacs-31.1`)では未導入だったため発生)。
   再ビルド時は必ず上記コマンドで `libxml2-dev` を入れてから `configure` すること。
+- `libsqlite3-dev` も、無いと `configure` がエラーを出さずに SQLite サポートなしで進む。
+  この状態で `M-x sqlite-mode-open-file` を使うと `This Emacs doesn't have SQLite support, so it can't view SQLite files`
+  というエラーになる (2026-10-08 にクライアントマシンで発覚)。`configure` の最後の一覧に
+  `Does Emacs use -lsqlite3?  yes` と出ること、ビルド後に `(sqlite-available-p)` が `t` を返すことで確かめられる。
+  (`M-x sql-sqlite` は外部の `sqlite3` コマンドを動かすだけなので、SQLite サポートがなくても使える)
+- 足りないライブラリを入れてビルドし直すときは、アンインストールしなくてよい。ビルドしたソースの
+  ディレクトリで `configure` (上と同じオプション) からやり直し、`make && sudo make install` で上書きする。
+  動いている Emacs は古いままなので、終了して起動し直す。
 - `texinfo` は不要。texlive と衝突するため apt での導入を避ける。
 
 ## パッケージのインストール
