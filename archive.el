@@ -295,3 +295,17 @@
 ;;   ;; 1回だけのシェルコマンド実行 (bash で動かしたいときは M-! の shell-command)
 ;;   ;; (以前は C-: に割り当てていたが、-nw の端末では C-: が届かないのでこちらに移した)
 ;;   ";" #'eshell-command
+
+;;;;
+;;;; pdf を開くと zathura で表示する (auto-mode-alist でバッファを作る途中に消す)
+;;;; (開く途中でバッファを消すため、dired の l で開くと別の dired バッファに切り替わってしまった。
+;;;; dired の E (dired-do-open) や embark の x (open-externally)、& で zathura ? を使うことにしたため
+;;;; init.el から移動, 2026-10-08)
+;;;;
+;; (when (executable-find "zathura")
+;;   (defun my-open-pdf-with-zathura ()
+;;     (let ((file (buffer-file-name)))
+;;       (kill-buffer)
+;;       (start-process "zathura" nil "zathura" file)))
+;;   (add-to-list 'auto-mode-alist
+;;                '("\\.[pP][dD][fF]\\'" . my-open-pdf-with-zathura)))

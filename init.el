@@ -137,15 +137,6 @@
 (defalias 'ff 'find-file)
 
 
-;; pdf の表示 (zathura によって開く)
-(when (executable-find "zathura") 
-  (defun my-open-pdf-with-zathura ()
-    (let ((file (buffer-file-name)))
-      (kill-buffer)
-      (start-process "zathura" nil "zathura" file)))
-  (add-to-list 'auto-mode-alist
-               '("\\.[pP][dD][fF]\\'" . my-open-pdf-with-zathura)))
-
 ;;;;
 ;;;; skk
 ;;;;
