@@ -33,7 +33,7 @@
 ;;;; 見た目
 ;;;;
 ;; テーマ (環境ごとに変えたいときは local.el で上書きする)
-(load-theme 'ef-day t)
+(load-theme 'ef-cyprus t)
 
 ;; 英字フォントを標準にし、日本語フォントだけ上書きする
 (set-face-attribute 'default nil :family "Ricty Diminished Discord" :height 150)
