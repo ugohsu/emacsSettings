@@ -541,9 +541,9 @@
 ;;;;
 (autoload 'yatex-mode "yatex" "Yet Another LaTeX mode" t)
 (add-to-list 'auto-mode-alist '("\\.tex\\'" . yatex-mode))
-(setq dvi2-command "zathura"
-      tex-preview-command "zathura"
-      tex-command "uplatex --kanji=utf8"
+;; プレビュー (C-c t p) のビューアは指定しない。PDF なら YaTeX が evince・okular などから
+;; 見つけたものが初期値になる (変えたい環境では local.el で tex-pdfview-command を設定する)
+(setq tex-command "uplatex --kanji=utf8"
       bibtex-command "pbibtex --kanji=utf8"
       YaTeX-latex-message-code 'utf-8
       YaTeX-kanji-code nil)

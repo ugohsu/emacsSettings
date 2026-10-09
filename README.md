@@ -110,7 +110,7 @@ make && sudo make install
 - マジックコメントにより、YaTeX はそのファイルだけ `lualatex` でタイプセットする
 - `--interaction=nonstopmode` はエラー時にハングしないために必要
 - `luatexja` パッケージで日本語組版が有効になる
-- タイプセット後のプレビューは従来通り `C-c t p` → zathura で行う
+- タイプセット後のプレビューは従来通り `C-c t p` で行う (ビューアの初期値は YaTeX が見つけたもの。`init.el` では指定しない)
 
 ## Python の補完・定義ジャンプを支援する Eglot (LSP クライアント) の導入
 
