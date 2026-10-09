@@ -30,7 +30,7 @@
 (defvar my-dired-preview-keep-commands
   '(dired-next-line dired-previous-line evil-next-line evil-previous-line
     dired-next-dirline dired-prev-dirline
-    evil-goto-first-line evil-goto-line evil-beginning-of-line
+    evil-beginning-of-line
     evil-search-next evil-search-previous
     evil-scroll-down evil-scroll-up evil-scroll-page-down evil-scroll-page-up
     evil-scroll-line-to-top evil-scroll-line-to-center evil-scroll-line-to-bottom
@@ -135,19 +135,14 @@
     (quit-windows-on buffer)
     (kill-buffer buffer)))
 
-(defun my-dired-preview--selected-dired ()
-  "選ばれているウィンドウのバッファが dired なら、そのバッファを返す。"
+(defun my-dired-preview--selected-dired-file ()
+  "選ばれているウィンドウが dired なら、カーソル行のファイルを返す。
+dired 以外や、dired でもファイルのない行 (見出しや空行) では nil。"
   ;; コマンドの終わりの今のバッファではなく、選ばれているウィンドウのバッファで見る
   ;; (SPC : の eat のように、with-current-buffer の中で別のウィンドウを選ぶコマンドがある)
-  (let ((buffer (window-buffer (selected-window))))
-    (and (with-current-buffer buffer (derived-mode-p 'dired-mode))
-         buffer)))
-
-(defun my-dired-preview--selected-dired-file ()
-  "選ばれているウィンドウが dired なら、カーソル行のファイルを返す (ファイルのない行では nil)。"
-  (when-let* ((buffer (my-dired-preview--selected-dired)))
-    (with-current-buffer buffer
-      (dired-get-filename nil t))))
+  (with-current-buffer (window-buffer (selected-window))
+    (and (derived-mode-p 'dired-mode)
+         (dired-get-filename nil t))))
 
 (defun my-dired-preview--pre-command ()
   "カーソルを動かすだけのコマンドでなければ、走る前にプレビューを閉じる (pre-command-hook 用)。"
@@ -155,24 +150,24 @@
     (my-dired-preview--close)))
 
 (defun my-dired-preview--post-command ()
-  "選ばれているウィンドウが dired なら、少し待ってからプレビューを出す (post-command-hook 用)。
-dired 以外なら閉じる。カーソル行のファイルが変わっていないうえに出したままなら、何もしない
-(ファイルのない行 (見出しなど) でも、それまでのプレビューのままにする)。"
-  (if (not (my-dired-preview--selected-dired))
-      (my-dired-preview--close)
-    (let ((file (my-dired-preview--selected-dired-file)))
-      (unless (or (null file)
-                  (and (equal file my-dired-preview--file)
-                       (get-buffer-window my-dired-preview--buffer-name)))
-        (my-dired-preview--cancel-timer)
-        (setq my-dired-preview--timer
-              (run-with-idle-timer
-               my-dired-preview-delay nil
-               (lambda ()
-                 ;; 待っているあいだに別のウィンドウに移っていたら出さない
-                 (when (and my-dired-preview-mode
-                            (equal (my-dired-preview--selected-dired-file) file))
-                   (my-dired-preview--show file)))))))))
+  "カーソル行のファイルを、少し待ってからプレビューする (post-command-hook 用)。
+選ばれているウィンドウが dired でないか、ファイルのない行 (見出しや空行) なら閉じる。
+カーソル行のファイルが変わっていないうえに出したままなら、何もしない。"
+  (let ((file (my-dired-preview--selected-dired-file)))
+    (cond
+     ((null file)
+      (my-dired-preview--close))
+     ((not (and (equal file my-dired-preview--file)
+                (get-buffer-window my-dired-preview--buffer-name)))
+      (my-dired-preview--cancel-timer)
+      (setq my-dired-preview--timer
+            (run-with-idle-timer
+             my-dired-preview-delay nil
+             (lambda ()
+               ;; 待っているあいだに別のウィンドウに移っていたら出さない
+               (when (and my-dired-preview-mode
+                          (equal (my-dired-preview--selected-dired-file) file))
+                 (my-dired-preview--show file)))))))))
 
 (define-minor-mode my-dired-preview-mode
   "dired のカーソル行のファイルを、隣のウィンドウに軽くプレビューする。"
