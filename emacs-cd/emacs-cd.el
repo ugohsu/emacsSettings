@@ -45,4 +45,12 @@
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map "q" #'emacs-cd-dired-quit))
 
+;; 起動したら zp のプレビューを有効にしておく (ranger と同じく、開いたらすぐプレビューが出る)
+;; -l はコマンドラインのディレクトリを開く前に読まれるので、開き終わった emacs-startup-hook で有効にする
+;; (ファイルを開いて dired を出ると、ふだんどおりプレビューは切れる。戻ったら zp でまた出せる)
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (when (and (fboundp 'my-dired-preview-mode) (derived-mode-p 'dired-mode))
+              (my-dired-preview-mode 1))))
+
 ;;; emacs-cd.el ends here

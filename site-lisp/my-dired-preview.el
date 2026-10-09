@@ -11,6 +11,10 @@
 ;; 有効・無効は Emacs 全体で 1 つ。dired の中にいる間は h・l・zz で移っても続き、
 ;; dired 以外のバッファに移ると切れる (プレビューのウィンドウに移っただけなら切れない)。
 ;; プレビューは、zp を押した dired のウィンドウを半分に分けて出す (横長なら右、縦長なら下)。
+;; ウィンドウは自分で管理せず、display-buffer で出して quit-windows-on で閉じる。
+;; display-buffer がウィンドウに付ける quit-restore の記録により、閉じるときは
+;; プレビューのために分けたウィンドウだけが消え、ほかのコマンドがそのウィンドウを
+;; 使っていたら (dired から C-x g の magit など) 何もしない。
 ;; TRAMP 先はプレビューしない。
 
 (defvar my-dired-preview-delay 0.05
@@ -23,8 +27,6 @@
 (defconst my-dired-preview--buffer-name " *dired-preview*"
   "プレビューのバッファ名 (先頭が空白なのでバッファの一覧には出ない)。")
 (defvar my-dired-preview--timer nil)
-(defvar my-dired-preview--window nil
-  "プレビュー用に分けて作ったウィンドウ。無効にしたときに、このウィンドウだけを消す。")
 (defvar my-dired-preview-mode)
 (declare-function dired-get-filename "dired")
 
@@ -68,21 +70,25 @@
 
 (defun my-dired-preview-window ()
   "プレビューを出していれば、そのウィンドウを返す (emacs-cd の q が、ウィンドウを数えるときに除く)。"
-  (and (window-live-p my-dired-preview--window) my-dired-preview--window))
+  (get-buffer-window my-dired-preview--buffer-name))
 
-(defun my-dired-preview--get-window ()
-  "プレビューのウィンドウを返す。なければ、選択中の (dired の) ウィンドウを半分に分けて作る。
-ウィンドウが横長なら右に、縦長なら下に分ける。小さくて分けられなければ nil。"
-  (if (window-live-p my-dired-preview--window)
-      my-dired-preview--window
-    (let* ((window (selected-window))
-           ;; 端末 (emacs -nw) では 1 文字が 1 ピクセルと数えられるので、
-           ;; 文字の縦横比 (おおよそ 2:1) で高さを補正して見た目の形で比べる
-           (height (* (window-pixel-height window) (if (display-graphic-p) 1 2))))
-      (setq my-dired-preview--window
-            (ignore-errors
-              (split-window window nil
-                            (if (> (window-pixel-width window) height) 'right 'below)))))))
+(defun my-dired-preview--display (buffer)
+  "BUFFER を、選択中の dired のウィンドウを半分に分けて出す。
+ウィンドウが横長なら右に、縦長なら下に分ける。小さくて分けられなければ nil を返す。"
+  (let* ((window (selected-window))
+         ;; 端末 (emacs -nw) では 1 文字が 1 ピクセルと数えられるので、
+         ;; 文字の縦横比 (おおよそ 2:1) で高さを補正して見た目の形で比べる
+         (wide (> (window-pixel-width window)
+                  (* (window-pixel-height window) (if (display-graphic-p) 1 2)))))
+    ;; 大きさは dired のウィンドウの半分を数 (桁数・行数) で渡す
+    ;; (0.5 のような割合はフレームに対する割合になり、分けた dired が押しつぶされる)
+    (display-buffer buffer
+                    `(display-buffer-in-direction
+                      (window . ,window)
+                      (direction . ,(if wide 'right 'below))
+                      ,(if wide
+                           `(window-width . ,(/ (window-total-width window) 2))
+                         `(window-height . ,(/ (window-total-height window) 2)))))))
 
 (defun my-dired-preview--show (file)
   "FILE のプレビューを、dired の隣のウィンドウに出す。"
@@ -94,8 +100,9 @@
         (goto-char (point-min)))
       (setq buffer-read-only t
             truncate-lines t))
-    (if-let* ((window (my-dired-preview--get-window)))
-        (set-window-buffer window buffer)
+    ;; すでに出ていれば中身を書き換えるだけにする (display-buffer を呼び直すと大きさが変わる)
+    (unless (or (get-buffer-window buffer)
+                (my-dired-preview--display buffer))
       (message "ウィンドウが小さいので、プレビューを出せません"))
     (setq my-dired-preview--file file)))
 
@@ -131,10 +138,8 @@
       (cancel-timer my-dired-preview--timer))
     (setq my-dired-preview--timer nil
           my-dired-preview--file nil)
-    (when (window-live-p my-dired-preview--window)
-      (ignore-errors (delete-window my-dired-preview--window)))
-    (setq my-dired-preview--window nil)
     (when-let* ((buffer (get-buffer my-dired-preview--buffer-name)))
+      (quit-windows-on buffer)
       (kill-buffer buffer))))
 
 (provide 'my-dired-preview)
