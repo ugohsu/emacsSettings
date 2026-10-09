@@ -66,6 +66,10 @@
    (t
     (my-dired-preview--insert-lines "file" "-b" file))))
 
+(defun my-dired-preview-window ()
+  "プレビューを出していれば、そのウィンドウを返す (emacs-cd の q が、ウィンドウを数えるときに除く)。"
+  (and (window-live-p my-dired-preview--window) my-dired-preview--window))
+
 (defun my-dired-preview--get-window ()
   "プレビューのウィンドウを返す。なければ、選択中の (dired の) ウィンドウを半分に分けて作る。
 ウィンドウが横長なら右に、縦長なら下に分ける。小さくて分けられなければ nil。"
