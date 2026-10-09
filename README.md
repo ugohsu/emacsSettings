@@ -358,7 +358,7 @@ rg のオプションとして渡される。
 - `find . -iname '*.hoge' | xargs grep hogehoge` は、シェルでも
   `rg hogehoge --iglob '*.hoge'` で書ける (rg は既定で再帰的に検索する)。
 
-## migemo (SPC / と SPC o で日本語をローマ字のまま検索する)
+## migemo (SPC /・SPC o・SPC b・ファイル名で日本語をローマ字のまま検索する)
 
 行の検索 (`SPC /` の `consult-line`) と見出しの一覧 (`SPC o` の `consult-outline`) では、
 [migemo](https://github.com/emacs-jp/migemo) で、ローマ字の入力をかな・漢字にも一致させている
@@ -369,10 +369,14 @@ SKK で入力するのと違って、入力モードの切り替えも変換も�
 sudo apt install cmigemo   # Debian・Ubuntu。macOS は brew install cmigemo
 ```
 
-- **効かせる範囲**: 候補の種類 `consult-location` (consult-line・consult-outline。consult-mark・
-  consult-global-mark・consult-line-multi も同じ種類) の補完でだけ、orderless の照合に migemo を足している
-  (`completion-category-overrides`)。`M-x` や `SPC b` などには影響しない。SPC メニューから呼ぶと
+- **効かせる範囲**: 次の候補の種類の補完でだけ、orderless の照合に migemo を足している
+  (`completion-category-overrides`)。`M-x` などには影響しない。SPC メニューから呼ぶと
   コマンド名では分けられないので、候補の種類で分けている。
+  - `consult-location`: consult-line・consult-outline (consult-mark・consult-global-mark・
+    consult-line-multi も同じ種類)
+  - `multi-category`: consult-buffer (`SPC b`。バッファ・最近開いたファイル・ブックマーク。2026-10-09 追加)
+  - `file`: find-file・dired の `zz`・`SPC z` など (2026-10-09 追加)。`~/d/o` のような略記を
+    そのまま使えるよう、basic・partial-completion を先に試し、どちらでも見つからないときだけ migemo で探す
 - **isearch では使わない**: isearch は skk-isearch のまま。migemo.el は読み込まれると isearch の検索関数を
   書き換えるので、`init.el` で元に戻している。
 - **辞書**: `init.el` で、Debian (`/usr/share/cmigemo/utf-8/migemo-dict`) と macOS の Homebrew の場所を
@@ -569,7 +573,7 @@ ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zox
 関数と記録の hook・advice は `site-lisp/my-zoxide.el` にまとめ、`init.el` から `require` している
 (`zz`・`SPC d`・`SPC :`・`SPC z` の割り当ては `init.el` にある)。
 dired の外からも使えるよう、`SPC z` でも同じ候補から選べる (2026-10-06 追加)。`zz` と同じ関数を呼ぶ。
-絞り込みは fzf ではなく vertico・orderless。候補は zoxide の並び (よく使う順) のまま出す
+絞り込みは fzf ではなく vertico・orderless (ローマ字で日本語のディレクトリ名にも一致する migemo も効く)。候補は zoxide の並び (よく使う順) のまま出す
 (`display-sort-function` を `identity` にして、vertico の並べ替えを止めている)。
 
 `zoxide add` で記録するのは、その場所で作業したときだけ。`h`・`l` で歩き回っただけの

@@ -164,10 +164,13 @@
       completion-category-overrides '((file (styles basic partial-completion))))
 
 ;;;;
-;;;; migemo (ローマ字のまま日本語に一致させる。SPC / と SPC o だけで使う)
+;;;; migemo (ローマ字のまま日本語に一致させる。SPC /・SPC o・SPC b・ファイル名で使う)
 ;;;;
-;; consult-line・consult-outline の候補の種類 (consult-location) でだけ、orderless の照合に
-;; migemo を足す (SPC メニューから呼ぶとコマンド名では分けられないので、候補の種類で分ける)。
+;; 候補の種類ごとに、orderless の照合に migemo を足す (SPC メニューから呼ぶとコマンド名では
+;; 分けられないので、候補の種類で分ける。M-x などには足さない):
+;;   consult-location  consult-line・consult-outline (SPC /・SPC o)
+;;   multi-category    consult-buffer (SPC b。バッファ・最近開いたファイル・ブックマーク)
+;;   file              find-file・zz・SPC z など。basic・partial-completion で見つからないときだけ使う
 ;; cmigemo・辞書・migemo パッケージのどれかがない環境では何もしない (普通の orderless で絞り込む)
 (defvar my-migemo-dictionary
   (seq-find #'file-exists-p
@@ -197,8 +200,10 @@
           (invalid-regexp nil)))))
   (orderless-define-completion-style my-orderless-migemo
     (orderless-matching-styles '(orderless-literal orderless-regexp my-orderless-migemo)))
-  (add-to-list 'completion-category-overrides
-               '(consult-location (styles my-orderless-migemo))))
+  (add-to-list 'completion-category-overrides '(consult-location (styles my-orderless-migemo)))
+  (add-to-list 'completion-category-overrides '(multi-category (styles my-orderless-migemo)))
+  (setf (alist-get 'file completion-category-overrides)
+        '((styles basic partial-completion my-orderless-migemo))))
 
 ;;;;
 ;;;; consult (検索・バッファ切替などの補完コマンド集)

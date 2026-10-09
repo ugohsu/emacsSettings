@@ -3,7 +3,7 @@
 ;; init.el から (require 'my-zoxide) で読み込む。zz・SPC d・SPC :・SPC z の割り当ては init.el にある。
 ;; zoxide がないマシンでは、記録は何もせず、zz・SPC z はメッセージを出すだけにする。
 
-;; zz (dired の中) と SPC z (どこからでも) で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless)
+;; zz (dired の中) と SPC z (どこからでも) で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless・migemo)
 ;; 記録するのは、その場所で作業したときだけにする: ファイルを開いたときのそのディレクトリ、
 ;; zz・SPC z・SPC d で開いた場所、SPC : で eat を開いた場所 (init.el の eat の節)、dired の上での !・&・:!
 ;; (h・l で歩き回っただけのディレクトリは記録しない。ranger 側と同じ方針)
