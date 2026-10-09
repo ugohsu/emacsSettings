@@ -272,7 +272,7 @@
 (require 'my-dired-preview)  ; dired のカーソル行のファイルのプレビュー (zp)
 
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
-;; dired と eat の normal state では、それぞれの節で SPC y・SPC i を足している
+;; eat の normal state では、eat の節で SPC i を足している
 (defvar-keymap my-spc-map
   :doc "SPC に続けて押すキー"
   "SPC" #'scroll-up-command
@@ -373,8 +373,9 @@
                         dired-listing-switches
                       "-l")))
 
-;; SPC y でカーソル行のファイルのパス類をコピーする (ranger の yp・yd・yn にならう)
-;; (dired の normal state でだけ SPC メニューに y を足す。SPC のほかのキーはそのまま使える)
+;; y でカーソル行のファイルのパス類をコピーする (ranger の yp・yd・yn にならう)
+;; (dired の normal state の y (evil-yank) を上書きする。行のテキストをコピーしたいときは
+;; visual state の y を使う。ファイル名だけなら evil-collection の Y でもコピーできる)
 (defun my-dired--copy (string)
   "STRING を kill-ring にコピーして表示する。"
   (kill-new string)
@@ -417,7 +418,7 @@
     "zh" #'my-dired-toggle-dotfiles
     "zz" #'my-zoxide-dired
     "zp" #'my-dired-preview-mode
-    (kbd "SPC y") my-dired-yank-map))
+    "y" my-dired-yank-map))
 
 ;;;;
 ;;;; eat (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
