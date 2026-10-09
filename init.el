@@ -409,7 +409,7 @@
 ;; h・l は ranger のように親ディレクトリへ戻る・ディレクトリに入る (ファイルなら開く) にする
 ;; (dired では行内の左右移動はほぼ使わないので上書きする)
 ;; zz は zoxide に記録されたディレクトリを選んで飛ぶ (ranger の zz にならう。SPC z と同じ)
-;; zp はカーソル行のファイルのプレビューを右に出す・消す (ranger の zp にならう。dired を出ると消える)
+;; zp はカーソル行のファイルのプレビューを隣に出す・消す (ranger の zp にならう。dired を出ると消える)
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map
     "f" #'my-dired-find-file-by-name
