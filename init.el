@@ -16,8 +16,16 @@
             (lambda () (setq gc-cons-threshold default))))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp")
-(setenv "PATH" (concat "$HOME/controls/scripts:$HOME/.local/bin:" (getenv "PATH")))
-(setq exec-path (parse-colon-path (getenv "PATH")))
+;; 自分のスクリプトの置き場所を、探す場所の先頭に足す。Emacs が直接起動するプログラムは exec-path から、
+;; :! や M-! などシェル経由で起動するものは環境変数 PATH から探すので、両方を同じ並びにそろえる
+;; (GUI の Emacs はデスクトップから起動して .bashrc を通らないので、ここで足さないと見つからない。
+;; シェルは PATH の中の $HOME を展開しないので、展開してから入れる。重なったものは 1 つにする)
+(let ((dirs (delete-dups
+             (mapcar #'directory-file-name
+                     (append (mapcar #'expand-file-name '("~/controls/scripts" "~/.local/bin"))
+                             (delq nil (parse-colon-path (getenv "PATH"))))))))
+  (setenv "PATH" (string-join dirs path-separator))
+  (setq exec-path (append (mapcar #'file-name-as-directory dirs) (list exec-directory))))
 
 (require 'package)
 (add-to-list 'package-archives
