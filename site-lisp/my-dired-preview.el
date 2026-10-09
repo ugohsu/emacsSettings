@@ -8,15 +8,17 @@
 ;;   それ以外      → file コマンドの出力 (種類)
 ;; メジャーモードも hook も走らないので、eglot・dir-locals・zoxide の記録などとは関わらない
 ;; (dired-preview パッケージはファイルを実際に開くため、そのあたりで不具合があり見送った)。
-;; 有効・無効 (zp) は Emacs 全体で 1 つで、もう一度 zp を押すまで続く。プレビューを出すかどうかは
-;; そのときの状態だけで決める: dired にいれば出し、dired 以外のバッファに移ると閉じる
-;; (プレビューのウィンドウやミニバッファに移っただけなら閉じない)。h・l・zz で移っても、
-;; ファイルを開いてから dired に戻っても、有効なうちはプレビューが出る。
-;; プレビューは、zp を押した dired のウィンドウを半分に分けて出す (横長なら右、縦長なら下)。
-;; ウィンドウは自分で管理せず、display-buffer で出して quit-windows-on で閉じる。
-;; display-buffer がウィンドウに付ける quit-restore の記録により、閉じるときは
-;; プレビューのために分けたウィンドウだけが消え、ほかのコマンドがそのウィンドウを
-;; 使っていたら (dired から C-x g の magit など) 何もしない。
+;;
+;; プレビューは見るだけのもので、そのウィンドウには入らない (操作したければファイルを開く)。
+;; zp で有効にすると、もう一度 zp を押すまで次のように動く:
+;;   - 選ばれているウィンドウが dired のときだけ、そのウィンドウを半分に分けて出す
+;;     (横長なら右、縦長なら下)
+;;   - カーソルを動かすだけのコマンド (my-dired-preview-keep-commands) のあいだは出したままにし、
+;;     それ以外のコマンドは、走る前 (pre-command-hook) に閉じる
+;; なので、SPC h などのウィンドウの移動、C-x g・SPC :・C (コピー) などは、どれもプレビューのない
+;; 画面で動き、プレビューのウィンドウと取り合いにならない。コマンドが終わって dired にいれば、また出す。
+;; 閉じるときは quit-windows-on に任せる (display-buffer が付ける quit-restore の記録で、
+;; プレビューのために分けたウィンドウだけが消える)。
 ;; TRAMP 先はプレビューしない。
 
 (defvar my-dired-preview-delay 0.05
@@ -25,15 +27,30 @@
   "テキストのファイルで読み込む先頭のバイト数。")
 (defvar my-dired-preview-max-lines 200
   "PDF・ディレクトリで表示する行数。")
+(defvar my-dired-preview-keep-commands
+  '(dired-next-line dired-previous-line evil-next-line evil-previous-line
+    dired-next-dirline dired-prev-dirline
+    evil-goto-first-line evil-goto-line evil-beginning-of-line
+    evil-search-next evil-search-previous
+    evil-scroll-down evil-scroll-up evil-scroll-page-down evil-scroll-page-up
+    evil-scroll-line-to-top evil-scroll-line-to-center evil-scroll-line-to-bottom
+    scroll-up-command scroll-down-command mwheel-scroll
+    ;; C-M-v などで、dired にいたままプレビューを送る
+    scroll-other-window scroll-other-window-down
+    ;; 3j などの数の前置
+    digit-argument universal-argument
+    dired-mark dired-unmark dired-unmark-backward dired-unmark-all-marks
+    dired-flag-file-deletion dired-toggle-marks)
+  "プレビューを出したままにするコマンド (カーソルを動かすだけのもの)。
+ほかのコマンドは、走る前にプレビューを閉じる (コマンドが終わって dired にいれば、また出す)。")
 
 (defconst my-dired-preview--buffer-name " *dired-preview*"
   "プレビューのバッファ名 (先頭が空白なのでバッファの一覧には出ない)。")
 (defvar my-dired-preview--timer nil)
-(defvar my-dired-preview-mode)
-(declare-function dired-get-filename "dired")
-
 (defvar my-dired-preview--file nil
   "いま表示しているファイル。同じ行で別のコマンドを押しても表示し直さない。")
+(defvar my-dired-preview-mode)
+(declare-function dired-get-filename "dired")
 
 (defun my-dired-preview--insert-lines (program &rest args)
   "PROGRAM を ARGS で実行し、出力の先頭 `my-dired-preview-max-lines' 行を差し込む。"
@@ -70,12 +87,8 @@
    (t
     (my-dired-preview--insert-lines "file" "-b" file))))
 
-(defun my-dired-preview-window ()
-  "プレビューを出していれば、そのウィンドウを返す (emacs-cd の q が、ウィンドウを数えるときに除く)。"
-  (get-buffer-window my-dired-preview--buffer-name))
-
 (defun my-dired-preview--display (buffer)
-  "BUFFER を、選択中の dired のウィンドウを半分に分けて出す。
+  "BUFFER を、選ばれている dired のウィンドウを半分に分けて出す。
 ウィンドウが横長なら右に、縦長なら下に分ける。小さくて分けられなければ nil を返す。"
   (let* ((window (selected-window))
          ;; 端末 (emacs -nw) では 1 文字が 1 ピクセルと数えられるので、
@@ -93,7 +106,7 @@
                          `(window-height . ,(/ (window-total-height window) 2)))))))
 
 (defun my-dired-preview--show (file)
-  "FILE のプレビューを、dired の隣のウィンドウに出す。"
+  "FILE のプレビューを、選ばれている dired の隣のウィンドウに出す。"
   (let ((buffer (get-buffer-create my-dired-preview--buffer-name)))
     (with-current-buffer buffer
       (let ((inhibit-read-only t))
@@ -118,29 +131,45 @@
     (quit-windows-on buffer)
     (kill-buffer buffer)))
 
-(defun my-dired-preview--update ()
-  "dired にいればプレビューを出し、dired 以外なら閉じる (post-command-hook 用)。
-dired では、カーソル行のファイルが変わったか、プレビューが出ていなければ、少し待ってから出し直す。
-どこにいるかは、選ばれているウィンドウのバッファで決める。コマンドの終わりの今のバッファは、
-with-current-buffer の中で別のウィンドウを選ぶコマンド (SPC : の eat など) では元の dired に戻っている。"
-  (with-current-buffer (window-buffer (selected-window))
-    (cond
-     ((or (minibufferp)
-          (equal (buffer-name) my-dired-preview--buffer-name)))
-     ((derived-mode-p 'dired-mode)
-      (let ((file (dired-get-filename nil t)))
-        (unless (or (null file)
-                    (and (equal file my-dired-preview--file) (my-dired-preview-window)))
-          (when (timerp my-dired-preview--timer)
-            (cancel-timer my-dired-preview--timer))
-          (setq my-dired-preview--timer
-                (run-with-idle-timer
-                 my-dired-preview-delay nil
-                 (lambda ()
-                   (when my-dired-preview-mode
-                     (my-dired-preview--show file))))))))
-     ((get-buffer my-dired-preview--buffer-name)
-      (my-dired-preview--close)))))
+(defun my-dired-preview--selected-dired ()
+  "選ばれているウィンドウのバッファが dired なら、そのバッファを返す。"
+  ;; コマンドの終わりの今のバッファではなく、選ばれているウィンドウのバッファで見る
+  ;; (SPC : の eat のように、with-current-buffer の中で別のウィンドウを選ぶコマンドがある)
+  (let ((buffer (window-buffer (selected-window))))
+    (and (with-current-buffer buffer (derived-mode-p 'dired-mode))
+         buffer)))
+
+(defun my-dired-preview--selected-dired-file ()
+  "選ばれているウィンドウが dired なら、カーソル行のファイルを返す (ファイルのない行では nil)。"
+  (when-let* ((buffer (my-dired-preview--selected-dired)))
+    (with-current-buffer buffer
+      (dired-get-filename nil t))))
+
+(defun my-dired-preview--pre-command ()
+  "カーソルを動かすだけのコマンドでなければ、走る前にプレビューを閉じる (pre-command-hook 用)。"
+  (unless (memq this-command my-dired-preview-keep-commands)
+    (my-dired-preview--close)))
+
+(defun my-dired-preview--post-command ()
+  "選ばれているウィンドウが dired なら、少し待ってからプレビューを出す (post-command-hook 用)。
+dired 以外なら閉じる。カーソル行のファイルが変わっていないうえに出したままなら、何もしない
+(ファイルのない行 (見出しなど) でも、それまでのプレビューのままにする)。"
+  (if (not (my-dired-preview--selected-dired))
+      (my-dired-preview--close)
+    (let ((file (my-dired-preview--selected-dired-file)))
+      (unless (or (null file)
+                  (and (equal file my-dired-preview--file)
+                       (get-buffer-window my-dired-preview--buffer-name)))
+        (when (timerp my-dired-preview--timer)
+          (cancel-timer my-dired-preview--timer))
+        (setq my-dired-preview--timer
+              (run-with-idle-timer
+               my-dired-preview-delay nil
+               (lambda ()
+                 ;; 待っているあいだに別のウィンドウに移っていたら出さない
+                 (when (and my-dired-preview-mode
+                            (equal (my-dired-preview--selected-dired-file) file))
+                   (my-dired-preview--show file)))))))))
 
 (define-minor-mode my-dired-preview-mode
   "dired のカーソル行のファイルを、隣のウィンドウに軽くプレビューする。"
@@ -148,10 +177,12 @@ with-current-buffer の中で別のウィンドウを選ぶコマンド (SPC : �
   :group 'dired
   (if my-dired-preview-mode
       (progn
-        (add-hook 'post-command-hook #'my-dired-preview--update)
-        (when-let* ((file (and (derived-mode-p 'dired-mode) (dired-get-filename nil t))))
+        (add-hook 'pre-command-hook #'my-dired-preview--pre-command)
+        (add-hook 'post-command-hook #'my-dired-preview--post-command)
+        (when-let* ((file (my-dired-preview--selected-dired-file)))
           (my-dired-preview--show file)))
-    (remove-hook 'post-command-hook #'my-dired-preview--update)
+    (remove-hook 'pre-command-hook #'my-dired-preview--pre-command)
+    (remove-hook 'post-command-hook #'my-dired-preview--post-command)
     (my-dired-preview--close)))
 
 (provide 'my-dired-preview)

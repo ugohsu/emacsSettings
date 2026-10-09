@@ -17,7 +17,7 @@
           (insert (expand-file-name dir)))))))
 (add-hook 'kill-emacs-hook #'emacs-cd--write-dir)
 
-;; dired の q: ウィンドウが1つ (zp のプレビューは除く) なら終了し、分割しているときは今までどおり quit-window にする
+;; dired の q: ウィンドウが1つなら終了し、分割しているときは今までどおり quit-window にする
 ;; (ranger の q がタブが残っているうちはタブを閉じ、最後の1つで終了するのにならう。
 ;; dwim の2画面コピーの最中に q で終了してしまわないように)
 ;; dired 以外の q は evil のマクロ記録のまま
@@ -25,15 +25,11 @@
 ;; デーモンなど他の Emacs と辞書の大きさが食い違って確認が出たりして、終了がもたつくため。
 ;; この Emacs で覚えた単語は失われる。C-x C-c などほかの抜け方では、ふだんどおり保存する)
 ;; 辞書バッファはファイルを訪れていないので、フックを外せば保存の確認も出ない
-;; zp のプレビュー (site-lisp/my-dired-preview.el) のウィンドウは数えない (dired + プレビューだけなら終了する)
-(defun emacs-cd--one-window-p ()
-  "zp のプレビューのウィンドウを除いて、ウィンドウが1つなら non-nil。"
-  (let ((preview (and (fboundp 'my-dired-preview-window) (my-dired-preview-window))))
-    (= 1 (length (delq preview (window-list nil 'nomini))))))
+;; zp のプレビュー (site-lisp/my-dired-preview.el) は q が走る前に閉じるので、数えなくてよい
 (defun emacs-cd-dired-quit ()
   "ウィンドウが1つなら SKK の辞書を保存せずに Emacs を終了し、そうでなければ `quit-window' する。"
   (interactive)
-  (if (emacs-cd--one-window-p)
+  (if (one-window-p)
       (let ((skk-hooked (memq 'skk-save-jisyo kill-emacs-hook)))
         (remove-hook 'kill-emacs-hook #'skk-save-jisyo)
         ;; ほかのバッファの保存の確認で取りやめたときは、フックを元に戻す
