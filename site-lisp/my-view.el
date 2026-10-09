@@ -16,6 +16,18 @@
   (when (and (buffer-base-buffer) (bound-and-true-p pm/polymode))
     (pm-switch-to-buffer (list nil (point) (point) (oref pm/polymode -hostmode)))))
 
+(defun my-markdown-view--show-hidden-newlines (limit)
+  "LIMIT まで、隠れたマークアップの改行だけを見えるようにする (font-lock のキーワード用)。
+markdown-view-mode はコードチャンクの囲み線 (```{python} など) を改行まで隠すので、
+囲み線の行が下の行とつながって 1 行に見える。すると k で上の行に移ろうとしても、
+つながった下の行 (元の行) に戻ってしまい、チャンクから上に抜けられない。
+改行を見せて囲み線の行を空行にし、表示・行番号・移動を 1 行ずつ一致させる。"
+  (while (search-forward "\n" limit t)
+    (when (eq (get-text-property (1- (point)) 'invisible) 'markdown-markup)
+      (remove-text-properties (1- (point)) (point) '(invisible nil))))
+  ;; 色付けの対象は見つけなかったことにする (書き換えだけが目的)
+  nil)
+
 (defvar-local my-view-previous-state nil
   "my-markdown-view に入る前の (メジャーモード . buffer-read-only)。")
 
@@ -43,9 +55,11 @@ RESTORE が non-nil なら、view-mode を抜けたときに元のモードへ�
       (setq my-view-previous-state state)
       (add-hook 'view-mode-hook #'my-markdown-view-restore nil t)))
   (setq-local markdown-fontify-code-blocks-natively t)
-  ;; 相対行番号は隠れた行 (```{python} など) も数えるので、[数字] j・k も隠れた行を
+  ;; 囲み線の行は空行として見せる (markdown-mode の色付けで隠したあとに改行だけ戻す)
+  (font-lock-add-keywords nil '((my-markdown-view--show-hidden-newlines)) 'append)
+  ;; 相対行番号は隠れたものも含めて行を数えるので、[数字] j・k も隠れたものを
   ;; 数えるようにして、見えている番号どおりに移動できるようにする
-  ;; (モードを戻すと buffer-local の変数は消えるので、編集用の表示では元どおり)
+  ;; (モードを戻すと buffer-local の変数もキーワードも消えるので、編集用の表示では元どおり)
   (setq-local line-move-ignore-invisible nil)
   (font-lock-update)
   ;; markdown-view-mode は read-only-mode にするだけで q では抜けられないので、
