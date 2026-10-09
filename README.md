@@ -261,6 +261,7 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 
 `SPC v` はバッファを誤編集しない閲覧用表示にする (`my-view-current-buffer`)。
 モードに応じて切り替わる。
+関数は `site-lisp/my-view.el` にまとめ、`init.el` から `require` している (`SPC v` の割り当ては `init.el`)。
 
 | 対象 | 表示 |
 |---|---|
@@ -565,8 +566,8 @@ ranger の `zz` (`../ranger/commands.py`) にならい、dired の `zz` で `zox
 候補から選んで、そのディレクトリを dired で開く (2026-10-06 追加)。
 元の dired バッファは残す (2026-10-07 変更。それまでは今の dired バッファを切り替えて、元のバッファを閉じていた。
 飛んだ先で少し作業して、すぐに `SPC b` で戻ることが多いため)。
-設定は `site-lisp/my-zoxide.el` にまとめ、`init.el` から `require` している
-(`SPC d`・`SPC :`・`SPC z` の割り当ては `init.el` の SPC メニューにある)。
+関数と記録の hook・advice は `site-lisp/my-zoxide.el` にまとめ、`init.el` から `require` している
+(`zz`・`SPC d`・`SPC :`・`SPC z` の割り当ては `init.el` にある)。
 dired の外からも使えるよう、`SPC z` でも同じ候補から選べる (2026-10-06 追加)。`zz` と同じ関数を呼ぶ。
 絞り込みは fzf ではなく vertico・orderless。候補は zoxide の並び (よく使う順) のまま出す
 (`display-sort-function` を `identity` にして、vertico の並べ替えを止めている)。

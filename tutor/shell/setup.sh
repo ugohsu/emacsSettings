@@ -159,7 +159,7 @@ cat > start.el <<'ELISP'
         (kill-buffer))))
   (delete-other-windows)
   (find-file (expand-file-name "00-tutor.md" dir))
-  ;; 課題は閲覧用表示 (SPC v と同じ my-view-current-buffer。init.el で定義) で開く
+  ;; 課題は閲覧用表示 (SPC v と同じ my-view-current-buffer。site-lisp/my-view.el で定義) で開く
   (when (fboundp 'my-view-current-buffer)
     (my-view-current-buffer))
   (split-window-right)

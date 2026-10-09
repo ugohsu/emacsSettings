@@ -1,7 +1,6 @@
 ;;; my-zoxide.el --- dired の zz・SPC z と、作業した場所の zoxide への記録  -*- lexical-binding: t; -*-
 
-;; init.el から (require 'my-zoxide) で読み込む。evil を読み込んだ後に読むこと。
-;; SPC d・SPC :・SPC z の割り当ては init.el の SPC メニュー (my-spc-map) にある。
+;; init.el から (require 'my-zoxide) で読み込む。zz・SPC d・SPC :・SPC z の割り当ては init.el にある。
 ;; zoxide がないマシンでは、記録は何もせず、zz・SPC z はメッセージを出すだけにする。
 
 ;; zz (dired の中) と SPC z (どこからでも) で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless)
@@ -58,8 +57,6 @@
   (let ((dir (my-zoxide-read-dir)))
     (my-zoxide-add dir)
     (dired dir)))
-(with-eval-after-load 'dired
-  (evil-define-key 'normal dired-mode-map "zz" #'my-zoxide-dired))
 
 (provide 'my-zoxide)
 ;;; my-zoxide.el ends here
