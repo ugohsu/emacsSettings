@@ -8,8 +8,10 @@
 ;;   それ以外      → file コマンドの出力 (種類)
 ;; メジャーモードも hook も走らないので、eglot・dir-locals・zoxide の記録などとは関わらない
 ;; (dired-preview パッケージはファイルを実際に開くため、そのあたりで不具合があり見送った)。
-;; 有効・無効は Emacs 全体で 1 つ。dired の中にいる間は h・l・zz で移っても続き、
-;; dired 以外のバッファに移ると切れる (プレビューのウィンドウに移っただけなら切れない)。
+;; 有効・無効 (zp) は Emacs 全体で 1 つで、もう一度 zp を押すまで続く。プレビューを出すかどうかは
+;; そのときの状態だけで決める: dired にいれば出し、dired 以外のバッファに移ると閉じる
+;; (プレビューのウィンドウやミニバッファに移っただけなら閉じない)。h・l・zz で移っても、
+;; ファイルを開いてから dired に戻っても、有効なうちはプレビューが出る。
 ;; プレビューは、zp を押した dired のウィンドウを半分に分けて出す (横長なら右、縦長なら下)。
 ;; ウィンドウは自分で管理せず、display-buffer で出して quit-windows-on で閉じる。
 ;; display-buffer がウィンドウに付ける quit-restore の記録により、閉じるときは
@@ -106,14 +108,26 @@
       (message "ウィンドウが小さいので、プレビューを出せません"))
     (setq my-dired-preview--file file)))
 
+(defun my-dired-preview--close ()
+  "プレビューを閉じる (プレビューのために分けたウィンドウを消し、バッファも消す)。"
+  (when (timerp my-dired-preview--timer)
+    (cancel-timer my-dired-preview--timer))
+  (setq my-dired-preview--timer nil
+        my-dired-preview--file nil)
+  (when-let* ((buffer (get-buffer my-dired-preview--buffer-name)))
+    (quit-windows-on buffer)
+    (kill-buffer buffer)))
+
 (defun my-dired-preview--update ()
-  "カーソル行のファイルが変わっていたら、少し待ってからプレビューし直す (post-command-hook 用)。"
+  "dired にいればプレビューを出し、dired 以外なら閉じる (post-command-hook 用)。
+dired では、カーソル行のファイルが変わったか、プレビューが出ていなければ、少し待ってから出し直す。"
   (cond
    ((or (minibufferp)
         (equal (buffer-name) my-dired-preview--buffer-name)))
    ((derived-mode-p 'dired-mode)
     (let ((file (dired-get-filename nil t)))
-      (unless (or (null file) (equal file my-dired-preview--file))
+      (unless (or (null file)
+                  (and (equal file my-dired-preview--file) (my-dired-preview-window)))
         (when (timerp my-dired-preview--timer)
           (cancel-timer my-dired-preview--timer))
         (setq my-dired-preview--timer
@@ -122,7 +136,8 @@
                (lambda ()
                  (when my-dired-preview-mode
                    (my-dired-preview--show file))))))))
-   (t (my-dired-preview-mode -1))))
+   ((get-buffer my-dired-preview--buffer-name)
+    (my-dired-preview--close))))
 
 (define-minor-mode my-dired-preview-mode
   "dired のカーソル行のファイルを、隣のウィンドウに軽くプレビューする。"
@@ -134,13 +149,7 @@
         (when-let* ((file (and (derived-mode-p 'dired-mode) (dired-get-filename nil t))))
           (my-dired-preview--show file)))
     (remove-hook 'post-command-hook #'my-dired-preview--update)
-    (when (timerp my-dired-preview--timer)
-      (cancel-timer my-dired-preview--timer))
-    (setq my-dired-preview--timer nil
-          my-dired-preview--file nil)
-    (when-let* ((buffer (get-buffer my-dired-preview--buffer-name)))
-      (quit-windows-on buffer)
-      (kill-buffer buffer))))
+    (my-dired-preview--close)))
 
 (provide 'my-dired-preview)
 ;;; my-dired-preview.el ends here
