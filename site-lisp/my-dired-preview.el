@@ -120,24 +120,27 @@
 
 (defun my-dired-preview--update ()
   "dired にいればプレビューを出し、dired 以外なら閉じる (post-command-hook 用)。
-dired では、カーソル行のファイルが変わったか、プレビューが出ていなければ、少し待ってから出し直す。"
-  (cond
-   ((or (minibufferp)
-        (equal (buffer-name) my-dired-preview--buffer-name)))
-   ((derived-mode-p 'dired-mode)
-    (let ((file (dired-get-filename nil t)))
-      (unless (or (null file)
-                  (and (equal file my-dired-preview--file) (my-dired-preview-window)))
-        (when (timerp my-dired-preview--timer)
-          (cancel-timer my-dired-preview--timer))
-        (setq my-dired-preview--timer
-              (run-with-idle-timer
-               my-dired-preview-delay nil
-               (lambda ()
-                 (when my-dired-preview-mode
-                   (my-dired-preview--show file))))))))
-   ((get-buffer my-dired-preview--buffer-name)
-    (my-dired-preview--close))))
+dired では、カーソル行のファイルが変わったか、プレビューが出ていなければ、少し待ってから出し直す。
+どこにいるかは、選ばれているウィンドウのバッファで決める。コマンドの終わりの今のバッファは、
+with-current-buffer の中で別のウィンドウを選ぶコマンド (SPC : の eat など) では元の dired に戻っている。"
+  (with-current-buffer (window-buffer (selected-window))
+    (cond
+     ((or (minibufferp)
+          (equal (buffer-name) my-dired-preview--buffer-name)))
+     ((derived-mode-p 'dired-mode)
+      (let ((file (dired-get-filename nil t)))
+        (unless (or (null file)
+                    (and (equal file my-dired-preview--file) (my-dired-preview-window)))
+          (when (timerp my-dired-preview--timer)
+            (cancel-timer my-dired-preview--timer))
+          (setq my-dired-preview--timer
+                (run-with-idle-timer
+                 my-dired-preview-delay nil
+                 (lambda ()
+                   (when my-dired-preview-mode
+                     (my-dired-preview--show file))))))))
+     ((get-buffer my-dired-preview--buffer-name)
+      (my-dired-preview--close)))))
 
 (define-minor-mode my-dired-preview-mode
   "dired のカーソル行のファイルを、隣のウィンドウに軽くプレビューする。"
