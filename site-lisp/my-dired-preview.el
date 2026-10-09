@@ -48,8 +48,7 @@
   "プレビューのバッファ名 (先頭が空白なのでバッファの一覧には出ない)。")
 (defvar my-dired-preview--timer nil)
 (defvar my-dired-preview--file nil
-  "いま表示しているファイル。同じ行で別のコマンドを押しても表示し直さない。")
-(defvar my-dired-preview-mode)
+  "いま表示しているファイル。同じ行でスクロールなどをしても表示し直さない。")
 (declare-function dired-get-filename "dired")
 
 (defun my-dired-preview--insert-lines (program &rest args)
@@ -108,13 +107,12 @@
 (defun my-dired-preview--show (file)
   "FILE のプレビューを、選ばれている dired の隣のウィンドウに出す。"
   (let ((buffer (get-buffer-create my-dired-preview--buffer-name)))
+    ;; プレビューのウィンドウには入らないので、読み取り専用にはしない
     (with-current-buffer buffer
-      (let ((inhibit-read-only t))
-        (erase-buffer)
-        (my-dired-preview--insert file)
-        (goto-char (point-min)))
-      (setq buffer-read-only t
-            truncate-lines t))
+      (erase-buffer)
+      (my-dired-preview--insert file)
+      (goto-char (point-min))
+      (setq truncate-lines t))
     ;; すでに出ていれば中身を書き換えるだけにする (display-buffer を呼び直すと大きさが変わる)
     (unless (or (get-buffer-window buffer)
                 (my-dired-preview--display buffer))
@@ -130,7 +128,6 @@
 (defun my-dired-preview--close ()
   "プレビューを閉じる (プレビューのために分けたウィンドウを消し、バッファも消す)。"
   (my-dired-preview--cancel-timer)
-  (setq my-dired-preview--file nil)
   (when-let* ((buffer (get-buffer my-dired-preview--buffer-name)))
     (quit-windows-on buffer)
     (kill-buffer buffer)))
@@ -159,15 +156,12 @@ dired 以外や、dired でもファイルのない行 (見出しや空行) で�
       (my-dired-preview--close))
      ((not (and (equal file my-dired-preview--file)
                 (get-buffer-window my-dired-preview--buffer-name)))
+      ;; 待っているあいだにコマンドが走れば、走る前か終わったあとにこのタイマーは止まるので、
+      ;; 出すときに状態を確かめ直さなくてよい
       (my-dired-preview--cancel-timer)
       (setq my-dired-preview--timer
-            (run-with-idle-timer
-             my-dired-preview-delay nil
-             (lambda ()
-               ;; 待っているあいだに別のウィンドウに移っていたら出さない
-               (when (and my-dired-preview-mode
-                          (equal (my-dired-preview--selected-dired-file) file))
-                 (my-dired-preview--show file)))))))))
+            (run-with-idle-timer my-dired-preview-delay nil
+                                 #'my-dired-preview--show file))))))
 
 (define-minor-mode my-dired-preview-mode
   "dired のカーソル行のファイルを、隣のウィンドウに軽くプレビューする。"
