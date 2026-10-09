@@ -269,6 +269,7 @@
 ;; site-lisp の仕組み (割り当ては下の SPC メニューと各節にある)
 (require 'my-view)    ; 閲覧用表示 (SPC v)
 (require 'my-zoxide)  ; zoxide への記録と、記録されたディレクトリへ飛ぶ (zz・SPC z)
+(require 'my-dired-preview)  ; dired のカーソル行のファイルのプレビュー (zp)
 
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
 ;; dired と eat の normal state では、それぞれの節で SPC y・SPC i を足している
@@ -407,6 +408,7 @@
 ;; h・l は ranger のように親ディレクトリへ戻る・ディレクトリに入る (ファイルなら開く) にする
 ;; (dired では行内の左右移動はほぼ使わないので上書きする)
 ;; zz は zoxide に記録されたディレクトリを選んで飛ぶ (ranger の zz にならう。SPC z と同じ)
+;; zp はカーソル行のファイルのプレビューを右に出す・消す (ranger の zp にならう。dired を出ると消える)
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map
     "f" #'my-dired-find-file-by-name
@@ -414,6 +416,7 @@
     "l" #'dired-find-file
     "zh" #'my-dired-toggle-dotfiles
     "zz" #'my-zoxide-dired
+    "zp" #'my-dired-preview-mode
     (kbd "SPC y") my-dired-yank-map))
 
 ;;;;
