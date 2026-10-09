@@ -121,12 +121,16 @@
       (message "ウィンドウが小さいので、プレビューを出せません"))
     (setq my-dired-preview--file file)))
 
-(defun my-dired-preview--close ()
-  "プレビューを閉じる (プレビューのために分けたウィンドウを消し、バッファも消す)。"
+(defun my-dired-preview--cancel-timer ()
+  "プレビューを出すのを待っているタイマーがあれば止める。"
   (when (timerp my-dired-preview--timer)
     (cancel-timer my-dired-preview--timer))
-  (setq my-dired-preview--timer nil
-        my-dired-preview--file nil)
+  (setq my-dired-preview--timer nil))
+
+(defun my-dired-preview--close ()
+  "プレビューを閉じる (プレビューのために分けたウィンドウを消し、バッファも消す)。"
+  (my-dired-preview--cancel-timer)
+  (setq my-dired-preview--file nil)
   (when-let* ((buffer (get-buffer my-dired-preview--buffer-name)))
     (quit-windows-on buffer)
     (kill-buffer buffer)))
@@ -160,8 +164,7 @@ dired 以外なら閉じる。カーソル行のファイルが変わってい�
       (unless (or (null file)
                   (and (equal file my-dired-preview--file)
                        (get-buffer-window my-dired-preview--buffer-name)))
-        (when (timerp my-dired-preview--timer)
-          (cancel-timer my-dired-preview--timer))
+        (my-dired-preview--cancel-timer)
         (setq my-dired-preview--timer
               (run-with-idle-timer
                my-dired-preview-delay nil
@@ -179,8 +182,8 @@ dired 以外なら閉じる。カーソル行のファイルが変わってい�
       (progn
         (add-hook 'pre-command-hook #'my-dired-preview--pre-command)
         (add-hook 'post-command-hook #'my-dired-preview--post-command)
-        (when-let* ((file (my-dired-preview--selected-dired-file)))
-          (my-dired-preview--show file)))
+        ;; 有効にしたときも、コマンドが終わったときと同じ道筋で出す
+        (my-dired-preview--post-command))
     (remove-hook 'pre-command-hook #'my-dired-preview--pre-command)
     (remove-hook 'post-command-hook #'my-dired-preview--post-command)
     (my-dired-preview--close)))

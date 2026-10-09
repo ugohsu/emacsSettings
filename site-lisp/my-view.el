@@ -28,6 +28,10 @@ markdown-view-mode はコードチャンクの囲み線 (```{python} など) を
   ;; 色付けの対象は見つけなかったことにする (書き換えだけが目的)
   nil)
 
+(defun my-view--enter-view-mode ()
+  "view-mode にする。ファイルのバッファなら、q で抜けるとバッファも閉じる (変更があれば閉じない)。"
+  (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified)))
+
 (defvar-local my-view-previous-state nil
   "my-markdown-view に入る前の (メジャーモード . buffer-read-only)。")
 
@@ -64,7 +68,7 @@ RESTORE が non-nil なら、view-mode を抜けたときに元のモードへ�
   (font-lock-update)
   ;; markdown-view-mode は read-only-mode にするだけで q では抜けられないので、
   ;; view-mode も有効にして q でバッファを閉じられるようにする
-  (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified)))
+  (my-view--enter-view-mode))
 
 (defun my-qmd-view ()
   "polymode をやめて markdown-view-mode で表示する。戻すときは M-x my-qmd-edit。"
@@ -84,7 +88,7 @@ RESTORE が non-nil なら、view-mode を抜けたときに元のモードへ�
   (cond
    ((bound-and-true-p poly-quarto-mode) (my-qmd-view))
    ((derived-mode-p 'markdown-mode) (my-markdown-view t))
-   (t (view-mode-enter nil (and buffer-file-name #'kill-buffer-if-not-modified)))))
+   (t (my-view--enter-view-mode))))
 
 (provide 'my-view)
 ;;; my-view.el ends here

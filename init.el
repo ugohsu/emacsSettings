@@ -276,6 +276,14 @@
 (require 'my-zoxide)  ; zoxide への記録と、記録されたディレクトリへ飛ぶ (zz・SPC z)
 (require 'my-dired-preview)  ; dired のカーソル行のファイルのプレビュー (zp)
 
+;; SPC メニューや dired の y のように、続けて 1 文字で選ぶキーマップでは、割り当てのないキーは
+;; 何もしない (read-char 版と同じく、undefined のエラーを出さない)。ただし C-h は割り当てなしのままにして、
+;; which-key のページ送りなど (prefix-help-command) を使えるようにする (nil を明示すると [t] より優先される)
+(defun my-keymap-ignore-unbound (map)
+  "MAP で、C-h 以外の割り当てのないキーを何もしないようにする。"
+  (define-key map [t] #'ignore)
+  (keymap-set map "C-h" nil))
+
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
 ;; eat の normal state では、eat の節で SPC i を足している
 (defvar-keymap my-spc-map
@@ -304,11 +312,7 @@
   "1" #'delete-other-windows
   "2" #'split-window-below
   "3" #'split-window-right)
-;; 割り当てのないキーは何もしない (read-char 版と同じく、undefined のエラーを出さない)
-(define-key my-spc-map [t] #'ignore)
-;; ただし C-h は割り当てなしのままにして、which-key のページ送りなど (prefix-help-command) を使えるようにする
-;; (nil を明示すると [t] より優先される)
-(keymap-set my-spc-map "C-h" nil)
+(my-keymap-ignore-unbound my-spc-map)
 
 (keymap-set evil-motion-state-map "SPC" my-spc-map)
 (keymap-set evil-motion-state-map "S-SPC" #'scroll-down-command)
@@ -407,9 +411,7 @@
   "p" #'my-dired-copy-full-path
   "d" #'my-dired-copy-dir-path
   "n" #'my-dired-copy-file-name)
-;; 割り当てのないキーは何もしない (SPC メニューと同じ)
-(define-key my-dired-yank-map [t] #'ignore)
-(keymap-set my-dired-yank-map "C-h" nil)
+(my-keymap-ignore-unbound my-dired-yank-map)
 
 ;; h・l は ranger のように親ディレクトリへ戻る・ディレクトリに入る (ファイルなら開く) にする
 ;; (dired では行内の左右移動はほぼ使わないので上書きする)
