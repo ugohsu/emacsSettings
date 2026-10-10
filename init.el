@@ -522,6 +522,14 @@
   (evil-define-key 'normal term-mode-map (kbd "SPC i") #'my-terminal-send-string)
   (evil-define-key 'normal term-raw-map (kbd "SPC i") #'my-terminal-send-string))
 
+;; vterm の中の git commit・git rebase -i などのエディタを、vim ではなくこの Emacs にする
+;; (vterm の中の vim では ESC・:wq が evil と衝突する)。メッセージのバッファは magit の c c と同じで、
+;; ZZ (C-c C-c) で確定、ZQ (C-c C-k) で中止。with-editor は magit と一緒に入るパッケージで、
+;; 初めて vterm を開いたときに Emacs のサーバを起動する (別の Emacs のサーバが動いていれば別の名前で)。
+;; git は $GIT_EDITOR を $VISUAL・core.editor・$EDITOR より優先するので、$EDITOR (crontab -e など用) と両方を設定する
+(add-hook 'vterm-mode-hook #'with-editor-export-editor)
+(add-hook 'vterm-mode-hook #'with-editor-export-git-editor)
+
 ;;;;
 ;;;; Markdown・Quarto・R Markdown (polymode)
 ;;;;
