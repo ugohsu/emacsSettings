@@ -526,9 +526,22 @@
 ;; (vterm の中の vim では ESC・:wq が evil と衝突する)。メッセージのバッファは magit の c c と同じで、
 ;; ZZ (C-c C-c) で確定、ZQ (C-c C-k) で中止。with-editor は magit と一緒に入るパッケージで、
 ;; 初めて vterm を開いたときに Emacs のサーバを起動する (別の Emacs のサーバが動いていれば別の名前で)。
-;; git は $GIT_EDITOR を $VISUAL・core.editor・$EDITOR より優先するので、$EDITOR (crontab -e など用) と両方を設定する
-(add-hook 'vterm-mode-hook #'with-editor-export-editor)
-(add-hook 'vterm-mode-hook #'with-editor-export-git-editor)
+;; git は $GIT_EDITOR を $VISUAL・core.editor・$EDITOR より優先するので、$EDITOR (crontab -e など用) と両方を設定する。
+;; with-editor の README にある vterm-mode-hook に with-editor-export-editor を足す方法は、シェルが起動してから
+;; export を打ち込み、出力が 1 秒止まるまで待つので、1 つにつき約 1 秒 vterm の起動が遅くなる。
+;; そこで、シェルを起動する前に環境変数を入れておき、シェルに最初から引き継がせる
+(with-eval-after-load 'vterm
+  (require 'with-editor)
+  (define-advice vterm-mode (:around (orig &rest args) my-with-editor)
+    "vterm のシェルが、この Emacs を $EDITOR・$GIT_EDITOR として使うようにする。"
+    ;; emacsclient がないときやリモートでは、with-editor は代わりの仕組み (sleeping editor) を使い、
+    ;; それには vterm のプロセスへの細工が要るので、ここでは何もしない
+    (if (or (not with-editor-emacsclient-executable)
+            (file-remote-p default-directory))
+        (apply orig args)
+      (with-editor "GIT_EDITOR"
+        (with-editor "EDITOR"
+          (apply orig args))))))
 
 ;;;;
 ;;;; Markdown・Quarto・R Markdown (polymode)

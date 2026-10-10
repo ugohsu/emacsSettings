@@ -525,11 +525,13 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
   (もう一度押すと evil に戻る。どちらに送るかはエコーエリアに出る)。
 - vterm の中の `git commit`・`git rebase -i` などは、vim ではなくこの Emacs のバッファでメッセージを書く
   (2026-10-11 追加。vterm の中の vim では `ESC`・`:wq` が evil と衝突したため)。magit の `c c` と同じバッファで、
-  `ZZ` (`C-c C-c`) で確定、`ZQ` (`C-c C-k`) で中止する。magit と一緒に入る with-editor の
-  `with-editor-export-editor`・`with-editor-export-git-editor` を `vterm-mode-hook` に足し、
-  vterm を開くたびに `$EDITOR` と `$GIT_EDITOR` を設定している (git は `$GIT_EDITOR` を
-  `$VISUAL`・`core.editor`・`$EDITOR` より優先する)。
-  - vterm を開いた直後に、`export ...` と `clear` が自動で送られるので一瞬間が空く。
+  `ZZ` (`C-c C-c`) で確定、`ZQ` (`C-c C-k`) で中止する。magit と一緒に入る with-editor を使い、
+  vterm のシェルを起動する前に `$EDITOR` と `$GIT_EDITOR` (emacsclient) を環境変数に入れて
+  引き継がせている (`vterm-mode` への advice。git は `$GIT_EDITOR` を `$VISUAL`・`core.editor`・`$EDITOR`
+  より優先する)。
+  - with-editor の README にある `vterm-mode-hook` に `with-editor-export-editor` を足す方法は、
+    起動したシェルに `export ...` を打ち込んで出力が 1 秒止まるまで待つので、1 つにつき約 1 秒
+    vterm の起動が遅くなった (2 つで約 2.2 秒。2026-10-11 に計測して今の方法に変えた)。
   - 初めて vterm を開いたときに Emacs のサーバを起動する。別の Emacs のサーバが動いていれば
     別の名前で起動するので、複数の Emacs を同時に起動していても、開いた Emacs にバッファが出る。
 
