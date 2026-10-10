@@ -12,7 +12,7 @@
 ;; プレビューは見るだけのもので、そのウィンドウには入らない (操作したければファイルを開く)。
 ;; zp で有効にすると、もう一度 zp を押すまで次のように動く:
 ;;   - 選ばれているウィンドウが dired のときだけ、そのウィンドウを半分に分けて出す
-;;     (横長なら右、縦長なら下)
+;;     (分け方は Emacs 標準の split-window-sensibly に任せる。my-dired-preview--display)
 ;;   - カーソルを動かすだけのコマンド (my-dired-preview-keep-commands) のあいだは出したままにし、
 ;;     それ以外のコマンドは、走る前 (pre-command-hook) に閉じる
 ;; なので、SPC h などのウィンドウの移動、C-x g・SPC :・C (コピー) などは、どれもプレビューのない
@@ -87,22 +87,16 @@
     (my-dired-preview--insert-lines "file" "-b" file))))
 
 (defun my-dired-preview--display (buffer)
-  "BUFFER を、選ばれている dired のウィンドウを半分に分けて出す。
-ウィンドウが横長なら右に、縦長なら下に分ける。小さくて分けられなければ nil を返す。"
+  "BUFFER を、選ばれている dired のウィンドウを半分に分けて出す。小さくて分けられなければ nil を返す。
+分け方は Emacs 標準の `split-window-sensibly' に任せる。標準が分けない (ほかのウィンドウを使い回す)
+ときだけ、隣のウィンドウを乗っ取らないように下に分ける。"
   (let* ((window (selected-window))
-         ;; 端末 (emacs -nw) では 1 文字が 1 ピクセルと数えられるので、
-         ;; 文字の縦横比 (おおよそ 2:1) で高さを補正して見た目の形で比べる
-         (wide (> (window-pixel-width window)
-                  (* (window-pixel-height window) (if (display-graphic-p) 1 2)))))
-    ;; 大きさは dired のウィンドウの半分を数 (桁数・行数) で渡す
-    ;; (0.5 のような割合はフレームに対する割合になり、分けた dired が押しつぶされる)
-    (display-buffer buffer
-                    `(display-buffer-in-direction
-                      (window . ,window)
-                      (direction . ,(if wide 'right 'below))
-                      ,(if wide
-                           `(window-width . ,(/ (window-total-width window) 2))
-                         `(window-height . ,(/ (window-total-height window) 2)))))))
+         (new (or (split-window-sensibly window)
+                  (ignore-errors (split-window window nil 'below)))))
+    ;; display-buffer で出したときと同じく、プレビューのために分けたウィンドウだと記録して出す
+    ;; (閉じるときに quit-windows-on が、このウィンドウを消せるように)
+    (when new
+      (window--display-buffer buffer new 'window))))
 
 (defun my-dired-preview--show (file)
   "FILE のプレビューを、選ばれている dired の隣のウィンドウに出す。"
