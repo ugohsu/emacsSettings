@@ -439,7 +439,7 @@
 ;;;;
 ;;;; vterm (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
 ;;;;
-;; eshell (2026-09-26 まで)・eat (2026-10-10 まで) から乗り換えた。どちらの設定も archive.el に移した
+;; eshell (2026-09-26 まで)・eat (2026-10-10 まで) から乗り換えた。どちらの設定も消した (git の履歴にある)
 
 ;; SPC : は押すたびに今のバッファのディレクトリで新しい vterm のシェルを別ウィンドウに開く
 ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
@@ -559,8 +559,7 @@
           (lambda () (setq-local markdown-code-block-braces t)))
 
 ;; R Markdown を HTML に変換する (C-c C-b)
-;; (jupytext の同期 C-c C-t は、.qmd を原本にして quarto で ipynb と変換する方針にしたので
-;; archive.el に移した)
+;; (jupytext の同期 C-c C-t は、.qmd を原本にして quarto で ipynb と変換する方針にしたので消した)
 (defun rmarkdown-to-html ()
   "Run rmarkdown::render on the current file"
   (interactive)
