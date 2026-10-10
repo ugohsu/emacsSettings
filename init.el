@@ -76,7 +76,6 @@
 (global-display-line-numbers-mode t)
 (dolist (hook '(term-mode-hook
                 shell-mode-hook
-                eat-mode-hook
                 vterm-mode-hook
                 calendar-mode-hook
                 dired-mode-hook))
@@ -294,7 +293,7 @@
   (keymap-set map "C-h" nil))
 
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
-;; 端末 (eat・term・vterm) の normal state では、eat の節で SPC i を足している
+;; 端末 (vterm・term) の normal state では、vterm の節で SPC i を足している
 (defvar-keymap my-spc-map
   :doc "SPC に続けて押すキー"
   "SPC" #'scroll-up-command
@@ -308,7 +307,7 @@
   "B" #'ibuffer
   "/" #'consult-line
   "o" #'my-consult-outline
-  ":" #'my-eat-new-other-window
+  ":" #'my-vterm-new-other-window
   "h" #'evil-window-left
   "j" #'evil-window-down
   "k" #'evil-window-up
@@ -437,30 +436,23 @@
     "y" my-dired-yank-map))
 
 ;;;;
-;;;; eat (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
+;;;; vterm (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
 ;;;;
-;; eshell から乗り換えた (2026-09-26)。eshell の設定は archive.el に移した
+;; eshell (2026-09-26 まで)・eat (2026-10-10 まで) から乗り換えた。どちらの設定も archive.el に移した
 
-;; SPC : は押すたびに今のバッファのディレクトリで新しい eat のシェルを別ウィンドウに開く
+;; SPC : は押すたびに今のバッファのディレクトリで新しい vterm のシェルを別ウィンドウに開く
 ;; (元のファイルを見ながら quarto などを実行できるように画面を分割する。
 ;; 非数値の前置引数 '(4) を渡すと、既存のセッションに切り替えず新規作成する)
-;; eat を開いた場所は大事な作業場所なので zoxide に記録する
-(defun my-eat-new-other-window ()
-  (interactive)
-  (my-zoxide-add default-directory)
-  (eat-other-window nil '(4)))
-
-;; vterm 版 (お試し中のためキーは割り当てていない。M-x で呼ぶ)
+;; シェルを開いた場所は大事な作業場所なので zoxide に記録する
 (defun my-vterm-new-other-window ()
   "今のバッファのディレクトリで、新しい vterm のシェルを別ウィンドウに開く。"
   (interactive)
   (my-zoxide-add default-directory)
   (vterm-other-window '(4)))
 
-;; SPC i (eat・term・vterm の normal state でだけ): ミニバッファで打った文字列を、端末の入力行
+;; SPC i (vterm・term の normal state でだけ): ミニバッファで打った文字列を、端末の入力行
 ;; (カーソル位置) に送る。端末では打ったキーがそのままシェルに送られ、SKK が使えないので、日本語はミニバッファで打つ
 ;; (SKK のひらがなモードで始める。送ったあとは insert state に戻り、続けて打つか RET で実行する)
-;; 2026-10-10 に eat 専用 (my-eat-send-string) から広げた
 (defvar my-terminal-send-string-history nil
   "`my-terminal-send-string' で送った文字列の履歴 (savehist で保存される)。")
 ;; 前の名前 (my-eat-send-string-history) で savehist が読み込んだ履歴を新しい名前に移し、前の名前は
@@ -476,17 +468,16 @@
                     (delq 'my-eat-send-string-history savehist-minibuffer-history-variables))))
   (makunbound 'my-eat-send-string-history))
 (defun my-terminal--send (string)
-  "STRING を今の端末のバッファ (eat・term・vterm) の入力行に送る。"
+  "STRING を今の端末のバッファ (vterm・term) の入力行に送る。"
   (pcase major-mode
-    ;; eat と vterm は bracketed paste として送る (シェルがキー操作として解釈しない)
-    ('eat-mode (eat-term-send-string-as-yank eat-terminal string))
+    ;; vterm は bracketed paste として送る (シェルがキー操作として解釈しない)
     ('vterm-mode (vterm-send-string string t))
     ;; term は、char mode ならキーとして送り、line mode なら入力行にそのまま入れる
     ('term-mode (if (term-in-char-mode)
                     (term-send-raw-string string)
                   (insert string)))))
 (defun my-terminal-send-string ()
-  "ミニバッファで SKK のひらがなモードから文字列を打ち、端末 (eat・term・vterm) の入力行に送る。"
+  "ミニバッファで SKK のひらがなモードから文字列を打ち、端末 (vterm・term) の入力行に送る。"
   (interactive)
   (let* ((minibuf nil)
          (string
@@ -504,20 +495,15 @@
       (my-terminal--send string))
     (evil-insert-state)))
 
-(with-eval-after-load 'eat
-  ;; eat は C-h をターミナルに送らないので、insert state でだけ ^H として bash に送り
-  ;; backspace として効かせる (normal state では evil の左移動のまま)
-  (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input)
-  (evil-define-key 'normal eat-mode-map (kbd "SPC i") #'my-terminal-send-string))
+(with-eval-after-load 'vterm
+  ;; vterm は C-h をターミナルに送らない (vterm-keymap-exceptions) ので、insert state でだけ
+  ;; ^H として送り、backspace として効かせる (normal state では evil の左移動のまま)
+  (evil-define-key 'insert vterm-mode-map (kbd "C-h") #'vterm--self-insert)
+  (evil-define-key 'normal vterm-mode-map (kbd "SPC i") #'my-terminal-send-string))
 ;; term の char mode では term-mode-map ではなく term-raw-map が使われるので、両方に割り当てる
 (with-eval-after-load 'term
   (evil-define-key 'normal term-mode-map (kbd "SPC i") #'my-terminal-send-string)
   (evil-define-key 'normal term-raw-map (kbd "SPC i") #'my-terminal-send-string))
-(with-eval-after-load 'vterm
-  ;; vterm も C-h をターミナルに送らない (vterm-keymap-exceptions) ので、eat と同じく
-  ;; insert state でだけ ^H として送り、backspace として効かせる
-  (evil-define-key 'insert vterm-mode-map (kbd "C-h") #'vterm--self-insert)
-  (evil-define-key 'normal vterm-mode-map (kbd "SPC i") #'my-terminal-send-string))
 
 ;;;;
 ;;;; Markdown・Quarto・R Markdown (polymode)

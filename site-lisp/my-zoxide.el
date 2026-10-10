@@ -5,7 +5,7 @@
 
 ;; zz (dired の中) と SPC z (どこからでも) で zoxide に記録されたディレクトリへ飛ぶ (ranger の zz にならう。絞り込みは vertico・orderless・migemo)
 ;; 記録するのは、その場所で作業したときだけにする: ファイルを開いたときのそのディレクトリ、
-;; zz・SPC z・SPC d で開いた場所、SPC : で eat を開いた場所 (init.el の eat の節)、dired の上での !・&・:!
+;; zz・SPC z・SPC d で開いた場所、SPC : で vterm を開いた場所 (init.el の vterm の節)、dired の上での !・&・:!
 ;; (h・l で歩き回っただけのディレクトリは記録しない。ranger 側と同じ方針)
 ;; zoxide がないときと TRAMP 先では何もしない
 (defun my-zoxide-add (dir)

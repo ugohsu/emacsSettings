@@ -136,7 +136,7 @@
   "選ばれているウィンドウが dired なら、カーソル行のファイルを返す。
 dired 以外や、dired でもファイルのない行 (見出しや空行) では nil。"
   ;; コマンドの終わりの今のバッファではなく、選ばれているウィンドウのバッファで見る
-  ;; (SPC : の eat のように、with-current-buffer の中で別のウィンドウを選ぶコマンドがある)
+  ;; (with-current-buffer の中で別のウィンドウを選ぶコマンドがある。以前 SPC : に割り当てていた eat など)
   (with-current-buffer (window-buffer (selected-window))
     (and (derived-mode-p 'dired-mode)
          (dired-get-filename nil t))))

@@ -309,3 +309,21 @@
 ;;       (start-process "zathura" nil "zathura" file)))
 ;;   (add-to-list 'auto-mode-alist
 ;;                '("\\.[pP][dD][fF]\\'" . my-open-pdf-with-zathura)))
+
+;;;;
+;;;; eat (Emacs 内のターミナル)
+;;;; (vterm に乗り換えたため init.el から移動, 2026-10-10。eat は NonGNU ELPA にだけあるパッケージ)
+;;;;
+;; ;; SPC : (my-spc-map の ":") に割り当てていた
+;; (defun my-eat-new-other-window ()
+;;   (interactive)
+;;   (my-zoxide-add default-directory)
+;;   (eat-other-window nil '(4)))
+;; ;; my-terminal--send の中の eat の分岐 (bracketed paste として送る)
+;; ;;   ('eat-mode (eat-term-send-string-as-yank eat-terminal string))
+;; (with-eval-after-load 'eat
+;;   ;; eat は C-h をターミナルに送らないので、insert state でだけ ^H として bash に送り
+;;   ;; backspace として効かせる (normal state では evil の左移動のまま)
+;;   (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input)
+;;   (evil-define-key 'normal eat-mode-map (kbd "SPC i") #'my-terminal-send-string))
+;; ;; 行番号を出さないモードの一覧 (init.el の見た目の節) にも eat-mode-hook を入れていた

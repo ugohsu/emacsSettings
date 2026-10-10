@@ -42,8 +42,7 @@ make && sudo make install
 (require 'package)
 (setq package-archives
       '(("melpa"  . "https://melpa.org/packages/")
-        ("gnu"    . "https://elpa.gnu.org/packages/")
-        ("nongnu" . "https://elpa.nongnu.org/nongnu/")))  ; eat は NonGNU ELPA にだけある
+        ("gnu"    . "https://elpa.gnu.org/packages/")))  ; ef-themes は GNU ELPA にだけある
 (package-initialize)
 
 ;; 2. インストールしたいパッケージのリスト
@@ -64,7 +63,6 @@ make && sudo make install
     embark-consult  ; embark と consult の連携
     wgrep           ; grep バッファを直接編集して一括置換
     migemo          ; ローマ字のまま日本語を検索 (SPC / と SPC o。cmigemo が必要)
-    eat             ; Emacs 内のターミナル (bash)
     vterm           ; Emacs 内のターミナル (C のモジュールを使う。cmake・libtool-bin・libvterm-dev が必要)
     ef-themes       ; テーマ (ef-day。環境ごとに変えるときは local.el で上書きする)
     
@@ -444,48 +442,50 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
   普通に編集して `C-c C-c` で各ファイルに反映 (`C-c C-k` で破棄)。反映後は
   `M-x save-some-buffers` で保存する。
 
-## eat (Emacs 内のターミナル)
+## vterm (Emacs 内のターミナル)
 
-[eat](https://codeberg.org/akib/emacs-eat) (Emulate A Terminal) は elisp で書かれた
+[vterm](https://github.com/akermu/emacs-libvterm) は、C のライブラリ libvterm を使う
 ターミナルエミュレータ。中身は普通の bash なので、`` `...` `` や `$(...)`、`.bashrc` の
-設定がそのまま使え、vim などの TUI アプリも動く。2026-09-26 に eshell から乗り換えた
-(eshell は bash と書き方が違い、`` `...` `` や `$(...)` が使えないため)。eshell の設定は
-`archive.el` に移した。NonGNU ELPA にだけあるので、`package-archives` に `nongnu` が必要
-(`init.el` は既定のアーカイブに melpa を足しているので入っている)。
+設定がそのまま使え、vim などの TUI アプリも動く。初めて読み込んだときにモジュールの
+コンパイルを訊かれるので `y` で答える (`cmake`・`libtool-bin`・`libvterm-dev` が必要。
+「Emacs のビルド」の apt の一覧に入れてある)。
+
+eshell (2026-09-26 まで) と eat (2026-10-10 まで) から乗り換えた。eshell は bash と書き方が違い、
+`` `...` `` や `$(...)` が使えないため。eat は elisp だけで書かれていてコンパイル不要だが、
+vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちらの設定も `archive.el` に移した。
 
 | キー | 内容 |
 |---|---|
-| `SPC :` | 今のバッファのディレクトリで、新しい eat のシェルを別ウィンドウに開く (押すたびに別のシェル) |
-| `SPC i` | (eat・term・vterm の normal state で) ミニバッファに打った文字列を、入力行のカーソル位置に送る (SKK のひらがなモードで始まる) |
+| `SPC :` | 今のバッファのディレクトリで、新しい vterm のシェルを別ウィンドウに開く (押すたびに別のシェル) |
+| `SPC i` | (vterm・term の normal state で) ミニバッファに打った文字列を、入力行のカーソル位置に送る (SKK のひらがなモードで始まる) |
 | `:!` (evil)・`M-!` | 1回だけシェルコマンドを実行 (bash で動く。使い方は `tutor/shell`) |
 
 - `.qmd` などを編集中に `SPC :` を押せば、同じディレクトリでシェルが開く。
   画面を分割して開くので、元のファイルを見ながらコマンドを実行できる (ウィンドウが
   1つなら分割し、分割済みなら隣のウィンドウに出す。閉じるときは `SPC 0`)。
-  同じウィンドウで開きたいときは `M-x eat`。
+  同じウィンドウで開きたいときは `C-u M-x vterm`。
   `quarto preview` と `jupyter lab` を別々のシェルで同時に動かせる。
-  バッファ名は `*eat*`・`*eat*<2>`… になるので、用途ごとに `M-x rename-buffer` で
+  バッファ名は `*vterm*`・`*vterm*<2>`… になるので、用途ごとに `M-x rename-buffer` で
   名前を付けると `SPC b` から探しやすい。
-- vterm で同じことをするときは `M-x my-vterm-new-other-window` (2026-10-10 追加。お試し中のためキーは割り当てていない)。
-- `M-x eat` は既存のシェルに切り替える (無ければ作る)。`C-u 2 M-x eat` のように
+- `M-x vterm` は既存のシェルに切り替える (無ければ作る)。`C-u 2 M-x vterm` のように
   番号を付けるとその番号のシェルに切り替える。
 - `C-h` は insert state では ^H として bash に送り、backspace として効かせている
-  (`init.el` の eat の節。vterm も同じ。2026-10-10 追加)。normal state では vim と同じく左移動 (evil の節で
-  `evil-motion-state-map` に設定。普通のバッファでも同じ)。
-- 日本語は `SPC i` で打つ (2026-10-07 追加)。eat では打ったキーがそのまま bash に送られ、
-  SKK が変換中の文字を置く場所がないため。2026-10-10 に term (`M-x term`・`M-x ansi-term`) と
-  vterm でも使えるようにした (`my-eat-send-string` から `my-terminal-send-string` に改名。
-  前の履歴は引き継ぐ)。eat と vterm には bracketed paste として送り、term は char mode なら
-  キーとして送り、line mode なら入力行にそのまま入れる。使い方:
-  1. `ESC` で normal state にして `SPC i` を押す (`SPC i` は eat・term・vterm のバッファでだけ使える)
+  (`init.el` の vterm の節。vterm は既定では `C-h` をターミナルに送らない)。normal state では
+  vim と同じく左移動 (evil の節で `evil-motion-state-map` に設定。普通のバッファでも同じ)。
+- 相対行番号は出さない (流れる出力には使い道がなく、出力のたびに付け直すぶん重くなるため)。
+- 日本語は `SPC i` で打つ (2026-10-07 追加)。端末では打ったキーがそのまま bash に送られ、
+  SKK が変換中の文字を置く場所がないため。vterm には bracketed paste として送る。
+  Emacs 組み込みの term (`M-x term`・`M-x ansi-term`) でも使え、char mode ならキーとして送り、
+  line mode なら入力行にそのまま入れる。使い方:
+  1. `ESC` で normal state にして `SPC i` を押す (`SPC i` は vterm・term のバッファでだけ使える)
   2. ミニバッファ (`端末に送る: `) が SKK のひらがなモードで開くので、普段どおり SKK で打つ
   3. `RET` で、入力行のカーソル位置に送る。insert state に戻るので、続けて打つか `RET` で実行する
 
   送った文字列は履歴に残り、ミニバッファで `M-p` を押すと呼び出せる。やめるときは `C-g`。
   SKK は変換中 (▼) に `RET` を押すと、確定と同時に送る (途中の変換は `C-j` で確定する)。
-  eat の line mode (`C-c C-l`) でも SKK は使えるが、bash の補完や `C-w` などが効かず、
-  切り替えも手間なので使わない。
-- Emacs を終了すると、eat で動かしていたプロセス (`jupyter lab` など) も止まる。
+  関数は eat 専用の `my-eat-send-string` から `my-terminal-send-string` に改名した (2026-10-10。
+  前の履歴は引き継ぐ)。
+- Emacs を終了すると、vterm で動かしていたプロセス (`jupyter lab` など) も止まる。
 - ESC は evil の normal state に入る (evil-collection の既定)。normal state では
   `SPC` メニューなど普段のキーが使える。
 
@@ -518,10 +518,10 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
 
   ```bash
   python3 -m venv ~/.virtualenvs/analysis
-  source ~/.virtualenvs/analysis/bin/activate   # eat などのシェルで有効にするとき
+  source ~/.virtualenvs/analysis/bin/activate   # vterm などのシェルで有効にするとき
   ```
 
-- **`.qmd` を原本にする**: 作業中は `SPC :` で開いた eat で venv を `activate` してから
+- **`.qmd` を原本にする**: 作業中は `SPC :` で開いた vterm で venv を `activate` してから
   `quarto preview` する。どの Python が使われるかは `quarto check jupyter` で確認できる。
   GitHub で見せたいときは、作業の終わりに `.ipynb` を作る。`.ipynb` は直接編集せず、
   直すときは `.qmd` を直して作り直す (jupytext のような双方向同期はしない)。
@@ -534,7 +534,7 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
   `analysis` を選んでから) `C-c C-p` を押す。`pyvenv-workon` は `~/.virtualenvs` の中の
   venv 名がすぐ候補に出るが、`pyvenv-activate` は普通のディレクトリ選択でパスを辿る。
   pyvenv は Emacs の `PATH` などを venv に向けるので、そのあとに起動した `C-c C-p` の
-  Python や、eat から実行した `quarto` も venv を使う (2026-09-27 確認)。Eglot (pylsp) も
+  Python や、ターミナル (当時は eat) から実行した `quarto` も venv を使う (2026-09-27 確認)。Eglot (pylsp) も
   venv のライブラリを見る (2026-09-27 確認。`.py` で `pd.DataFrame` の定義へジャンプすると
   venv の pandas が開く。evil の normal state では `M-.` が取られているので、`gd`、
   `M-a` → `RET`、`M-x xref-find-definitions` のいずれかで)。すでに起動している Python や
@@ -594,7 +594,7 @@ dired の外からも使えるよう、`SPC z` でも同じ候補から選べる
 - ファイルを開いたときのそのディレクトリ (`find-file-hook`)
 - `zz`・`SPC z` で飛んだ先と、`SPC d` で開いた場所 (`SPC d` は `dired` を包んだ関数に割り当てている。
   `h`・`l` は `dired` コマンドを通らないので記録されない)
-- `SPC :` で eat を開いた場所 (どのバッファからでも。eat の中の bash の zoxide フックは
+- `SPC :` で vterm を開いた場所 (どのバッファからでも。vterm の中の bash の zoxide フックは
   `cd` したときにしか記録しないので、開いた場所はこちらで記録する)
 - dired の上での `!`・`&` (`dired-do-shell-command` への advice。`&` も中でこれを呼ぶ)
 - dired の上での `:!` (`evil-shell-command` への advice。ほかのバッファでの `:!` は、
