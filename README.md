@@ -3,7 +3,7 @@
 ## Emacs のビルド
 
 ```bash
-sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev libsqlite3-dev libgccjit-14-dev
+sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev libsqlite3-dev libgccjit-14-dev cmake libtool-bin libvterm-dev
 ./configure --with-x-toolkit=gtk3 --without-toolkit-scroll-bars --without-xaw3d --without-xim --without-rsvg --without-xpm --without-tiff --without-gpm --with-wide-int 
 make && sudo make install
 ```
@@ -24,6 +24,9 @@ make && sudo make install
   ディレクトリで `configure` (上と同じオプション) からやり直し、`make && sudo make install` で上書きする。
   動いている Emacs は古いままなので、終了して起動し直す。
 - `texinfo` は不要。texlive と衝突するため apt での導入を避ける。
+- `cmake`・`libtool-bin`・`libvterm-dev` は Emacs のビルドではなく、vterm パッケージのモジュール
+  (C で書かれた部分) のコンパイル用。vterm を初めて読み込んだときにコンパイルを訊かれるので `y` で答える
+  (2026-10-10 追加)。
 
 ## パッケージのインストール
 
@@ -62,6 +65,7 @@ make && sudo make install
     wgrep           ; grep バッファを直接編集して一括置換
     migemo          ; ローマ字のまま日本語を検索 (SPC / と SPC o。cmigemo が必要)
     eat             ; Emacs 内のターミナル (bash)
+    vterm           ; Emacs 内のターミナル (C のモジュールを使う。cmake・libtool-bin・libvterm-dev が必要)
     ef-themes       ; テーマ (ef-day。環境ごとに変えるときは local.el で上書きする)
     
     ;; LaTeX / R / Python / Markdown
@@ -462,6 +466,7 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
   `quarto preview` と `jupyter lab` を別々のシェルで同時に動かせる。
   バッファ名は `*eat*`・`*eat*<2>`… になるので、用途ごとに `M-x rename-buffer` で
   名前を付けると `SPC b` から探しやすい。
+- vterm で同じことをするときは `M-x my-vterm-new-other-window` (2026-10-10 追加。お試し中のためキーは割り当てていない)。
 - `M-x eat` は既存のシェルに切り替える (無ければ作る)。`C-u 2 M-x eat` のように
   番号を付けるとその番号のシェルに切り替える。
 - `C-h` は insert state では ^H として bash に送り、backspace として効かせている

@@ -77,6 +77,7 @@
 (dolist (hook '(term-mode-hook
                 shell-mode-hook
                 eat-mode-hook
+                vterm-mode-hook
                 calendar-mode-hook
                 dired-mode-hook))
   (add-hook hook (lambda () (display-line-numbers-mode 0))))
@@ -448,6 +449,13 @@
   (interactive)
   (my-zoxide-add default-directory)
   (eat-other-window nil '(4)))
+
+;; vterm 版 (お試し中のためキーは割り当てていない。M-x で呼ぶ)
+(defun my-vterm-new-other-window ()
+  "今のバッファのディレクトリで、新しい vterm のシェルを別ウィンドウに開く。"
+  (interactive)
+  (my-zoxide-add default-directory)
+  (vterm-other-window '(4)))
 
 ;; SPC i (eat・term・vterm の normal state でだけ): ミニバッファで打った文字列を、端末の入力行
 ;; (カーソル位置) に送る。端末では打ったキーがそのままシェルに送られ、SKK が使えないので、日本語はミニバッファで打つ
