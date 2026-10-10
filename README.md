@@ -702,22 +702,25 @@ emacsclient (デーモン) は使わない。デーモンは1つの Emacs を共
 カーソル行を持って `:` に戻れるようにした (`my-evil-command-window-edit`。2026-10-07 追加)。
 戻った `:` では `TAB` で補完できる。`/` の中の `C-f` で開いたときも、同じように `/` に戻る。
 
-## dired・ibuffer・シェルコマンドの練習 (tutor/)
+## dired・ibuffer・シェルコマンド・magit の練習 (tutor/)
 
 vimtutor のように手を動かして dired・ibuffer の操作と、Emacs からシェルコマンドを使う操作
-(evil の `:!`・`!` と dired の `!`・`&` など) を覚えるための課題集を `tutor/` に置いている
-(2026-10-04 追加、シェルコマンドは 2026-10-05 追加)。キーはこの `init.el` の設定を前提にしている。
+(evil の `:!`・`!` と dired の `!`・`&` など)、git と magit の使い方を覚えるための課題集を `tutor/` に置いている
+(2026-10-04 追加、シェルコマンドは 2026-10-05、magit は 2026-10-10 追加)。キーはこの `init.el` の設定を前提にしている。
+magit の課題は git の初歩 (リポジトリを作って最初のコミットをする) から始め、各操作に同じことをする git コマンドを並べて書いている。
 
 ```sh
 bash tutor/dired/setup.sh     # ~/dired-tutor に練習用のファイルを作る (再実行で作り直す)
 bash tutor/ibuffer/setup.sh   # ~/ibuffer-tutor に練習用のファイルを作る (再実行で作り直す)
 bash tutor/shell/setup.sh     # ~/shell-tutor に練習用のファイルを作る (再実行で作り直す)
+bash tutor/magit/setup.sh     # ~/magit-tutor に練習用のリポジトリを作る (再実行で作り直す)
 ```
 
 始めるときは、起動している Emacs で `M-x load-file` → `~/dired-tutor/start.el` (ibuffer は
-`~/ibuffer-tutor/start.el`、シェルコマンドは `~/shell-tutor/start.el`) と読み込む。
-左に課題、右に dired・ibuffer が出る (シェルコマンドは dired)。読み込むたびに
+`~/ibuffer-tutor/start.el`、シェルコマンドは `~/shell-tutor/start.el`、magit は `~/magit-tutor/start.el`) と読み込む。
+左に課題、右に dired・ibuffer が出る (シェルコマンドと magit は dired)。読み込むたびに
 練習用のバッファを開き直すので、最初からやり直すときにも使う (`emacs -nw -l …/start.el` で起動してもよい)。
+magit の `start.el` は、左の課題のウィンドウを dedicated にして、magit のバッファが課題を隠さないようにしている。
 
 全体の説明は `tutor/*/README.md`、各レッスンの課題は `tutor/*/lessons/` にある。
 `setup.sh` が README と全レッスンの課題を、練習用ディレクトリ直下の `00-tutor.md` 1 つにまとめるので、
