@@ -523,17 +523,11 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
   `SPC` メニューなど普段のキーが使える。vterm の中で vim など ESC を使うプログラムを動かすときは、
   `C-c C-z` (`evil-collection-vterm-toggle-send-escape`) で ESC を vterm に送るように切り替える
   (もう一度押すと evil に戻る。どちらに送るかはエコーエリアに出る)。
-- vterm の中の `git commit`・`git rebase -i` などは、vim ではなくこの Emacs のバッファでメッセージを書く
-  (2026-10-11 追加。vterm の中の vim では `ESC`・`:wq` が evil と衝突したため)。magit の `c c` と同じバッファで、
-  `ZZ` (`C-c C-c`) で確定、`ZQ` (`C-c C-k`) で中止する。magit と一緒に入る with-editor を使い、
-  vterm のシェルを起動する前に `$EDITOR` と `$GIT_EDITOR` (emacsclient) を環境変数に入れて
-  引き継がせている (`vterm-mode` への advice。git は `$GIT_EDITOR` を `$VISUAL`・`core.editor`・`$EDITOR`
-  より優先する)。
-  - with-editor の README にある `vterm-mode-hook` に `with-editor-export-editor` を足す方法は、
-    起動したシェルに `export ...` を打ち込んで出力が 1 秒止まるまで待つので、1 つにつき約 1 秒
-    vterm の起動が遅くなった (2 つで約 2.2 秒。2026-10-11 に計測して今の方法に変えた)。
-  - 初めて vterm を開いたときに Emacs のサーバを起動する。別の Emacs のサーバが動いていれば
-    別の名前で起動するので、複数の Emacs を同時に起動していても、開いた Emacs にバッファが出る。
+- vterm の中の `git commit` などでは vim が開き、`ESC`・`:wq` が evil と衝突する。コミットは magit
+  (`SPC g`) でするか、`git commit -m "メッセージ"` とする。vim が開いてしまったら、`C-c C-z` で ESC を
+  vterm に送るようにしてから `ESC` → `:wq` で抜ける。
+  vterm の中のエディタを with-editor でこの Emacs にする設定は、vterm の中で入れ子に起動した Emacs が
+  おかしくなって全体が落ちたので取りやめた (2026-10-11)。
 
 ## Python の分析環境 (venv + quarto + run-python) の方針
 
