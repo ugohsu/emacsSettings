@@ -511,7 +511,7 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
   Emacs 組み込みの term (`M-x term`・`M-x ansi-term`) でも使え、char mode ならキーとして送り、
   line mode なら入力行にそのまま入れる。使い方:
   1. `C-c i` を押す (vterm・term のバッファでだけ使える。insert state のままでよく、normal state でも効く)
-  2. ミニバッファ (`端末に送る: `) が SKK のひらがなモードで開くので、普段どおり SKK で打つ
+  2. ミニバッファ (`Send to terminal: `) が SKK のひらがなモードで開くので、普段どおり SKK で打つ
   3. `RET` で、入力行のカーソル位置に送る。insert state に戻るので、続けて打つか `RET` で実行する
 
   送った文字列は履歴に残り、ミニバッファで `M-p` を押すと呼び出せる。やめるときは `C-g`。

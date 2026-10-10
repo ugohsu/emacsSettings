@@ -488,7 +488,7 @@
                 (setq minibuf (current-buffer))
                 (skk-mode 1))
             (unwind-protect
-                (read-string "端末に送る: " nil 'my-terminal-send-string-history)
+                (read-string "Send to terminal: " nil 'my-terminal-send-string-history)
               ;; ミニバッファのバッファは使い回されるので、SKK を切っておく
               ;; (切らないと、次の M-x なども SKK のひらがなモードで始まる)
               (when (buffer-live-p minibuf)
