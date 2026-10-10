@@ -460,10 +460,21 @@
 ;; SPC i (eat・term・vterm の normal state でだけ): ミニバッファで打った文字列を、端末の入力行
 ;; (カーソル位置) に送る。端末では打ったキーがそのままシェルに送られ、SKK が使えないので、日本語はミニバッファで打つ
 ;; (SKK のひらがなモードで始める。送ったあとは insert state に戻り、続けて打つか RET で実行する)
-;; 2026-10-10 に eat 専用 (my-eat-send-string) から広げた。前の履歴はそのまま引き継ぐ
-(define-obsolete-variable-alias 'my-eat-send-string-history 'my-terminal-send-string-history "2026-10-10")
+;; 2026-10-10 に eat 専用 (my-eat-send-string) から広げた
 (defvar my-terminal-send-string-history nil
   "`my-terminal-send-string' で送った文字列の履歴 (savehist で保存される)。")
+;; 前の名前 (my-eat-send-string-history) で savehist が読み込んだ履歴を新しい名前に移し、前の名前は
+;; 保存しないようにする (savehist は保存する変数の一覧も保存しているので、外さないと残り続ける)。
+;; 一度起動すれば前の名前は保存されなくなるので、どのマシンでも起動し終えたら、この式は消してよい
+(when (boundp 'my-eat-send-string-history)
+  (setq my-terminal-send-string-history
+        (delete-dups (append my-terminal-send-string-history my-eat-send-string-history)))
+  ;; 新しい名前は、ミニバッファで一度使うまで保存の一覧に載らないので、ここで載せておく
+  (setq savehist-minibuffer-history-variables
+        (cons 'my-terminal-send-string-history
+              (delq 'my-terminal-send-string-history
+                    (delq 'my-eat-send-string-history savehist-minibuffer-history-variables))))
+  (makunbound 'my-eat-send-string-history))
 (defun my-terminal--send (string)
   "STRING を今の端末のバッファ (eat・term・vterm) の入力行に送る。"
   (pcase major-mode
@@ -503,6 +514,9 @@
   (evil-define-key 'normal term-mode-map (kbd "SPC i") #'my-terminal-send-string)
   (evil-define-key 'normal term-raw-map (kbd "SPC i") #'my-terminal-send-string))
 (with-eval-after-load 'vterm
+  ;; vterm も C-h をターミナルに送らない (vterm-keymap-exceptions) ので、eat と同じく
+  ;; insert state でだけ ^H として送り、backspace として効かせる
+  (evil-define-key 'insert vterm-mode-map (kbd "C-h") #'vterm--self-insert)
   (evil-define-key 'normal vterm-mode-map (kbd "SPC i") #'my-terminal-send-string))
 
 ;;;;

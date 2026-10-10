@@ -470,7 +470,7 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
 - `M-x eat` は既存のシェルに切り替える (無ければ作る)。`C-u 2 M-x eat` のように
   番号を付けるとその番号のシェルに切り替える。
 - `C-h` は insert state では ^H として bash に送り、backspace として効かせている
-  (`init.el` の eat の節)。normal state では vim と同じく左移動 (evil の節で
+  (`init.el` の eat の節。vterm も同じ。2026-10-10 追加)。normal state では vim と同じく左移動 (evil の節で
   `evil-motion-state-map` に設定。普通のバッファでも同じ)。
 - 日本語は `SPC i` で打つ (2026-10-07 追加)。eat では打ったキーがそのまま bash に送られ、
   SKK が変換中の文字を置く場所がないため。2026-10-10 に term (`M-x term`・`M-x ansi-term`) と
