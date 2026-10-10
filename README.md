@@ -434,6 +434,9 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
     org-mode では `org-mark-element` が優先されるので効かない。
   - ミニバッファの中では動かない (`embark-bindings` が `completing-read` を使うため、
     `enable-recursive-minibuffers` が必要。有効にはしていない)。
+  - 既定ではグローバルキーマップ (`global-map`) のキーは出ない。`M-,` (`xref-go-back`) や
+    `M-.` などの Emacs 標準のキーも見たいときは `C-u M-h` と前置引数を付ける。表示後に
+    全件表示へ切り替える機能は embark にはない。
 - **embark-consult**: consult と embark が両方読み込まれると自動で読み込まれるが、
   それまでは consult 検索のメニュー (`C`) が使えないため、`init.el` で embark と同時に
   `require` している。
