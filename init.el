@@ -293,7 +293,7 @@
   (keymap-set map "C-h" nil))
 
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
-;; 端末 (vterm・term) の normal state では、vterm の節で SPC i を足している
+;; 端末 (vterm・term) の normal state では、vterm の節で SPC i (vterm では SPC c も) を足している
 (defvar-keymap my-spc-map
   :doc "SPC に続けて押すキー"
   "SPC" #'scroll-up-command
@@ -498,11 +498,24 @@
 ;; vterm では現在行のハイライト (global-hl-line-mode) を切る。vterm は入力のたびに行を消して
 ;; 入れ直すので、ハイライトが消えては付き、ちらつく (emacs-libvterm の issue #432。2020 年から未解決)
 (add-hook 'vterm-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
+;; コピーモード (vterm-copy-mode。出力の表示を止めて、普通のバッファのように動いてコピーする) のあいだだけは、
+;; 行の書き換えが起きないので、現在行のハイライトと相対行番号を付ける ([数字] j・k の目安になる)
+(defun my-vterm-copy-mode-display ()
+  "vterm のコピーモードに入ったら現在行のハイライトと相対行番号を付け、出たら外す。"
+  (let ((arg (if vterm-copy-mode 1 -1)))
+    (hl-line-mode arg)
+    (display-line-numbers-mode arg)))
+(add-hook 'vterm-copy-mode-hook #'my-vterm-copy-mode-display)
 (with-eval-after-load 'vterm
   ;; vterm は C-h をターミナルに送らない (vterm-keymap-exceptions) ので、insert state でだけ
   ;; ^H として送り、backspace として効かせる (normal state では evil の左移動のまま)
   (evil-define-key 'insert vterm-mode-map (kbd "C-h") #'vterm--self-insert)
-  (evil-define-key 'normal vterm-mode-map (kbd "SPC i") #'my-terminal-send-string))
+  ;; SPC c (vterm の normal state でだけ): コピーモードに入る・出る
+  ;; (コピーモードのあいだは vterm-mode-map が外れて vterm-copy-mode-map だけになるので、両方に割り当てる)
+  (evil-define-key 'normal vterm-mode-map
+    (kbd "SPC i") #'my-terminal-send-string
+    (kbd "SPC c") #'vterm-copy-mode)
+  (evil-define-key 'normal vterm-copy-mode-map (kbd "SPC c") #'vterm-copy-mode))
 ;; term の char mode では term-mode-map ではなく term-raw-map が使われるので、両方に割り当てる
 (with-eval-after-load 'term
   (evil-define-key 'normal term-mode-map (kbd "SPC i") #'my-terminal-send-string)
