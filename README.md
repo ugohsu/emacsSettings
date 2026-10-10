@@ -484,7 +484,7 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
 | キー | 内容 |
 |---|---|
 | `SPC :` | 今のバッファのディレクトリで、新しい vterm のシェルを別ウィンドウに開く (押すたびに別のシェル) |
-| `SPC i` | (vterm・term の normal state で) ミニバッファに打った文字列を、入力行のカーソル位置に送る (SKK のひらがなモードで始まる) |
+| `C-c i` | (vterm・term で。insert state のままでも押せる) ミニバッファに打った文字列を、入力行のカーソル位置に送る (SKK のひらがなモードで始まる) |
 | `SPC c` | (vterm の normal state で) コピーモード (`vterm-copy-mode`) に入る・出る |
 | `:!` (evil)・`M-!` | 1回だけシェルコマンドを実行 (bash で動く。使い方は `tutor/shell`) |
 
@@ -506,11 +506,11 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
 - コピーモード (`SPC c`。出力の表示を止めて、普通のバッファのように動いてコピーする) のあいだだけは、
   行の書き換えが起きないので、現在行のハイライトと相対行番号を付ける (2026-10-10)。コピーモードでは
   vterm のキーマップ (`vterm-mode-map`) が外れるので、`SPC c` はコピーモードのキーマップにも割り当てている。
-- 日本語は `SPC i` で打つ (2026-10-07 追加)。端末では打ったキーがそのまま bash に送られ、
-  SKK が変換中の文字を置く場所がないため。vterm には bracketed paste として送る。
+- 日本語は `C-c i` で打つ (2026-10-07 追加。2026-10-11 に normal state の `SPC i` から変えた)。
+  端末では打ったキーがそのまま bash に送られ、SKK が変換中の文字を置く場所がないため。vterm には bracketed paste として送る。
   Emacs 組み込みの term (`M-x term`・`M-x ansi-term`) でも使え、char mode ならキーとして送り、
   line mode なら入力行にそのまま入れる。使い方:
-  1. `ESC` で normal state にして `SPC i` を押す (`SPC i` は vterm・term のバッファでだけ使える)
+  1. `C-c i` を押す (vterm・term のバッファでだけ使える。insert state のままでよく、normal state でも効く)
   2. ミニバッファ (`端末に送る: `) が SKK のひらがなモードで開くので、普段どおり SKK で打つ
   3. `RET` で、入力行のカーソル位置に送る。insert state に戻るので、続けて打つか `RET` で実行する
 
@@ -518,6 +518,8 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
   SKK は変換中 (▼) に `RET` を押すと、確定と同時に送る (途中の変換は `C-j` で確定する)。
   関数は eat 専用の `my-eat-send-string` から `my-terminal-send-string` に改名した (2026-10-10。
   前の履歴は引き継ぐ)。
+  `C-c` は vterm が端末に送らないキー (`vterm-keymap-exceptions`) なので、vterm の中の vim でも、
+  vim を挿入モードにしてから `C-c i` で日本語を入れられる (`C-c C-z` で ESC を vterm に送っているあいだも使える)。
 - Emacs を終了すると、vterm で動かしていたプロセス (`jupyter lab` など) も止まる。
 - ESC は evil の normal state に入る (evil-collection の既定)。normal state では
   `SPC` メニューなど普段のキーが使える。vterm の中で vim など ESC を使うプログラムを動かすときは、

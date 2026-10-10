@@ -293,7 +293,7 @@
   (keymap-set map "C-h" nil))
 
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
-;; 端末 (vterm・term) の normal state では、vterm の節で SPC i (vterm では SPC c も) を足している
+;; vterm の normal state では、vterm の節で SPC c を足している
 (defvar-keymap my-spc-map
   :doc "SPC に続けて押すキー"
   "SPC" #'scroll-up-command
@@ -451,9 +451,10 @@
   (my-zoxide-add default-directory)
   (vterm-other-window '(4)))
 
-;; SPC i (vterm・term の normal state でだけ): ミニバッファで打った文字列を、端末の入力行
+;; C-c i (vterm・term のバッファでだけ。insert state のままでも押せる): ミニバッファで打った文字列を、端末の入力行
 ;; (カーソル位置) に送る。端末では打ったキーがそのままシェルに送られ、SKK が使えないので、日本語はミニバッファで打つ
-;; (SKK のひらがなモードで始める。送ったあとは insert state に戻り、続けて打つか RET で実行する)
+;; (SKK のひらがなモードで始める。送ったあとは insert state に戻り、続けて打つか RET で実行する)。
+;; C-c は vterm が端末に送らないキー (vterm-keymap-exceptions) なので、vterm の中の vim の挿入モードでも使える
 (defvar my-terminal-send-string-history nil
   "`my-terminal-send-string' で送った文字列の履歴 (savehist で保存される)。")
 ;; 前の名前 (my-eat-send-string-history) で savehist が読み込んだ履歴を新しい名前に移し、前の名前は
@@ -511,16 +512,16 @@
   ;; vterm は C-h をターミナルに送らない (vterm-keymap-exceptions) ので、insert state でだけ
   ;; ^H として送り、backspace として効かせる (normal state では evil の左移動のまま)
   (evil-define-key 'insert vterm-mode-map (kbd "C-h") #'vterm--self-insert)
+  (keymap-set vterm-mode-map "C-c i" #'my-terminal-send-string)
   ;; SPC c (vterm の normal state でだけ): コピーモードに入る・出る
   ;; (コピーモードのあいだは vterm-mode-map が外れて vterm-copy-mode-map だけになるので、両方に割り当てる)
-  (evil-define-key 'normal vterm-mode-map
-    (kbd "SPC i") #'my-terminal-send-string
-    (kbd "SPC c") #'vterm-copy-mode)
+  (evil-define-key 'normal vterm-mode-map (kbd "SPC c") #'vterm-copy-mode)
   (evil-define-key 'normal vterm-copy-mode-map (kbd "SPC c") #'vterm-copy-mode))
-;; term の char mode では term-mode-map ではなく term-raw-map が使われるので、両方に割り当てる
+;; term の char mode では、C-c に続くキーは term-mode-map ではなく term-raw-escape-map で引くので、両方に割り当てる
+;; (term-raw-escape-map の親は C-x のキーマップなので、割り当てる前の C-c i は C-x i の insert-file だった)
 (with-eval-after-load 'term
-  (evil-define-key 'normal term-mode-map (kbd "SPC i") #'my-terminal-send-string)
-  (evil-define-key 'normal term-raw-map (kbd "SPC i") #'my-terminal-send-string))
+  (keymap-set term-mode-map "C-c i" #'my-terminal-send-string)
+  (keymap-set term-raw-escape-map "i" #'my-terminal-send-string))
 
 ;;;;
 ;;;; Markdown・Quarto・R Markdown (polymode)
