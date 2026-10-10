@@ -594,7 +594,7 @@
 ;; データフレームの列名の補完: M-x ugr-framenames で列名を読み込むと、C-c i (ugr-insert) で挿入できる
 ;; (C-c i は ugr-framenames が初めて呼ばれたときに、その中で割り当てる)
 (autoload 'ugr-framenames
-  "./ugr/ugr-framenames/ugr-framenames_v0.0.3.el" nil t)
+  "./ugr/ugr-framenames/ugr-framenames.el" nil t)
 
 ;;;;
 ;;;; LaTeX (YaTeX)
