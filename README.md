@@ -283,13 +283,20 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   `markdown-inline-code-at-pos` の探索開始を行頭にして回避している (0.2 秒まで短縮)。
 - `view-mode` の主なキー: `SPC` / `DEL` でページ送り・戻し、`q` で終了。
 
+### magit (SPC g)
+
+`SPC g` で magit のステータス画面を開く (`C-x g` と同じ `magit-status`。2026-10-10 追加)。
+使い方の練習は `tutor/magit` (下の「練習 (tutor/)」の節)。magit の画面では `SPC` メニューが使えない
+(`SPC` は magit の「差分を別のウィンドウに出す」になる)。ウィンドウの移動は `C-w h` などを使う。
+
 ### ファイルの変更履歴を順に見る (magit)
 
 ファイルを開いたバッファで `M-x magit-log-buffer-file` を実行すると、そのファイルに触れた
 コミットだけのログが出る。ログを見るだけなら、これを直接呼ぶのがいちばん速いので、
 通常はこの方法で使う (`magit-file-dispatch` は経由しない)。
 
-- `magit-file-dispatch` (既定では `C-c f`) は、ファイルに対する操作 (stage・log・blame・diff など)
+- `magit-file-dispatch` (`C-c M-g`。`C-c f` になるのは `magit-define-global-key-bindings` を
+  `recommended` にしたとき) は、ファイルに対する操作 (stage・log・blame・diff など)
   を並べたメニューで、その中の `l` が `magit-log-buffer-file` を呼ぶ。メニューを経由する分
   1 手間増えるだけで、ログの内容は同じ。
 - ログ上でコミットに `j` / `k` で移動し、`SPC` を押すと、別ウィンドウにそのコミットの diff が出る。

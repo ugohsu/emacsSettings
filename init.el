@@ -305,6 +305,7 @@
   "z" #'my-zoxide-dired
   "b" #'consult-buffer
   "B" #'ibuffer
+  "g" #'magit-status
   "/" #'consult-line
   "o" #'my-consult-outline
   ":" #'my-vterm-new-other-window
