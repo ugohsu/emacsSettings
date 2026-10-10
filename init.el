@@ -293,7 +293,7 @@
   (keymap-set map "C-h" nil))
 
 ;; SPC に続けて1文字で呼ぶメニュー (少し待つと which-key が一覧を出す)
-;; eat の normal state では、eat の節で SPC i を足している
+;; 端末 (eat・term・vterm) の normal state では、eat の節で SPC i を足している
 (defvar-keymap my-spc-map
   :doc "SPC に続けて押すキー"
   "SPC" #'scroll-up-command
@@ -449,13 +449,25 @@
   (my-zoxide-add default-directory)
   (eat-other-window nil '(4)))
 
-;; SPC i (eat の normal state でだけ): ミニバッファで打った文字列を eat の入力行 (カーソル位置) に送る。
-;; eat では SKK が使えないので、日本語はミニバッファで打つ
+;; SPC i (eat・term・vterm の normal state でだけ): ミニバッファで打った文字列を、端末の入力行
+;; (カーソル位置) に送る。端末では打ったキーがそのままシェルに送られ、SKK が使えないので、日本語はミニバッファで打つ
 ;; (SKK のひらがなモードで始める。送ったあとは insert state に戻り、続けて打つか RET で実行する)
-(defvar my-eat-send-string-history nil
-  "`my-eat-send-string' で送った文字列の履歴 (savehist で保存される)。")
-(defun my-eat-send-string ()
-  "ミニバッファで SKK のひらがなモードから文字列を打ち、eat の入力行に送る。"
+;; 2026-10-10 に eat 専用 (my-eat-send-string) から広げた。前の履歴はそのまま引き継ぐ
+(define-obsolete-variable-alias 'my-eat-send-string-history 'my-terminal-send-string-history "2026-10-10")
+(defvar my-terminal-send-string-history nil
+  "`my-terminal-send-string' で送った文字列の履歴 (savehist で保存される)。")
+(defun my-terminal--send (string)
+  "STRING を今の端末のバッファ (eat・term・vterm) の入力行に送る。"
+  (pcase major-mode
+    ;; eat と vterm は bracketed paste として送る (シェルがキー操作として解釈しない)
+    ('eat-mode (eat-term-send-string-as-yank eat-terminal string))
+    ('vterm-mode (vterm-send-string string t))
+    ;; term は、char mode ならキーとして送り、line mode なら入力行にそのまま入れる
+    ('term-mode (if (term-in-char-mode)
+                    (term-send-raw-string string)
+                  (insert string)))))
+(defun my-terminal-send-string ()
+  "ミニバッファで SKK のひらがなモードから文字列を打ち、端末 (eat・term・vterm) の入力行に送る。"
   (interactive)
   (let* ((minibuf nil)
          (string
@@ -464,21 +476,26 @@
                 (setq minibuf (current-buffer))
                 (skk-mode 1))
             (unwind-protect
-                (read-string "eat: " nil 'my-eat-send-string-history)
+                (read-string "端末に送る: " nil 'my-terminal-send-string-history)
               ;; ミニバッファのバッファは使い回されるので、SKK を切っておく
               ;; (切らないと、次の M-x なども SKK のひらがなモードで始まる)
               (when (buffer-live-p minibuf)
                 (with-current-buffer minibuf (skk-mode -1)))))))
     (unless (string-empty-p string)
-      ;; eat-yank と同じく、bracketed paste として送る (bash がキー操作として解釈しない)
-      (eat-term-send-string-as-yank eat-terminal string))
+      (my-terminal--send string))
     (evil-insert-state)))
 
 (with-eval-after-load 'eat
   ;; eat は C-h をターミナルに送らないので、insert state でだけ ^H として bash に送り
   ;; backspace として効かせる (normal state では evil の左移動のまま)
   (evil-define-key 'insert eat-mode-map (kbd "C-h") #'eat-self-input)
-  (evil-define-key 'normal eat-mode-map (kbd "SPC i") #'my-eat-send-string))
+  (evil-define-key 'normal eat-mode-map (kbd "SPC i") #'my-terminal-send-string))
+;; term の char mode では term-mode-map ではなく term-raw-map が使われるので、両方に割り当てる
+(with-eval-after-load 'term
+  (evil-define-key 'normal term-mode-map (kbd "SPC i") #'my-terminal-send-string)
+  (evil-define-key 'normal term-raw-map (kbd "SPC i") #'my-terminal-send-string))
+(with-eval-after-load 'vterm
+  (evil-define-key 'normal vterm-mode-map (kbd "SPC i") #'my-terminal-send-string))
 
 ;;;;
 ;;;; Markdown・Quarto・R Markdown (polymode)

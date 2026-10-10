@@ -452,7 +452,7 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
 | キー | 内容 |
 |---|---|
 | `SPC :` | 今のバッファのディレクトリで、新しい eat のシェルを別ウィンドウに開く (押すたびに別のシェル) |
-| `SPC i` | (eat の normal state で) ミニバッファに打った文字列を、入力行のカーソル位置に送る (SKK のひらがなモードで始まる) |
+| `SPC i` | (eat・term・vterm の normal state で) ミニバッファに打った文字列を、入力行のカーソル位置に送る (SKK のひらがなモードで始まる) |
 | `:!` (evil)・`M-!` | 1回だけシェルコマンドを実行 (bash で動く。使い方は `tutor/shell`) |
 
 - `.qmd` などを編集中に `SPC :` を押せば、同じディレクトリでシェルが開く。
@@ -468,10 +468,13 @@ normal state では `SPC a` でも `embark-act` を呼べる (2026-09-28 追加)
   (`init.el` の eat の節)。normal state では vim と同じく左移動 (evil の節で
   `evil-motion-state-map` に設定。普通のバッファでも同じ)。
 - 日本語は `SPC i` で打つ (2026-10-07 追加)。eat では打ったキーがそのまま bash に送られ、
-  SKK が変換中の文字を置く場所がないため。使い方:
-  1. `ESC` で normal state にして `SPC i` を押す (`SPC i` は eat のバッファでだけ使える)
-  2. ミニバッファ (`eat: `) が SKK のひらがなモードで開くので、普段どおり SKK で打つ
-  3. `RET` で、eat の入力行のカーソル位置に送る。insert state に戻るので、続けて打つか `RET` で実行する
+  SKK が変換中の文字を置く場所がないため。2026-10-10 に term (`M-x term`・`M-x ansi-term`) と
+  vterm でも使えるようにした (`my-eat-send-string` から `my-terminal-send-string` に改名。
+  前の履歴は引き継ぐ)。eat と vterm には bracketed paste として送り、term は char mode なら
+  キーとして送り、line mode なら入力行にそのまま入れる。使い方:
+  1. `ESC` で normal state にして `SPC i` を押す (`SPC i` は eat・term・vterm のバッファでだけ使える)
+  2. ミニバッファ (`端末に送る: `) が SKK のひらがなモードで開くので、普段どおり SKK で打つ
+  3. `RET` で、入力行のカーソル位置に送る。insert state に戻るので、続けて打つか `RET` で実行する
 
   送った文字列は履歴に残り、ミニバッファで `M-p` を押すと呼び出せる。やめるときは `C-g`。
   SKK は変換中 (▼) に `RET` を押すと、確定と同時に送る (途中の変換は `C-j` で確定する)。
