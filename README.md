@@ -473,6 +473,8 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
   (`init.el` の vterm の節。vterm は既定では `C-h` をターミナルに送らない)。normal state では
   vim と同じく左移動 (evil の節で `evil-motion-state-map` に設定。普通のバッファでも同じ)。
 - 相対行番号は出さない (流れる出力には使い道がなく、出力のたびに付け直すぶん重くなるため)。
+- 現在行のハイライト (`global-hl-line-mode`) も切る (2026-10-10)。vterm は入力のたびに行を消して入れ直すので、
+  ハイライトが消えては付き、ちらつくため (emacs-libvterm の issue #432。2020 年から未解決)。
 - 日本語は `SPC i` で打つ (2026-10-07 追加)。端末では打ったキーがそのまま bash に送られ、
   SKK が変換中の文字を置く場所がないため。vterm には bracketed paste として送る。
   Emacs 組み込みの term (`M-x term`・`M-x ansi-term`) でも使え、char mode ならキーとして送り、

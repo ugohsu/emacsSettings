@@ -495,6 +495,9 @@
       (my-terminal--send string))
     (evil-insert-state)))
 
+;; vterm では現在行のハイライト (global-hl-line-mode) を切る。vterm は入力のたびに行を消して
+;; 入れ直すので、ハイライトが消えては付き、ちらつく (emacs-libvterm の issue #432。2020 年から未解決)
+(add-hook 'vterm-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
 (with-eval-after-load 'vterm
   ;; vterm は C-h をターミナルに送らない (vterm-keymap-exceptions) ので、insert state でだけ
   ;; ^H として送り、backspace として効かせる (normal state では evil の左移動のまま)
