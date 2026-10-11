@@ -283,6 +283,7 @@
 (require 'my-view)    ; 閲覧用表示 (SPC v)
 (require 'my-zoxide)  ; zoxide への記録と、記録されたディレクトリへ飛ぶ (zz・SPC z)
 (require 'my-dired-preview)  ; dired のカーソル行のファイルのプレビュー (zp)
+(require 'my-open-with)  ; dired のファイルを選んだ外部アプリで開く (r)
 
 ;; SPC メニューや dired の y のように、続けて 1 文字で選ぶキーマップでは、割り当てのないキーは
 ;; 何もしない (read-char 版と同じく、undefined のエラーを出さない)。ただし C-h は割り当てなしのままにして、
@@ -426,6 +427,8 @@
 ;; (dired では行内の左右移動はほぼ使わないので上書きする)
 ;; zz は zoxide に記録されたディレクトリを選んで飛ぶ (ranger の zz にならう。SPC z と同じ)
 ;; zp はカーソル行のファイルのプレビューを隣に出す・消す (ranger の zp にならう。dired の外では閉じる)
+;; r はマークしたファイル (なければカーソル行のファイル) を選んだ外部アプリで開く (ranger の r にならう。
+;; evil-collection の r (dired-do-redisplay) を上書きする。読み直しは gr でできる)
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map
     "f" #'my-dired-find-file-by-name
@@ -434,6 +437,7 @@
     "zh" #'my-dired-toggle-dotfiles
     "zz" #'my-zoxide-dired
     "zp" #'my-dired-preview-mode
+    "r" #'my-open-with
     "y" my-dired-yank-map))
 
 ;;;;

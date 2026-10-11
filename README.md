@@ -680,6 +680,24 @@ dired-preview パッケージは見送った。ファイルを実際に開くの
 `.dir-locals.el` などが効かないこと (dired-preview の issue #35) が合わないため。
 メジャーモードを走らせないので、色付けはない。TRAMP 先はプレビューしない。
 
+## dired の r (選んだ外部アプリで開く)
+
+dired の `r` で、マークしたファイル (なければカーソル行のファイル) を、選んだ外部アプリで開く
+(ranger の `r` (open_with) にならう。2026-10-11 追加)。evil-collection の `r` (`dired-do-redisplay`) を上書きする
+(表示の読み直しは `gr` でできる)。
+`&` (`dired-do-async-shell-command`) と違い、`*Async Shell Command*` バッファを作らず、ウィンドウも分けない。
+起動は `setsid -f` を挟んで `call-process` の出力先を `0` にし、終わるのを待たない。出力は捨て、Emacs を閉じてもアプリは残る。
+
+候補は次の順に並べ、手元に入っていないアプリは出さない。最初の候補が既定値なので、前と同じアプリなら `RET` だけで開ける。
+
+1. その拡張子で前に選んだアプリ (新しい順に 5 つまで。`my-open-with-recent` を savehist で保存する)
+2. `my-open-with-alist` で拡張子に対応させたアプリ (PDF なら evince など)
+3. `xdg-open` (既定のアプリ)
+
+候補にないコマンドも、その場で入力して使える。`libreoffice --calc` のように引数も付けられる。
+TRAMP 先のファイルは開かない (アプリは手元で動くため)。
+設定は `site-lisp/my-open-with.el` にまとめ、`init.el` から `require` している (`r` の割り当ては `init.el`)。
+
 ## emacs-cd (終了したときの場所にシェルを cd する)
 
 ranger-cd にならい、`emacs -nw` で開いて、終了したときにいた場所へ元のシェルを `cd` させる
