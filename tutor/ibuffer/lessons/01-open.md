@@ -32,9 +32,12 @@ ibuffer は「たくさんのバッファを見渡して整理する」ための
 - [ ] `plot.R` の行で `go` を押す。左のウィンドウに `plot.R` が出て、カーソルもそちらに移る。
       `SPC b` で `00-tutor.md` に戻し、`SPC l` で右に移って `SPC B`。
 - [ ] `todo.org` の行で `M-o` を押す。画面が `todo.org` だけになる。
-      `SPC 3` で左右に分け直し、左で `SPC b` → `00-tutor.md`、右 (`SPC l`) で `SPC B` に戻す。
+      `SPC B` で ibuffer を出し、`00-tutor.md` の行で `go` を押すと、画面が分かれて `00-tutor.md` が出る
+      (読んでいた位置のまま)。`SPC H` で左に移すと、元の配置に戻る。
 - [ ] `analysis.R` の行で `C-x C-f` を押す。入力欄が `~/ibuffer-tutor/projB/` から始まる。
       `new.R` と入力して開き (まだ保存しない)、`SPC B` で戻ると、一覧に `new.R` が増えている。
+      同じ `analysis.R` の行で `SPC f` を押すと、入力欄は `~/ibuffer-tutor/` から始まる (`C-g` で閉じる)。
+      `SPC f` はカーソル行と関係なく、ibuffer を開いた場所 (`*Ibuffer*` バッファ自身のディレクトリ) が起点になる。
 - [ ] ibuffer にいるまま `<f1> f` → `ibuffer` → `RET` で関数の説明を開く (`*Help*` が左に出て、カーソルは右に残る)。
       一覧にはまだ `*Help*` がない。`gr` を押すと現れる。左は `SPC h` → `SPC b` → `00-tutor.md` で戻す。
 - [ ] `C-c C-a` を押すと、モードライン (画面下の帯) に `(Auto)` と出る。この間は `gr` を押さなくても一覧が更新される。
