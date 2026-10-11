@@ -696,7 +696,11 @@ dired の `r` で、マークしたファイル (なければカーソル行の�
 
 候補にないコマンドも、その場で入力して使える。`libreoffice --calc` のように引数も付けられる。
 TRAMP 先のファイルは開かない (アプリは手元で動くため)。
-設定は `site-lisp/my-open-with.el` にまとめ、`init.el` から `require` している (`r` の割り当ては `init.el`)。
+`SPC f`・dired の `f`・`SPC b` などでファイルを選んでいる途中でも、`M-a x` (embark) で同じように開ける (2026-10-11 追加)。
+embark の `x` (`embark-open-externally`。xdg-open で開くだけ) を置き換えた。xdg-open は候補に残るので、できることは減らない。
+`M-a A` (`embark-act-all`) で `x` を選べば、絞り込んだ候補をすべて開ける。ただしアプリは候補ごとに聞かれる
+(2 つ目からは前に選んだアプリが既定値なので `RET` で進む)。1 回で選びたいときは、`M-e` で dired に書き出し、`*t` (印の反転) で全部に印を付けて `r` を押す。
+設定は `site-lisp/my-open-with.el` にまとめ、`init.el` から `require` している (`r`・`M-a x` の割り当ては `init.el`)。
 
 ## emacs-cd (終了したときの場所にシェルを cd する)
 

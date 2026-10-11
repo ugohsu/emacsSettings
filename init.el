@@ -262,6 +262,11 @@
 (with-eval-after-load 'embark
   (require 'embark-consult))
 
+;; ファイルの候補の M-a x を、xdg-open で開くだけの embark-open-externally から、アプリを選んで開く
+;; my-open-with-file (dired の r と同じ。site-lisp/my-open-with.el) に置き換える。xdg-open は候補に残る
+(with-eval-after-load 'embark
+  (keymap-set embark-file-map "x" #'my-open-with-file))
+
 ;;;;
 ;;;; evil
 ;;;;
