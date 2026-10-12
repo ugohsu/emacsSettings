@@ -50,14 +50,14 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 | 別のウィンドウに出すだけ | `C-o` | (なし) | evil (`C-o` はジャンプを戻る) |
 | 並べ替え (名前順 ↔ 日付順) | `s` | `o` (`C-u o` でオプションを編集) | evil-collection (`s` を行を隠すのに使うため) |
 | 行を一覧から隠す | `k` | `s` | evil-collection (`k` は evil の行移動) |
-| 隠しファイルの表示を切り替える | (なし) | `zh` | 個人設定 |
+| 隠しファイルの表示を切り替える | (なし。dired-x の `C-x M-o`) | `zh` | 個人設定 (dired-omit-mode) |
 | よく行くディレクトリへ飛ぶ (zoxide) | (なし) | `zz` | 個人設定 (evil の `zz` は今の行を画面の中央へ) |
 | サブディレクトリをこのバッファに挿入 | `i` | `I` | evil-collection (`i` は wdired。素の `I` は Info で開く) |
 | ファイル名を直接編集する (wdired) | `C-x C-q` | `i` (`C-x C-q` でも) | evil-collection |
 | ファイル名をコピー | `w` | `Y` | evil-collection (`w` は evil の単語移動。素の `Y` は相対シンボリックリンク) |
 | ファイル名を入力して飛ぶ | `j` | `J` | evil-collection |
 | 一覧を読み直す | `g` | `gr` | evil-collection |
-| 印の付いた行を表示し直す | `l` | `r` | evil-collection (`l` は個人設定でファイルを開く) |
+| 印の付いた行を表示し直す | `l` | (なし。`gr` で読み直す) | `r` は個人設定で、選んだ外部アプリで開く (`l` は個人設定でファイルを開く) |
 | 印の反転 | `t` | `t` (`~` でもよい) | evil-collection (`~` を足している) |
 | バックアップファイルに削除の印 | `~` | (なし。`% d` で `~$` と入力する) | evil-collection (`~` を印の反転に使うため) |
 | ファイルの種類を表示 | `y` | `gy` | evil-collection (`y` は evil のコピー) |

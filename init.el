@@ -387,15 +387,19 @@
       (call-interactively #'consult-fd)
     (call-interactively #'consult-find)))
 
-;; zh で隠しファイルの表示・非表示を切り替える (ranger の zh にならう)
-;; C-u o で ls のオプションを -l にするのと同じで、変わるのは今のバッファだけ
-;; (別のディレクトリに移ると元の -al に戻る)。o で日付順にしていても名前順に戻る
-(defun my-dired-toggle-dotfiles ()
-  "今の dired バッファだけ、隠しファイルの表示・非表示を切り替える。"
-  (interactive)
-  (dired-sort-other (if (equal dired-actual-switches "-l")
-                        dired-listing-switches
-                      "-l")))
+;; dired-x (Emacs 付属の dired の拡張) を読み込む。* . (拡張子で印)・* ( (Lisp の式で印)・
+;; dired-omit (zh) が使えるようになる。F (印の付いたファイルを全部開く) なども割り当てられるが、
+;; Emacs 側のキーマップなので、evil の normal state では F・V は evil のまま
+(with-eval-after-load 'dired
+  (require 'dired-x))
+;; zh で隠しファイルの表示・非表示を切り替える (ranger の zh にならう。dired-omit-mode)
+;; 一覧を作ったあとで行を隠すだけなので、o で日付順にしていても保たれる。変わるのは今のバッファだけ
+;; (別のディレクトリに移ると、また表示される)。印を付けた隠しファイルは隠れずに残る
+;; 既定のままだと .elc なども隠し (dired-omit-extensions)、大きいディレクトリでは黙って隠すのを
+;; やめる (dired-omit-size-limit) ので、隠しファイルだけを、いつでも隠すようにする
+(setq dired-omit-files "\\`[.]"
+      dired-omit-extensions nil
+      dired-omit-size-limit nil)
 
 ;; y でカーソル行のファイルのパス類をコピーする (ranger の yp・yd・yn にならう)
 ;; (dired の normal state の y (evil-yank) を上書きする。行のテキストをコピーしたいときは
@@ -439,7 +443,7 @@
     "f" #'my-dired-find-file-by-name
     "h" #'dired-up-directory
     "l" #'dired-find-file
-    "zh" #'my-dired-toggle-dotfiles
+    "zh" #'dired-omit-mode
     "zz" #'my-zoxide-dired
     "zp" #'my-dired-preview-mode
     "r" #'my-open-with
