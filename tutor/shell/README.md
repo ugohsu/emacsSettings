@@ -19,7 +19,7 @@ bash emacsSettings/tutor/shell/setup.sh   # emacsSettings はこのリポジト�
 - 練習用のディレクトリは `~/shell-tutor` にできる。`bash setup.sh 作成先` で場所を変えられる。
 - 壊しても `setup.sh` をもう一度実行すれば、まっさらな状態に作り直せる。
   作り直すときに消すのは、目印のファイル `.shell-tutor` があるディレクトリだけ。
-- 各レッスンは対応するディレクトリ (`1-run` など) の中でやる。右の dired で `l` で入り、ファイルも `l` で開く。
+- 各レッスンは対応するディレクトリ (`01-run` など) の中でやる。右の dired で `l` で入り、ファイルも `l` で開く。
 - 練習用ディレクトリ直下の `00-tutor.md` は、この README と全レッスンの課題を 1 つにまとめたもの。
   左の `00-tutor.md` で `SPC o` (見出しの一覧) からレッスンに飛べる。
   `00-tutor.md` は閲覧用表示 (`SPC v` と同じ) で開く。`q` で抜けるとバッファも閉じるので、
@@ -54,14 +54,14 @@ bash emacsSettings/tutor/shell/setup.sh   # emacsSettings はこのリポジト�
 各レッスンの課題はリポジトリの `tutor/shell/lessons/` にある。練習用ディレクトリでは、
 `setup.sh` がこの README の後ろにつなげて `00-tutor.md` にまとめている。
 
-- [レッスン 1: `:!` でコマンドを実行する (`1-run`)](lessons/1-run.md)
-- [レッスン 2: `:r !` で出力を取り込む (`2-read`)](lessons/2-read.md)
-- [レッスン 3: `!` で行をコマンドに通して置き換える (`3-filter`)](lessons/3-filter.md)
-- [レッスン 4: よく使うフィルタ (`4-filter-more`)](lessons/4-filter-more.md)
-- [レッスン 5: `:w !` で行をコマンドに渡す (`5-write`)](lessons/5-write.md)
-- [レッスン 6: dired の `!` と `*`・`?` (`6-dired-bang`)](lessons/6-dired-bang.md)
-- [レッスン 7: dired の `&` で裏で実行する (`7-dired-async`)](lessons/7-dired-async.md)
-- [レッスン 8: evil の外で使う・使い分け (`8-other`)](lessons/8-other.md)
+- [レッスン 1: `:!` でコマンドを実行する (`01-run`)](lessons/01-run.md)
+- [レッスン 2: `:r !` で出力を取り込む (`02-read`)](lessons/02-read.md)
+- [レッスン 3: `!` で行をコマンドに通して置き換える (`03-filter`)](lessons/03-filter.md)
+- [レッスン 4: よく使うフィルタ (`04-filter-more`)](lessons/04-filter-more.md)
+- [レッスン 5: `:w !` で行をコマンドに渡す (`05-write`)](lessons/05-write.md)
+- [レッスン 6: dired の `!` と `*`・`?` (`06-dired-bang`)](lessons/06-dired-bang.md)
+- [レッスン 7: dired の `&` で裏で実行する (`07-dired-async`)](lessons/07-dired-async.md)
+- [レッスン 8: evil の外で使う・使い分け (`08-other`)](lessons/08-other.md)
 
 ---
 

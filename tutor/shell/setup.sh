@@ -32,23 +32,23 @@ mk() {
     printf '%s\n' "$2" > "$1"
 }
 
-## 1-run: :! でコマンドを実行する
-mk 1-run/notes.txt 'シェルコマンドの練習用メモ
+## 01-run: :! でコマンドを実行する
+mk 01-run/notes.txt 'シェルコマンドの練習用メモ
 2 行目
 3 行目
 4 行目
 5 行目'
-mk 1-run/todo.txt 'TODO: 資料を作る'
-mk 1-run/greet.sh '#!/usr/bin/env bash
+mk 01-run/todo.txt 'TODO: 資料を作る'
+mk 01-run/greet.sh '#!/usr/bin/env bash
 echo "こんにちは、${1:-名無し}さん"'
-mk 1-run/logs/app.log '2026-10-01 09:00:01 INFO 起動
+mk 01-run/logs/app.log '2026-10-01 09:00:01 INFO 起動
 2026-10-01 09:00:05 ERROR 設定ファイルがない
 2026-10-01 09:01:10 INFO 再試行
 2026-10-01 09:01:12 ERROR 接続できない
 2026-10-01 09:02:00 INFO 終了'
 
-## 2-read: :r ! で出力を取り込む
-mk 2-read/report.md '# 作業記録
+## 02-read: :r ! で出力を取り込む
+mk 02-read/report.md '# 作業記録
 
 日付:
 
@@ -57,10 +57,10 @@ mk 2-read/report.md '# 作業記録
 ## 課題
 
 ## 定型文'
-mk 2-read/template.md '以上、よろしくお願いします。'
+mk 02-read/template.md '以上、よろしくお願いします。'
 
-## 3-filter: ! で行をコマンドに通して置き換える
-mk 3-filter/members.txt 'suzuki
+## 03-filter: ! で行をコマンドに通して置き換える
+mk 03-filter/members.txt 'suzuki
 tanaka
 sato
 suzuki
@@ -68,62 +68,62 @@ suzuki
 yamada
 ito
 kato'
-mk 3-filter/numbers.txt '10
+mk 03-filter/numbers.txt '10
 9
 100
 2
 1'
 
-## 4-filter-more: よく使うフィルタ
-mk 4-filter-more/table.txt 'name dept ext
+## 04-filter-more: よく使うフィルタ
+mk 04-filter-more/table.txt 'name dept ext
 alice sales 101
 bob engineering 2034
 carol hr 7'
-mk 4-filter-more/scores.csv 'name,score
+mk 04-filter-more/scores.csv 'name,score
 alice,72
 bob,95
 carol,88
 dave,61'
-mk 4-filter-more/words.txt 'apple
+mk 04-filter-more/words.txt 'apple
 banana
 apple
 cherry
 banana
 apple'
-mk 4-filter-more/list.md '牛乳を買う
+mk 04-filter-more/list.md '牛乳を買う
 本を返す
 メールを送る'
 
-## 5-write: :w ! で行をコマンドに渡す
-mk 5-write/calc.py 'x = [3, 1, 2]
+## 05-write: :w ! で行をコマンドに渡す
+mk 05-write/calc.py 'x = [3, 1, 2]
 print(sorted(x))
 print(sum(x))
 import math
 print(math.pi)'
-mk 5-write/commands.md '# メモに書いたコマンド
+mk 05-write/commands.md '# メモに書いたコマンド
 
 ls -l
 du -sh .'
-mk 5-write/essay.txt '吾輩は猫である。名前はまだ無い。
+mk 05-write/essay.txt '吾輩は猫である。名前はまだ無い。
 どこで生れたかとんと見当がつかぬ。'
 
-## 6-dired-bang: dired の ! と * ・ ?
-mk "6-dired-bang/a b.txt" 'いち
+## 06-dired-bang: dired の ! と * ・ ?
+mk "06-dired-bang/a b.txt" 'いち
 に
 さん'
-mk 6-dired-bang/c.txt 'し
+mk 06-dired-bang/c.txt 'し
 ご'
-mk 6-dired-bang/d.txt 'ろく'
-mkdir -p 6-dired-bang/backup
+mk 06-dired-bang/d.txt 'ろく'
+mkdir -p 06-dired-bang/backup
 
-## 7-dired-async: dired の & で裏で実行する
-mk 7-dired-async/job1.txt 'a'
-mk 7-dired-async/job2.txt 'bb'
-mk 7-dired-async/job3.txt 'ccc'
-mkdir -p 7-dired-async/done
+## 07-dired-async: dired の & で裏で実行する
+mk 07-dired-async/job1.txt 'a'
+mk 07-dired-async/job2.txt 'bb'
+mk 07-dired-async/job3.txt 'ccc'
+mkdir -p 07-dired-async/done
 
-## 8-other: evil の外で使う・使い分け
-mk 8-other/memo.txt '今日は
+## 08-other: evil の外で使う・使い分け
+mk 08-other/memo.txt '今日は
 りんご
 みかん
 バナナ'
