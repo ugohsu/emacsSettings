@@ -392,15 +392,34 @@
 ;; Emacs 側のキーマップなので、evil の normal state では F・V は evil のまま
 (with-eval-after-load 'dired
   (require 'dired-x))
-;; zh で隠しファイルの表示・非表示を切り替える (ranger の zh にならう。dired-omit-mode)
-;; 一覧を作ったあとで行を隠すだけなので、o で日付順にしていても保たれる。変わるのは今のバッファだけ
-;; (別のディレクトリに移ると、また表示される)。印を付けた隠しファイルは隠れずに残る
+;; 隠しファイルは最初から隠し、zh で表示・非表示を切り替える (ranger の zh にならう。dired-omit-mode)
+;; zh は開いているすべての dired をまとめて切り替え、そのあと開く dired もそれに従う
+;; 一覧を作ったあとで行を隠すだけなので、o で日付順にしていても保たれる。印を付けた隠しファイルは隠れずに残る
+;; 隠れているファイルに C-x C-j (dired-jump) で飛ぶと、そのバッファだけ隠すのをやめる (Emacs 本体の動き)
 ;; 既定のままだと .elc なども隠し (dired-omit-extensions)、大きいディレクトリでは黙って隠すのを
 ;; やめる (dired-omit-size-limit) ので、隠しファイルだけを、いつでも隠すようにする
 ;; . と .. は残す (既定値はこの 2 つも隠し、* O でも印が付く)
 (setq dired-omit-files "\\`[.]\\([^.]\\|[.].\\)"
       dired-omit-extensions nil
       dired-omit-size-limit nil)
+(defvar my-dired-omit-hidden t
+  "non-nil なら、dired で隠しファイルを隠す。zh (`my-dired-toggle-hidden') で切り替える。")
+(defun my-dired-omit-setup ()
+  "新しく開いた dired で、`my-dired-omit-hidden' に合わせて隠しファイルを隠す。"
+  ;; dired-mode-hook は一覧を作る前に動くので、有効にするだけにする
+  ;; (dired-omit-mode を無効にすると、その場で一覧を読み直してしまう)
+  (when my-dired-omit-hidden
+    (dired-omit-mode 1)))
+(add-hook 'dired-mode-hook #'my-dired-omit-setup)
+(defun my-dired-toggle-hidden ()
+  "隠しファイルの表示・非表示を、開いているすべての dired でまとめて切り替える。"
+  (interactive)
+  (setq my-dired-omit-hidden (not my-dired-omit-hidden))
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when (and (derived-mode-p 'dired-mode)
+                 (not (eq (and dired-omit-mode t) my-dired-omit-hidden)))
+        (dired-omit-mode (if my-dired-omit-hidden 1 -1))))))
 
 ;; y でカーソル行のファイルのパス類をコピーする (ranger の yp・yd・yn にならう)
 ;; (dired の normal state の y (evil-yank) を上書きする。行のテキストをコピーしたいときは
@@ -444,7 +463,7 @@
     "f" #'my-dired-find-file-by-name
     "h" #'dired-up-directory
     "l" #'dired-find-file
-    "zh" #'dired-omit-mode
+    "zh" #'my-dired-toggle-hidden
     "zz" #'my-zoxide-dired
     "zp" #'my-dired-preview-mode
     "r" #'my-open-with
