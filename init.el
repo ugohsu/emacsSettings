@@ -397,7 +397,8 @@
 ;; (別のディレクトリに移ると、また表示される)。印を付けた隠しファイルは隠れずに残る
 ;; 既定のままだと .elc なども隠し (dired-omit-extensions)、大きいディレクトリでは黙って隠すのを
 ;; やめる (dired-omit-size-limit) ので、隠しファイルだけを、いつでも隠すようにする
-(setq dired-omit-files "\\`[.]"
+;; . と .. は残す (既定値はこの 2 つも隠し、* O でも印が付く)
+(setq dired-omit-files "\\`[.]\\([^.]\\|[.].\\)"
       dired-omit-extensions nil
       dired-omit-size-limit nil)
 
