@@ -1,7 +1,7 @@
 # dired tutor
 
 vimtutor のように、手を動かしながら dired の操作を覚えるための課題集。
-キーはこのリポジトリの `init.el` (evil + evil-collection と自分の設定) を前提にしている。
+キーはこのリポジトリの `init.el` (evil + evil-collection と自分の設定、dired-x) を前提にしている。
 素の Emacs のキーとは違うところがある (例: 行を隠すのは `k` ではなく `s`。下の「素の Emacs とキーが違うもの」を参照)。
 
 ## 始め方
@@ -19,15 +19,31 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 - 練習用のディレクトリは `~/dired-tutor` にできる。`bash setup.sh 作成先` で場所を変えられる。
 - 壊しても `setup.sh` をもう一度実行すれば、まっさらな状態に作り直せる。
   作り直すときに消すのは、目印のファイル `.dired-tutor` があるディレクトリだけ。
-- 各レッスンは対応するディレクトリ (`1-move` など) の中でやる。順番どおりでなくてもよい。
+- 各レッスンは対応するディレクトリ (`01-move` など) の中でやる。右の dired で `l` で入る。
+  順番どおりでなくてもよいが、レッスン 3〜5 (印) は続けてやると分かりやすい。
 - 練習用ディレクトリ直下の `00-tutor.md` は、この README と全レッスンの課題を 1 つにまとめたもの。
   左の `00-tutor.md` で `SPC o` (見出しの一覧) からレッスンに飛び、右の dired で操作すると、見ながら進められる。
   `00-tutor.md` は閲覧用表示 (`SPC v` と同じ) で開く。`q` で抜けるとバッファも閉じるので、
   チェックを付けるなど書き込むときは、`M-x view-mode` で閲覧用表示だけを抜ける。
-- `x` などで確認を求められたら `y` で答える (`use-short-answers` を `t` にしているため)。
+- `D` などで確認を求められたら `y` で答える (`use-short-answers` を `t` にしているため)。
+- **消したファイルはゴミ箱に入らない** (`delete-by-moving-to-trash` は `nil` のまま)。練習用ディレクトリなら
+  `setup.sh` で作り直せるが、ふだんの作業では `D` の確認に出る名前をよく見てから `y` を押す。
 - キーの割り当ては `M-h` (embark-bindings) か `<f1> k キー` で調べる。
   normal state では `C-h` を左移動にしているので、`C-h k` ではヘルプが開かない。
   `g?` (dired-summary) は決め打ちの一覧を出すだけで、この設定の割り当て (`f`、`o`、`h` など) とは食い違うので使わない。
+
+## このチュートリアルの方針: 印を付けてから操作する
+
+dired の操作は「印 (`*`) を付けて選ぶ」→「大文字のキーで操作する」の 2 段に分かれている。
+削除も、印を付けて `D` で消す。素の Emacs の解説では、削除専用の印 (flag) を `d` で付けて `x` で消す流れが
+先に出てくることが多いが、このチュートリアルでは使わない。印なら、削除だけでなくコピー・移動・シェルコマンドなど、
+どの操作にも同じ選び方が使えるため。flag は、掃除用のコマンド (`% &` など) が付けたときに `x` で消すために、
+読み方だけ覚える (レッスン 6)。
+
+- レッスン 3: 印の基本 (付ける・外す・反転・範囲で付ける) と、印を付けて `D` で消す
+- レッスン 4: 拡張子・名前・中身・種類・大きさなどの条件で、まとめて印を付ける
+- レッスン 5: 印を使いこなす (選んだものだけを表示する・印を退避する・複数のディレクトリにまたがって付ける・数える)
+- レッスン 6: 消す・片付ける (ディレクトリの削除、バックアップや中間ファイルの掃除、flag の読み方)
 
 ## 素の Emacs とキーが違うもの
 
@@ -52,14 +68,18 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 | 行を一覧から隠す | `k` | `s` | evil-collection (`k` は evil の行移動) |
 | 隠しファイルの表示を切り替える | (なし。dired-x の `C-x M-o`) | `zh` | 個人設定 (dired-omit-mode) |
 | よく行くディレクトリへ飛ぶ (zoxide) | (なし) | `zz` | 個人設定 (evil の `zz` は今の行を画面の中央へ) |
+| 選んだ外部アプリで開く | (なし) | `r` | 個人設定 (evil-collection の `r` (dired-do-redisplay) を上書き) |
 | サブディレクトリをこのバッファに挿入 | `i` | `I` | evil-collection (`i` は wdired。素の `I` は Info で開く) |
 | ファイル名を直接編集する (wdired) | `C-x C-q` | `i` (`C-x C-q` でも) | evil-collection |
 | ファイル名をコピー | `w` | `Y` | evil-collection (`w` は evil の単語移動。素の `Y` は相対シンボリックリンク) |
 | ファイル名を入力して飛ぶ | `j` | `J` | evil-collection |
 | 一覧を読み直す | `g` | `gr` | evil-collection |
-| 印の付いた行を表示し直す | `l` | (なし。`gr` で読み直す) | `r` は個人設定で、選んだ外部アプリで開く (`l` は個人設定でファイルを開く) |
+| 印の付いた行を表示し直す | `l` | (なし。`gr` で読み直す) | 個人設定 (`l` はファイルを開く) |
 | 印の反転 | `t` | `t` (`~` でもよい) | evil-collection (`~` を足している) |
-| バックアップファイルに削除の印 | `~` | (なし。`% d` で `~$` と入力する) | evil-collection (`~` を印の反転に使うため) |
+| 1 つ上の行の印を外す | `DEL` | (なし。`k` で上がって `u`) | evil (`DEL` は evil の左移動) |
+| 印の数と合計サイズを表示 | `* N` | (なし。`M-x dired-number-of-marked-files`) | evil-collection (`*` で始まるキーを付け直していて、`* N` が含まれていない) |
+| 印の付いたファイルを全部開く | `F` (dired-x) | (なし。`M-x dired-do-find-marked-files`) | evil (`F` は evil の後ろ向きの文字検索) |
+| バックアップファイルに削除の印 | `~` | (なし。`% m` で `~$` と入力して印を付け、`D`) | evil-collection (`~` を印の反転に使うため) |
 | ファイルの種類を表示 | `y` | `gy` | evil-collection (`y` は evil のコピー) |
 | グループを変える (chgrp) | `G` | `gG` | evil-collection (`G` は evil の最後の行へ) |
 | サブディレクトリを畳む | `$` | `g$` | evil-collection (`$` は evil の行末へ) |
@@ -70,11 +90,25 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 
 | 動き | 素の Emacs | この設定 |
 |---|---|---|
-| 別のディレクトリに移ったとき | 元のディレクトリの dired バッファが残る | 元のバッファを閉じる (`dired-kill-when-opening-new-dired-buffer`) |
+| 別のディレクトリに移ったとき | 元のディレクトリの dired バッファが残る | 元のバッファを閉じる (`dired-kill-when-opening-new-dired-buffer`)。付けていた印も消える |
 | `q` で閉じたとき | ウィンドウを閉じるだけで、バッファは残る | バッファも閉じる (`quit-window-kill-buffer`) |
 | `C` (コピー)・`R` (移動) の送り先の初期値 | 今のディレクトリ | dired を 2 つ並べているときは、もう一方のディレクトリ (`dired-dwim-target`) |
 | 削除などの確認 | `yes` / `no` を入力する | `y` / `n` だけで答える (`use-short-answers` を `t` にしている) |
 | 長い行 | 折り返す | 折り返さない (`dired-mode-hook` で `truncate-lines`) |
+
+### 気をつけること・練習しないもの
+
+- **範囲を選んだまま (`V` のビジュアル選択のまま) `D`・`C`・`R` などを押さない。** 印を付ける `m` は選んだ範囲に効くが、
+  `D` などの操作は範囲を見ずに、カーソルのある 1 つのファイルだけを対象にする。しかも evil が選択を行末まで広げるので、
+  下に向かって選んだときは選択の**次の行**のファイルが対象になる (確認には出るが、見落とすと別のファイルを消す)。
+  範囲で選んだら、必ず `m` で印に変えてから操作する (レッスン 3)。
+- `* O` (dired-omit で隠す対象に印を付ける) は、この設定では `.` と `..` にも印を付ける (隠す対象を「`.` で始まる名前」に
+  しているため)。そのまま `D` を押すと今のディレクトリごと消しにいくので使わない。隠しファイルに印を付けるときは、
+  `% m` で `^\.` と入力する (`% m` は `.`・`..` には印を付けない)。
+- `* (` (Lisp の式で印を付ける) も、条件によっては `.`・`..` やディレクトリに印を付ける (レッスン 4)。`D` の前に印を確かめる。
+- `.` は evil の繰り返しではなく、dired の `dired-clean-directory` (番号付きバックアップ `foo.~1~` の古いものに削除の印を付ける)。
+  練習では扱わない。
+- `P` (印刷)、`L` (Emacs Lisp を読み込む)、`B` (バイトコンパイル)、`H` (ハードリンク) は扱わない。
 
 ---
 
@@ -83,16 +117,18 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 各レッスンの課題はリポジトリの `tutor/dired/lessons/` にある。練習用ディレクトリでは、
 `setup.sh` がこの README の後ろにつなげて `00-tutor.md` にまとめている。
 
-- [レッスン 1: 移動 (`1-move`)](lessons/1-move.md)
-- [レッスン 2: 表示の切り替え (`2-view`)](lessons/2-view.md)
-- [レッスン 3: 印を付ける (`3-mark`)](lessons/3-mark.md)
-- [レッスン 4: 削除 (`4-delete`)](lessons/4-delete.md)
-- [レッスン 5: コピー・移動・作成 (`5-copy-move`)](lessons/5-copy-move.md)
-- [レッスン 6: 名前の一括変更 (`6-rename`)](lessons/6-rename.md)
-- [レッスン 7: サブディレクトリと一括検索・置換 (`7-project`)](lessons/7-project.md)
-- [レッスン 8: シェルコマンド・圧縮・比較 (`8-shell`)](lessons/8-shell.md)
-- [レッスン 9: consult・embark と組み合わせる (`9-combo`)](lessons/9-combo.md)
-- [レッスン 10: おまけ (どのディレクトリでも)](lessons/10-extra.md)
+- [レッスン 1: 移動と開く (`01-move`)](lessons/01-move.md)
+- [レッスン 2: 表示の切り替え (`02-view`)](lessons/02-view.md)
+- [レッスン 3: 印の基本と、印を付けて消す (`03-mark`)](lessons/03-mark.md)
+- [レッスン 4: 条件で印を付ける (`04-mark-by`)](lessons/04-mark-by.md)
+- [レッスン 5: 印を使いこなす (`05-mark-more`)](lessons/05-mark-more.md)
+- [レッスン 6: 消す・片付ける (`06-delete`)](lessons/06-delete.md)
+- [レッスン 7: コピー・移動・作成 (`07-copy-move`)](lessons/07-copy-move.md)
+- [レッスン 8: 名前の一括変更 (`08-rename`)](lessons/08-rename.md)
+- [レッスン 9: サブディレクトリと一括検索・置換 (`09-project`)](lessons/09-project.md)
+- [レッスン 10: シェルコマンド・圧縮・比較・外部アプリ (`10-shell`)](lessons/10-shell.md)
+- [レッスン 11: consult・embark と組み合わせる (`11-combo`)](lessons/11-combo.md)
+- [レッスン 12: おまけ (どのディレクトリでも)](lessons/12-extra.md)
 
 ---
 

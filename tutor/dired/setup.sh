@@ -32,92 +32,122 @@ mk() {
     printf '%s\n' "$2" > "$1"
 }
 
-## 1-move: 移動
-mk 1-move/notes.txt "レッスン 1 のメモ"
-mk 1-move/a/b/c/deep.txt "ここまで来られたら OK"
-mk 1-move/a/b/shallow.txt "途中のファイル"
-mk 1-move/zz-last.txt "一番下のファイル"
-mkdir -p 1-move/x 1-move/y
+## 01-move: 移動と開く
+mk 01-move/notes.txt "レッスン 1 のメモ"
+mk 01-move/a/b/c/deep.txt "ここまで来られたら OK"
+mk 01-move/a/b/shallow.txt "途中のファイル"
+mk 01-move/zz-last.txt "一番下のファイル"
+mkdir -p 01-move/x 01-move/y
 
-## 2-view: 表示の切り替え
-mk 2-view/new.txt "新しいファイル"
-mk 2-view/middle.txt "中くらいのファイル"
-mk 2-view/old.txt "古いファイル"
-touch -d "2020-01-01 09:00" 2-view/old.txt
-touch -d "2023-06-15 09:00" 2-view/middle.txt
-mk 2-view/.config "隠しファイル"
-mk 2-view/.history "隠しファイル"
-mk 2-view/.cache/data "隠しディレクトリの中身"
+## 02-view: 表示の切り替え
+mk 02-view/new.txt "新しいファイル"
+mk 02-view/middle.txt "中くらいのファイル"
+mk 02-view/old.txt "古いファイル"
+touch -d "2020-01-01 09:00" 02-view/old.txt
+touch -d "2023-06-15 09:00" 02-view/middle.txt
+mk 02-view/.config "隠しファイル"
+mk 02-view/.history "隠しファイル"
+mk 02-view/.cache/data "隠しディレクトリの中身"
 
-## 3-mark: 印の付け方
-mk 3-mark/data-2024.csv "id,value"
-mk 3-mark/data-2025.csv "id,value"
-mk 3-mark/memo.txt "TODO: 図を差し替える"
-mk 3-mark/memo2.txt "特になし"
-mk 3-mark/plan.md "TODO: 締め切りを確認する"
-mk 3-mark/figs/fig1.png ""
-mk 3-mark/scripts/run.sh "echo run"
+## 03-mark: 印の基本と、印を付けて消す
+for f in apple banana cherry date elderberry fig grape; do
+    mk "03-mark/$f.txt" "$f"
+done
+mk 03-mark/keep.md "これは消さない"
+mk 03-mark/box/inside.txt "ディレクトリの中のファイル"
 
-## 4-delete: 削除
-mk 4-delete/keep.md "これは消さない"
-mk 4-delete/draft.txt "下書き"
-mk "4-delete/#draft.txt#" "自動保存ファイル"
-mk 4-delete/report.txt "レポート"
-mk "4-delete/report.txt~" "バックアップファイル"
-mk 4-delete/old1.bak "古い版"
-mk 4-delete/old2.bak "古い版"
-mk 4-delete/old3.bak "古い版"
-mk 4-delete/tmp-a.log "ログ"
-mk 4-delete/tmp-b.log "ログ"
-mk 4-delete/junk.txt "ごみ"
+## 04-mark-by: 条件で印を付ける
+mk 04-mark-by/data-2024.csv "id,value"
+mk 04-mark-by/data-2025.csv "id,value"
+mk 04-mark-by/summary.csv "total"
+mk 04-mark-by/memo.txt "TODO: 図を差し替える"
+mk 04-mark-by/memo2.txt "特になし"
+mk 04-mark-by/plan.md "TODO: 締め切りを確認する"
+mk 04-mark-by/notes.md "打ち合わせのメモ"
+# 空のファイル (* ( で (= size 0) を試す)
+: > 04-mark-by/empty1.txt
+: > 04-mark-by/empty2.log
+mk 04-mark-by/run.sh "echo run"
+chmod +x 04-mark-by/run.sh
+# シンボリックリンク (拡張子を付けない。* . txt や % g TODO に引っかからないように、TODO のない memo2.txt を指す)
+ln -s memo2.txt 04-mark-by/latest
+mk 04-mark-by/.env-old "隠しファイル"
+mk 04-mark-by/figs/fig1.png ""
+mk 04-mark-by/old/backup.csv "id,value"
 
-## 5-copy-move: コピー・移動・作成
-mk 5-copy-move/src/analysis.R "library(tidyverse)"
-mk 5-copy-move/src/main.py "import pandas as pd"
-mk 5-copy-move/src/memo.md "# メモ"
-mk 5-copy-move/src/rename-me.txt "名前を変えてほしいファイル"
-mkdir -p 5-copy-move/dst
+## 05-mark-more: 印を使いこなす
+for f in r-2024-01 r-2024-02 r-2025-01 r-2025-02; do
+    mk "05-mark-more/$f.csv" "month,amount"
+done
+mk 05-mark-more/readme.md "# 月次レポート"
+mk 05-mark-more/draft1.md "下書き 1"
+mk 05-mark-more/draft2.md "下書き 2"
+mkdir -p 05-mark-more/archive
+mk 05-mark-more/old/a.csv "id,value"
+mk 05-mark-more/old/b.csv "id,value"
+mk 05-mark-more/new/c.csv "id,value"
 
-## 6-rename: 名前の一括変更
+## 06-delete: 消す・片付ける
+mk 06-delete/keep.md "これは消さない"
+mk 06-delete/report.txt "レポート"
+mk "06-delete/report.txt~" "バックアップファイル"
+mk 06-delete/draft.txt "下書き"
+mk "06-delete/#draft.txt#" "自動保存ファイル"
+mk 06-delete/paper.tex '\documentclass{article}'
+mk 06-delete/paper.aux "中間ファイル"
+mk 06-delete/paper.log "中間ファイル"
+mk 06-delete/paper.toc "中間ファイル"
+mk 06-delete/old-project/main.py "print('old')"
+mk 06-delete/old-project/README.md "# 古いプロジェクト"
+mkdir -p 06-delete/empty-dir
+
+## 07-copy-move: コピー・移動・作成
+mk 07-copy-move/src/analysis.R "library(tidyverse)"
+mk 07-copy-move/src/main.py "import pandas as pd"
+mk 07-copy-move/src/memo.md "# メモ"
+mk 07-copy-move/src/rename-me.txt "名前を変えてほしいファイル"
+mkdir -p 07-copy-move/dst
+
+## 08-rename: 名前の一括変更
 for i in 1 2 3 4 5; do
-    mk "6-rename/photos/IMG_000$i.JPG" ""
+    mk "08-rename/photos/IMG_000$i.JPG" ""
 done
 for n in 1 2 3 9 10 11; do
-    mk "6-rename/chapters/ch$n.md" "# 第 $n 章"
+    mk "08-rename/chapters/ch$n.md" "# 第 $n 章"
 done
 
-## 7-project: サブディレクトリと一括検索・置換
-mk 7-project/R/analysis.R 'df <- read_csv("data.csv") |>
+## 09-project: サブディレクトリと一括検索・置換
+mk 09-project/R/analysis.R 'df <- read_csv("data.csv") |>
   mutate(score = old_name * 2)'
-mk 7-project/R/plot.R 'ggplot(df, aes(x = old_name, y = score)) + geom_point()'
-mk 7-project/py/main.py 'import pandas as pd
+mk 09-project/R/plot.R 'ggplot(df, aes(x = old_name, y = score)) + geom_point()'
+mk 09-project/py/main.py 'import pandas as pd
 df = pd.read_csv("data.csv").assign(score=lambda d: d["old_name"] * 2)'
-mk 7-project/docs/memo.md '列 old_name の意味を確認する'
+mk 09-project/docs/memo.md '列 old_name の意味を確認する'
 
-## 8-shell: シェルコマンド・圧縮・比較
-mk 8-shell/a.txt 'りんご
+## 10-shell: シェルコマンド・圧縮・比較・外部アプリ
+mk 10-shell/a.txt 'りんご
 みかん
 ぶどう'
-mk 8-shell/b.txt 'りんご
+mk 10-shell/b.txt 'りんご
 バナナ
 ぶどう'
-mk 8-shell/log1.txt 'line1
+mk 10-shell/log1.txt 'line1
 line2
 line3'
-mk 8-shell/log2.txt 'line1
+mk 10-shell/log2.txt 'line1
 line2'
 
-## 9-combo: consult・embark と組み合わせる
-mk 9-combo/2024/jan/sales-2024-01.csv "month,amount"
-mk 9-combo/2024/jan/debug.tmp "一時ファイル"
-mk 9-combo/2024/feb/sales-2024-02.csv "month,amount"
-mk 9-combo/2024/feb/notes.md "2 月の締め切りを確認する"
-mk 9-combo/2025/mar/sales-2025-03.csv "month,amount"
-mk 9-combo/2025/mar/debug.tmp "一時ファイル"
-mk 9-combo/2025/mar/cache.tmp "一時ファイル"
-mk 9-combo/docs/guide.md "提出の締め切りは 10 月末"
-mk 9-combo/docs/faq.md "締め切りを過ぎたら連絡する"
-mkdir -p 9-combo/collected
+## 11-combo: consult・embark と組み合わせる
+mk 11-combo/2024/jan/sales-2024-01.csv "month,amount"
+mk 11-combo/2024/jan/debug.tmp "一時ファイル"
+mk 11-combo/2024/feb/sales-2024-02.csv "month,amount"
+mk 11-combo/2024/feb/notes.md "2 月の締め切りを確認する"
+mk 11-combo/2025/mar/sales-2025-03.csv "month,amount"
+mk 11-combo/2025/mar/debug.tmp "一時ファイル"
+mk 11-combo/2025/mar/cache.tmp "一時ファイル"
+mk 11-combo/docs/guide.md "提出の締め切りは 10 月末"
+mk 11-combo/docs/faq.md "締め切りを過ぎたら連絡する"
+mkdir -p 11-combo/collected
 
 ## README と全レッスンの課題を 00-tutor.md にまとめる (00- を付けて一覧の先頭に出す)
 # README のレッスンへのリンクは外し、レッスンの見出しは 1 段下げて README の節と並べる
