@@ -163,6 +163,24 @@ OSC 52 エスケープシーケンスで端末(kitty)経由でクリップボー
   詳細は`controls/setting/server/hp-mini/workbox_setup/README.md`の「11. Emacs (clipetty)
   の kill-ring → クリップボード連携に必要な tmux 設定」を参照。
 
+## emacs -nw (CLI版) での幅があいまいな文字 (● → … など)
+
+日本語の言語環境 (`LANG=ja_JP.UTF-8` など) では、`cjk-ambiguous-chars-are-wide`
+(既定値 `t`) によって、Emacs は Unicode で幅が「あいまい」とされる文字
+(`●`・`→`・`…`・`─` など) を 2 列と数える。GUI 版は IPAGothic でこれらを 2 列幅で描くので
+合っているが、kitty は 1 列で描く (幅があいまいな文字を 2 列にする設定もない)。
+数え方が食い違うと、Emacs が行の一部だけを書き直すとき (`j`・`k` で 1 行ずつ
+スクロールするときなど) に書く位置が 1 列ずれ、前の文字が残って画面が崩れる。
+markdown-mode が `-` を `●` に置き換えて表示する箇条書きの行や、`→` を含む行で目立つ。
+左右に分けたウィンドウの境界線もガタガタになる。
+
+対策として、端末版だけ `(setopt cjk-ambiguous-chars-are-wide nil)` で 1 列と数える
+(2026-10-13)。GUI 版は変えない。`setq` では文字幅の表が更新されないので `setopt` を使う。
+端末版でこれらの文字が 1 列幅で詰まって見えるのは kitty の描き方なので、この設定の有無に
+かかわらず GUI 版とは見え方が違う。この設定でなくなるのは崩れだけ。
+幅があいまいな文字を 2 列で描く設定にした端末 (WezTerm の
+`treat_east_asian_ambiguous_width_as_wide` など) で使うときは、逆にずれるので外す。
+
 ## ミニバッファ補完 (vertico + marginalia)
 
 [vertico](https://github.com/minad/vertico) でミニバッファの補完候補を縦に並べ、

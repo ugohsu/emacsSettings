@@ -51,6 +51,11 @@
 (dolist (target '(japanese-jisx0208 kana han symbol cjk-misc bopomofo))
   ;; (set-fontset-font t target (font-spec :family "Noto Sans Mono CJK JP"))
   (set-fontset-font t target (font-spec :family "IPAGothic")))
+;; 端末版では、幅があいまいな文字 (● → … など) を 1 列として数える。
+;; 日本語の言語環境では 2 列と数えるが、kitty は 1 列で描くため、行の一部だけを
+;; 書き直すときに位置がずれて画面が崩れる。GUI 版は IPAGothic の 2 列幅のままにする
+(unless (display-graphic-p)
+  (setopt cjk-ambiguous-chars-are-wide nil))
 
 (setq inhibit-startup-message t
       initial-scratch-message "")
