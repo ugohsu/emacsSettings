@@ -71,6 +71,7 @@ dired のキーの多くは evil-collection が決めている。考え方は ev
 
 ### 困ったとき
 
+- `C-h`: このクイックガイドを別のウィンドウに出す (`q` で閉じる)
 - `M-h`: 今使えるキーの一覧 (embark-bindings。絞り込んで実行もできる)
 - `<f1> k` のあとにキー: そのキーの説明
 
@@ -99,7 +100,7 @@ bash emacsSettings/tutor/dired/setup.sh   # emacsSettings はこのリポジト�
 - **消したファイルはゴミ箱に入らない** (`delete-by-moving-to-trash` は `nil` のまま)。練習用ディレクトリなら
   `setup.sh` で作り直せるが、ふだんの作業では `D` の確認に出る名前をよく見てから `y` を押す。
 - キーの割り当ては `M-h` (embark-bindings) か `<f1> k キー` で調べる。
-  normal state では `C-h` を左移動にしているので、`C-h k` ではヘルプが開かない。
+  dired の `C-h` はこの README のクイックガイドを出すので、`C-h k` ではヘルプが開かない。
   `g?` (dired-summary) は決め打ちの一覧を出すだけで、この設定の割り当て (`f`、`o`、`h` など) とは食い違うので使わない。
 
 ## このチュートリアルの方針: 印を付けてから操作する

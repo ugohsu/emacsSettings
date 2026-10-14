@@ -294,6 +294,7 @@
 (require 'my-zoxide)  ; zoxide への記録と、記録されたディレクトリへ飛ぶ (zz・SPC z)
 (require 'my-dired-preview)  ; dired のカーソル行のファイルのプレビュー (zp)
 (require 'my-open-with)  ; dired のファイルを選んだ外部アプリで開く (r)
+(require 'my-tutor-guide)  ; tutor の README のクイックガイドを表示する (dired・ibuffer の C-h)
 
 ;; SPC メニューや dired の y のように、続けて 1 文字で選ぶキーマップでは、割り当てのないキーは
 ;; 何もしない (read-char 版と同じく、undefined のエラーを出さない)。ただし C-h は割り当てなしのままにして、
@@ -338,6 +339,7 @@
 (keymap-set evil-motion-state-map "S-SPC" #'scroll-down-command)
 ;; C-h は global で delete-backward-char にしているが、normal state では vim と同じく
 ;; 左移動にする (insert state では global のまま backspace として効く)
+;; dired・ibuffer では行内の左右移動を使わないので、それぞれの節でクイックガイドの表示に上書きする
 (keymap-set evil-motion-state-map "C-h" #'evil-backward-char)
 
 ;; コマンドラインウィンドウ (: の中の C-f や q:) で C-c を押すと、カーソル行を持って
@@ -463,8 +465,10 @@
 ;; zp はカーソル行のファイルのプレビューを隣に出す・消す (ranger の zp にならう。dired の外では閉じる)
 ;; r はマークしたファイル (なければカーソル行のファイル) を選んだ外部アプリで開く (ranger の r にならう。
 ;; evil-collection の r (dired-do-redisplay) を上書きする。読み直しは gr でできる)
+;; C-h は tutor/dired/README.md のクイックガイドを出す (site-lisp/my-tutor-guide.el)
 (with-eval-after-load 'dired
   (evil-define-key 'normal dired-mode-map
+    (kbd "C-h") #'my-tutor-guide
     "f" #'my-dired-find-file-by-name
     "h" #'dired-up-directory
     "l" #'dired-find-file
@@ -473,6 +477,14 @@
     "zp" #'my-dired-preview-mode
     "r" #'my-open-with
     "y" my-dired-yank-map))
+
+;;;;
+;;;; ibuffer (SPC B・C-x C-b。キーの多くは evil-collection が決めている)
+;;;;
+;; C-h は tutor/ibuffer/README.md のクイックガイドを出す (site-lisp/my-tutor-guide.el)
+(with-eval-after-load 'ibuffer
+  (evil-define-key 'normal ibuffer-mode-map
+    (kbd "C-h") #'my-tutor-guide))
 
 ;;;;
 ;;;; vterm (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)

@@ -75,6 +75,7 @@ ibuffer のキーの多くは evil-collection が決めている。考え方は 
 
 ### 困ったとき
 
+- `C-h`: このクイックガイドを別のウィンドウに出す (`q` で閉じる)
 - `M-h`: 今使えるキーの一覧 (embark-bindings。絞り込んで実行もできる)
 - `<f1> k` のあとにキー: そのキーの説明
 - 並べ替え・絞り込みなどを全部元に戻す: `M-x kill-current-buffer` で ibuffer を閉じて、`SPC B` で開き直す

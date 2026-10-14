@@ -517,7 +517,8 @@ vterm のほうが速く、NonGNU ELPA を引かずに済むため。どちら�
   番号を付けるとその番号のシェルに切り替える。
 - `C-h` は insert state では ^H として bash に送り、backspace として効かせている
   (`init.el` の vterm の節。vterm は既定では `C-h` をターミナルに送らない)。normal state では
-  vim と同じく左移動 (evil の節で `evil-motion-state-map` に設定。普通のバッファでも同じ)。
+  vim と同じく左移動 (evil の節で `evil-motion-state-map` に設定。普通のバッファでも同じ。
+  dired・ibuffer だけはクイックガイドの表示。下の「dired・ibuffer の C-h」)。
 - 相対行番号は出さない (流れる出力には使い道がなく、出力のたびに付け直すぶん重くなるため)。
 - 現在行のハイライト (`global-hl-line-mode`) も切る (2026-10-10)。vterm は入力のたびに行を消して入れ直すので、
   ハイライトが消えては付き、ちらつくため (emacs-libvterm の issue #432。2020 年から未解決)。
@@ -822,3 +823,13 @@ magit の `start.el` は、左の課題のウィンドウを dedicated にして
 `setup.sh` が README と全レッスンの課題を、練習用ディレクトリ直下の `00-tutor.md` 1 つにまとめるので、
 練習中はそれを開いて `SPC o` (見出しの一覧) でレッスンに飛べばよい (各レッスンのディレクトリには課題を置かない)。
 ibuffer の練習で絞り込みやグループを保存すると `~/.emacs.d/custom.el` に書き込まれるので、課題の最後の手順で消す。
+
+### dired・ibuffer の C-h (クイックガイドを出す)
+
+dired・ibuffer の normal state で `C-h` を押すと、`tutor/dired/README.md`・`tutor/ibuffer/README.md` の
+「クイックガイド」の節を別のウィンドウに閲覧用表示で出す (2026-10-14 追加)。`q` でウィンドウごと閉じる。
+それまでの `C-h` は evil の節で付けた左移動だったが、dired・ibuffer では行内の左右移動はほとんど使わないので上書きした。
+`M-h` (全部のキーの一覧) と `<f1> k` (1 つのキー) のあいだの、全体をざっと見る手段がなかったため。
+押すたびに README を読み直すので、README を直せばすぐに反映される。README はリポジトリの中で探す
+(`~/.emacs.d/site-lisp` のリンクをたどる)。ほかのモードに広げるときは `my-tutor-guide-alist` に足す。
+設定は `site-lisp/my-tutor-guide.el` にまとめ、`init.el` から `require` している (`C-h` の割り当ては `init.el` の dired・ibuffer の節)。
