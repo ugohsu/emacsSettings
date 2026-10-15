@@ -394,9 +394,30 @@
       (call-interactively #'consult-fd)
     (call-interactively #'consult-find)))
 
+;; F はファイルの中身での検索。rg (ripgrep) が入っていれば consult-ripgrep、なければ consult-grep を使う
+;; (f と同じく、押したときにその場所 (TRAMP 先を含む) での有無を調べる)
+;; 印があれば印の付いたファイルだけを検索する (find ... | xargs grep のように)。印の付いたディレクトリは
+;; その中を再帰的に検索する (rg も consult の grep (-r 付き) もディレクトリを渡すと再帰する。
+;; rg はその中の隠しファイルと .gitignore 対象を飛ばす (grep は隠しファイルも検索する)。
+;; 印を付けたファイルそのものは、隠しファイルでもどちらも検索する)
+;; 印がなければ M-x consult-ripgrep と同じ (プロジェクトの中ならプロジェクト全体、外ならこのディレクトリ。
+;; C-u F で検索するディレクトリやファイルを選べる)
+(defun my-dired-grep ()
+  "rg があれば `consult-ripgrep'、なければ `consult-grep' でファイルの中身を検索する。
+印があれば印の付いたファイル・ディレクトリだけを検索する。"
+  (interactive)
+  (let ((command (if (executable-find "rg" 'remote) #'consult-ripgrep #'consult-grep))
+        ;; 印が 1 つなら (t FILE)、2 つ以上なら印の付いたファイル、印がなければカーソル行のファイル
+        ;; (ファイルのない行なら nil) が返る
+        (files (dired-get-marked-files nil nil nil t)))
+    (cond
+     ((eq (car files) t) (funcall command (cdr files)))
+     ((cdr files) (funcall command files))
+     (t (call-interactively command)))))
+
 ;; dired-x (Emacs 付属の dired の拡張) を読み込む。* . (拡張子で印)・* ( (Lisp の式で印)・
 ;; dired-omit (zh) が使えるようになる。F (印の付いたファイルを全部開く) なども割り当てられるが、
-;; Emacs 側のキーマップなので、evil の normal state では F・V は evil のまま
+;; Emacs 側のキーマップなので、evil の normal state では効かない (V は evil のまま、F は下の my-dired-grep)
 (with-eval-after-load 'dired
   (require 'dired-x))
 ;; 隠しファイルは最初から隠し、zh で表示・非表示を切り替える (ranger の zh にならう。dired-omit-mode)
@@ -470,6 +491,7 @@
   (evil-define-key 'normal dired-mode-map
     (kbd "C-h") #'my-tutor-guide
     "f" #'my-dired-find-file-by-name
+    "F" #'my-dired-grep
     "h" #'dired-up-directory
     "l" #'dired-find-file
     "zh" #'my-dired-toggle-hidden

@@ -239,7 +239,7 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
 
 キーに割り当てていないコマンドは `M-x` から呼ぶ。例:
 
-- `consult-ripgrep`: ディレクトリ (プロジェクト) 全体を grep
+- `consult-ripgrep`: ディレクトリ (プロジェクト) 全体を grep (dired では `F` で呼べる。後述の「dired の F」)
 - `consult-org-heading` / `consult-outline`: org の見出し / アウトラインへジャンプ
 - `consult-yank-pop`: kill-ring を一覧から選んで貼り付け
 
@@ -254,7 +254,7 @@ vertico の候補をスペース区切りの複数キーワードで順不同に
   `*Completions*` ではなくミニバッファ (vertico・orderless・marginalia) に出している。
   選択中の候補はバッファにプレビューされる。Eglot の候補だけは Eglot 専用の
   補完スタイル (`eglot--dumb-flex`) で絞り込まれ、orderless は効かない。
-- `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep`
+- `consult-ripgrep` には ripgrep が必要: `sudo apt install ripgrep` (dired の `F` は、ripgrep がなければ `consult-grep` を使う)
 
 ### consult の絞り込み (narrowing)
 
@@ -642,7 +642,8 @@ ddskk には、保存時に他の Emacs の更新を読み直して合わせる
 Emacs に付属する dired の拡張 dired-x を、dired を最初に開いたときに読み込む (2026-10-12 追加)。
 `* .` (拡張子で印を付ける)、`* (` (サイズ・日付などを Lisp の式で書いて印を付ける)、dired-omit が使えるようになる。
 dired-x は `F` (印の付いたファイルを全部開く)・`V` も割り当てるが、Emacs 側のキーマップなので、
-evil の normal state では `F`・`V` は evil のまま (insert state などでだけ効く)。
+evil の normal state では効かない (insert state などでだけ効く)。normal state の `V` は evil のまま、
+`F` は中身の検索 (後述の「dired の F」) にしている。
 dired の中の `M-!` は `dired-smart-shell-command` (dired のディレクトリで実行する版) になる。
 読み込みは数ミリ秒。隠しファイルを隠す処理 (dired-omit) は一覧を作るたびに動くが、行の名前を正規表現で調べて消すだけなので軽い。
 
@@ -747,6 +748,22 @@ embark の `x` (`embark-open-externally`。xdg-open で開くだけ) を置き�
 `M-a A` (`embark-act-all`) で `x` を選べば、絞り込んだ候補をすべて開ける。ただしアプリは候補ごとに聞かれる
 (2 つ目からは前に選んだアプリが既定値なので `RET` で進む)。1 回で選びたいときは、`M-e` で dired に書き出し、`*t` (印の反転) で全部に印を付けて `r` を押す。
 設定は `site-lisp/my-open-with.el` にまとめ、`init.el` から `require` している (`r`・`M-a x` の割り当ては `init.el`)。
+
+## dired の F (ファイルの中身を検索する)
+
+dired の `F` で、ファイルの中身を検索する (2026-10-15 追加。`f` (名前で探す) の隣に置いた。evil の `F` (行の中を後ろへ文字検索) を上書きする)。
+`f` と同じく、押したときに rg (ripgrep) があるかを調べ (TRAMP 先ではその先で)、あれば `consult-ripgrep`、なければ `consult-grep` を使う。
+入力の書き方 (`#` での分担、`-g` などのオプション) と `M-e` での書き出しは、`M-x consult-ripgrep` と同じ。
+
+- **印がないとき**: `M-x consult-ripgrep` と同じ。プロジェクトの中ならプロジェクト全体、外ならその dired のディレクトリの下を検索する。
+  `C-u F` で検索するディレクトリやファイルを選べる。
+- **印があるとき**: 印の付いたファイルだけを検索する (`find ... | xargs grep` にあたる)。consult-ripgrep・consult-grep は
+  検索先にファイルやディレクトリのリストを受け取れるので、印の付いたファイルをそのまま渡している。
+- **ディレクトリに印を付けたとき**: その下を再帰的に検索する (rg はディレクトリを渡すと再帰し、consult の grep は `-r` 付きで動くため)。
+  その下の隠しファイルと `.gitignore` 対象は、rg は飛ばし、grep は検索する (grep は `grep-find-ignored-directories` の `.git` などだけを飛ばす)。
+  印を付けたファイルそのものは、隠しファイルでもどちらも検索する。
+
+dired の `A` (`dired-do-find-regexp`) も印の付いたファイルの中身を検索するが、結果は xref の一覧で、打つたびに結果が変わったりプレビューしたりはしない。
 
 ## emacs-cd (終了したときの場所にシェルを cd する)
 
