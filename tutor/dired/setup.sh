@@ -147,6 +147,16 @@ mk 11-combo/2025/mar/debug.tmp "一時ファイル"
 mk 11-combo/2025/mar/cache.tmp "一時ファイル"
 mk 11-combo/docs/guide.md "提出の締め切りは 10 月末"
 mk 11-combo/docs/faq.md "締め切りを過ぎたら連絡する"
+# f → M-e → 印 → F を find | xargs grep のようにつなぐ課題用 (名前に py を含むのは .py だけにする)
+mk 11-combo/2024/jan/load.py 'import pandas as pd
+df = pd.read_csv("sales-2024-01.csv")  # TODO: 列名を確かめる'
+mk 11-combo/2024/feb/plot.py 'import matplotlib.pyplot as plt
+# TODO: 色を決める'
+mk 11-combo/2025/mar/clean.py 'import pandas as pd
+df = pd.read_csv("sales-2025-03.csv").dropna()'
+mk 11-combo/2025/mar/report.py 'import pandas as pd
+# TODO: 合計の行を足す'
+mk 11-combo/docs/todo.md "TODO: pandas の使い方をまとめる"
 mkdir -p 11-combo/collected
 
 ## README と全レッスンの課題を 00-tutor.md にまとめる (00- を付けて一覧の先頭に出す)
