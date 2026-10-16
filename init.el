@@ -610,14 +610,8 @@
   (keymap-set term-raw-escape-map "i" #'my-terminal-send-string))
 
 ;;;;
-;;;; org (evil-org。evil-collection には org の設定がない)
+;;;; org (evil-collection には org の設定がない。evil-org は gj・gk を見出しの移動に取るので使わない)
 ;;;;
-;; evil-org の key theme から additional を外す。additional は normal state の M-h を org-metaleft にして、
-;; global の M-h (embark-bindings) を隠すため。見出しの昇格・降格は < と > (常に有効)、
-;; 上下の入れ替えは org の M-<up>・M-<down> でできる。evil-org を読み込む前に設定しないと効かない
-(setq evil-org-key-theme '(navigation insert textobjects calendar))
-(add-hook 'org-mode-hook #'evil-org-mode)
-
 ;; RET はリンクの上ならリンクを開き、そうでなければ evil の RET (次の行へ) のまま
 ;; リンクを開く前に jump list に記録して、C-o で戻れるようにする (C-c C-o で開いたときも同じ)
 (defun my-org-open-link-or-ret ()
@@ -630,7 +624,7 @@
 ;; C-h は tutor/org/README.md のクイックガイドを出す (site-lisp/my-tutor-guide.el)
 ;; normal state の C-h (evil の節で付けた左移動) を上書きする。insert state では global のまま backspace
 ;; M-h は org-mode-map が org-mark-element にしているので、global と同じ embark-bindings に戻す
-;; (要素の選択は evil-org の vaE で代用できる)
+;; (段落の選択は vap で代用できる)
 (with-eval-after-load 'org
   (evil-set-command-property #'org-open-at-point :jump t)
   (keymap-set org-mode-map "M-h" #'embark-bindings)

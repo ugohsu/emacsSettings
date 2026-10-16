@@ -52,7 +52,6 @@ make && sudo make install
     evil
     evil-collection  ; 追加: キーバインド一括設定
     evil-surround
-    evil-org         ; org-mode を evil で使うキーバインド (evil-collection には org がない)
     ddskk
     magit
     clipetty  ; emacs -nw でkillring⇄クリップボード連携 (OSC 52)
@@ -882,14 +881,13 @@ dired・ibuffer の normal state で `C-h` を押すと、`tutor/dired/README.md
 (`~/.emacs.d/site-lisp` のリンクをたどる)。org にも広げた (2026-10-17。`tutor/org/README.md` にはクイックガイドだけがある)。ほかのモードに広げるときは `my-tutor-guide-alist` に足す。
 設定は `site-lisp/my-tutor-guide.el` にまとめ、`init.el` から `require` している (`C-h` の割り当ては `init.el` の dired・ibuffer の節)。
 
-## org (evil-org)
+## org
 
-evil-collection には org の設定がないので、evil-org を入れた (2026-10-17 追加)。設定は `init.el` の org の節。
+evil-collection には org の設定がない (2026-10-17 追加)。設定は `init.el` の org の節。
 
-- key theme は `navigation insert textobjects calendar`。`additional` は外した。normal state の `M-h`・`M-l` などを
-  `org-metaleft`・`org-metaright` などにして、global の `M-h` (embark-bindings) を隠すため。見出しの昇格・降格は
-  常に有効な `<`・`>`、上下の入れ替えは org の `M-<up>`・`M-<down>` でできる。
-- org-mode-map も `M-h` を `org-mark-element` にしているので、`embark-bindings` に戻した (要素の選択は `vaE` で代用できる)。
+- evil-org は一度入れたが、使わないことにした。`gj`・`gk` を見出しの移動に取るので、折り返した行の中を
+  動けなくなるため。チェックボックスやリンクの操作は結局 org の `C-c` のキーで足りる。
+- org-mode-map は `M-h` を `org-mark-element` にしているので、global と同じ `embark-bindings` に戻した。
 - normal state の `RET` は、リンクの上ならリンクを開き、そうでなければ evil の `RET` (次の行へ) のまま。
   リンクを開く前に jump list に記録するので、`C-o` で戻れる (`C-c C-o` で開いたときも同じ)。
 - normal state の `C-h` は、dired・ibuffer と同じく `tutor/org/README.md` のクイックガイドを出す。
