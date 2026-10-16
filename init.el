@@ -504,9 +504,22 @@
 ;;;; ibuffer (SPC B・C-x C-b。キーの多くは evil-collection が決めている)
 ;;;;
 ;; C-h は tutor/ibuffer/README.md のクイックガイドを出す (site-lisp/my-tutor-guide.el)
+;; F はバッファの中身を consult-line-multi で検索する (dired の F に合わせた)。grep 系ではなくこれにしたのは、
+;; ディスクではなくバッファの中身を探すので、保存していない変更やファイルのないバッファも検索できるため。
+;; evil-collection の F (ibuffer-do-shell-command-file) を上書きする (同じものが ! にもある)
+(defun my-ibuffer-consult-line-multi (arg)
+  "印の付いたバッファの中身を `consult-line-multi' で検索する。
+印がなければ `consult-line-multi' と同じ (プロジェクトのバッファ。C-u ですべてのバッファ)。"
+  (interactive "P")
+  (if-let* ((buffers (ibuffer-get-marked-buffers)))
+      ;; :filter nil で、consult-buffer-filter に当たるバッファ (*vc* など) も印のとおりに検索する
+      (consult-line-multi (list :buffer-list buffers :filter nil))
+    (consult-line-multi arg)))
+
 (with-eval-after-load 'ibuffer
   (evil-define-key 'normal ibuffer-mode-map
-    (kbd "C-h") #'my-tutor-guide))
+    (kbd "C-h") #'my-tutor-guide
+    "F" #'my-ibuffer-consult-line-multi))
 
 ;;;;
 ;;;; vterm (Emacs 内のターミナル。中身は普通の bash なので `...` や $(...) も使える)
