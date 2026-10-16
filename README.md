@@ -885,9 +885,11 @@ dired・ibuffer の normal state で `C-h` を押すと、`tutor/dired/README.md
 
 evil-collection には org の設定がない (2026-10-17 追加)。設定は `init.el` の org の節。
 
-- evil-org は一度入れたが、使わないことにした。`gj`・`gk` を見出しの移動に取るので、折り返した行の中を
-  動けなくなるため。チェックボックスやリンクの操作は結局 org の `C-c` のキーで足りる。
-- org-mode-map は `M-h` を `org-mark-element` にしているので、global と同じ `embark-bindings` に戻した。
+- evil-org は一度入れたが、使わないことにした。チェックボックスやリンクの操作は結局 org の `C-c` のキーで足りる。
+- evil-collection には org の設定はないが、outline-mode の設定が、outline-mode を元にした org にも効く。
+  normal state の `gj`・`gk` (`C-j`・`C-k`) は同じ階層の次・前の見出しへ、`]]`・`[[` は次・前の見出しへ、`zu` は親の見出しへ、
+  `M-h`・`M-l` は見出しの昇格・降格 (子もいっしょに)、`M-j`・`M-k` は見出しの入れ替えになる。
+  そのため org では `M-h` が embark-bindings (キーの一覧) にならない。キーの一覧は `<f1> b` か、`C-c` のあとの which-key で見る。
 - normal state の `RET` は、リンクの上ならリンクを開き、そうでなければ evil の `RET` (次の行へ) のまま。
   リンクを開く前に jump list に記録するので、`C-o` で戻れる (`C-c C-o` で開いたときも同じ)。
 - normal state の `C-h` は、dired・ibuffer と同じく `tutor/org/README.md` のクイックガイドを出す。

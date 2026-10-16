@@ -610,7 +610,7 @@
   (keymap-set term-raw-escape-map "i" #'my-terminal-send-string))
 
 ;;;;
-;;;; org (evil-collection には org の設定がない。evil-org は gj・gk を見出しの移動に取るので使わない)
+;;;; org (evil-collection に org の設定はないが、outline-mode の設定 (gj・gk・M-h など) が org にも効く)
 ;;;;
 ;; RET はリンクの上ならリンクを開き、そうでなければ evil の RET (次の行へ) のまま
 ;; リンクを開く前に jump list に記録して、C-o で戻れるようにする (C-c C-o で開いたときも同じ)
@@ -623,11 +623,8 @@
 
 ;; C-h は tutor/org/README.md のクイックガイドを出す (site-lisp/my-tutor-guide.el)
 ;; normal state の C-h (evil の節で付けた左移動) を上書きする。insert state では global のまま backspace
-;; M-h は org-mode-map が org-mark-element にしているので、global と同じ embark-bindings に戻す
-;; (段落の選択は vap で代用できる)
 (with-eval-after-load 'org
   (evil-set-command-property #'org-open-at-point :jump t)
-  (keymap-set org-mode-map "M-h" #'embark-bindings)
   (evil-define-key 'normal org-mode-map
     (kbd "C-h") #'my-tutor-guide
     (kbd "RET") #'my-org-open-link-or-ret))
