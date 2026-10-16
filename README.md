@@ -894,3 +894,8 @@ evil-collection には org の設定がない (2026-10-17 追加)。設定は `i
   リンクを開く前に jump list に記録するので、`C-o` で戻れる (`C-c C-o` で開いたときも同じ)。
 - normal state の `C-h` は、dired・ibuffer と同じく `tutor/org/README.md` のクイックガイドを出す。
   insert state の `C-h` は backspace のまま。
+- org では `auto-fill-mode` を有効にし、`fill-column` を 80 にした (org だけ。markdown などは既定のまま)。
+  `gj`・`gk` が見出しの移動なので、長い行を折り返して読むより、行を短く保つほうが扱いやすいため。
+  org の既定どおり長い行は見切れる (`org-startup-truncated`) が、見切れるのは URL と表くらいになる。
+  段落を整え直すのは `M-q` (`org-fill-paragraph`)。evil の `gq` は `fill-region` を呼ぶだけで org の構造を見ないので、
+  `#+TITLE:` と `#+STARTUP:` の行やコメントの行をつなげてしまう (2026-10-17 に試して発覚)。
