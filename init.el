@@ -294,7 +294,7 @@
 (require 'my-zoxide)  ; zoxide への記録と、記録されたディレクトリへ飛ぶ (zz・SPC z)
 (require 'my-dired-preview)  ; dired のカーソル行のファイルのプレビュー (zp)
 (require 'my-open-with)  ; dired のファイルを選んだ外部アプリで開く (r)
-(require 'my-tutor-guide)  ; tutor の README のクイックガイドを表示する (dired・ibuffer の C-h)
+(require 'my-tutor-guide)  ; tutor の README のクイックガイドを表示する (dired・ibuffer・org の C-h)
 
 ;; SPC メニューや dired の y のように、続けて 1 文字で選ぶキーマップでは、割り当てのないキーは
 ;; 何もしない (read-char 版と同じく、undefined のエラーを出さない)。ただし C-h は割り当てなしのままにして、
@@ -340,6 +340,7 @@
 ;; C-h は global で delete-backward-char にしているが、normal state では vim と同じく
 ;; 左移動にする (insert state では global のまま backspace として効く)
 ;; dired・ibuffer では行内の左右移動を使わないので、それぞれの節でクイックガイドの表示に上書きする
+;; (org でも上書きする。左移動は h でできる)
 (keymap-set evil-motion-state-map "C-h" #'evil-backward-char)
 
 ;; コマンドラインウィンドウ (: の中の C-f や q:) で C-c を押すと、カーソル行を持って
@@ -607,6 +608,35 @@
 (with-eval-after-load 'term
   (keymap-set term-mode-map "C-c i" #'my-terminal-send-string)
   (keymap-set term-raw-escape-map "i" #'my-terminal-send-string))
+
+;;;;
+;;;; org (evil-org。evil-collection には org の設定がない)
+;;;;
+;; evil-org の key theme から additional を外す。additional は normal state の M-h を org-metaleft にして、
+;; global の M-h (embark-bindings) を隠すため。見出しの昇格・降格は < と > (常に有効)、
+;; 上下の入れ替えは org の M-<up>・M-<down> でできる。evil-org を読み込む前に設定しないと効かない
+(setq evil-org-key-theme '(navigation insert textobjects calendar))
+(add-hook 'org-mode-hook #'evil-org-mode)
+
+;; RET はリンクの上ならリンクを開き、そうでなければ evil の RET (次の行へ) のまま
+;; リンクを開く前に jump list に記録して、C-o で戻れるようにする (C-c C-o で開いたときも同じ)
+(defun my-org-open-link-or-ret ()
+  "カーソルがリンクの上ならリンクを開く。そうでなければ `evil-ret' と同じく次の行へ動く。"
+  (interactive)
+  (if (eq (org-element-type (org-element-context)) 'link)
+      (progn (evil-set-jump) (org-open-at-point))
+    (call-interactively #'evil-ret)))
+
+;; C-h は tutor/org/README.md のクイックガイドを出す (site-lisp/my-tutor-guide.el)
+;; normal state の C-h (evil の節で付けた左移動) を上書きする。insert state では global のまま backspace
+;; M-h は org-mode-map が org-mark-element にしているので、global と同じ embark-bindings に戻す
+;; (要素の選択は evil-org の vaE で代用できる)
+(with-eval-after-load 'org
+  (evil-set-command-property #'org-open-at-point :jump t)
+  (keymap-set org-mode-map "M-h" #'embark-bindings)
+  (evil-define-key 'normal org-mode-map
+    (kbd "C-h") #'my-tutor-guide
+    (kbd "RET") #'my-org-open-link-or-ret))
 
 ;;;;
 ;;;; Markdown・Quarto・R Markdown (polymode)

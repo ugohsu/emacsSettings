@@ -52,6 +52,7 @@ make && sudo make install
     evil
     evil-collection  ; 追加: キーバインド一括設定
     evil-surround
+    evil-org         ; org-mode を evil で使うキーバインド (evil-collection には org がない)
     ddskk
     magit
     clipetty  ; emacs -nw でkillring⇄クリップボード連携 (OSC 52)
@@ -871,12 +872,25 @@ magit の `start.el` は、左の課題のウィンドウを dedicated にして
 練習中はそれを開いて `SPC o` (見出しの一覧) でレッスンに飛べばよい (各レッスンのディレクトリには課題を置かない)。
 ibuffer の練習で絞り込みやグループを保存すると `~/.emacs.d/custom.el` に書き込まれるので、課題の最後の手順で消す。
 
-### dired・ibuffer の C-h (クイックガイドを出す)
+### dired・ibuffer・org の C-h (クイックガイドを出す)
 
 dired・ibuffer の normal state で `C-h` を押すと、`tutor/dired/README.md`・`tutor/ibuffer/README.md` の
 「クイックガイド」の節を別のウィンドウに閲覧用表示で出す (2026-10-14 追加)。`q` でウィンドウごと閉じる。
 それまでの `C-h` は evil の節で付けた左移動だったが、dired・ibuffer では行内の左右移動はほとんど使わないので上書きした。
 `M-h` (全部のキーの一覧) と `<f1> k` (1 つのキー) のあいだの、全体をざっと見る手段がなかったため。
 押すたびに README を読み直すので、README を直せばすぐに反映される。README はリポジトリの中で探す
-(`~/.emacs.d/site-lisp` のリンクをたどる)。ほかのモードに広げるときは `my-tutor-guide-alist` に足す。
+(`~/.emacs.d/site-lisp` のリンクをたどる)。org にも広げた (2026-10-17。`tutor/org/README.md` にはクイックガイドだけがある)。ほかのモードに広げるときは `my-tutor-guide-alist` に足す。
 設定は `site-lisp/my-tutor-guide.el` にまとめ、`init.el` から `require` している (`C-h` の割り当ては `init.el` の dired・ibuffer の節)。
+
+## org (evil-org)
+
+evil-collection には org の設定がないので、evil-org を入れた (2026-10-17 追加)。設定は `init.el` の org の節。
+
+- key theme は `navigation insert textobjects calendar`。`additional` は外した。normal state の `M-h`・`M-l` などを
+  `org-metaleft`・`org-metaright` などにして、global の `M-h` (embark-bindings) を隠すため。見出しの昇格・降格は
+  常に有効な `<`・`>`、上下の入れ替えは org の `M-<up>`・`M-<down>` でできる。
+- org-mode-map も `M-h` を `org-mark-element` にしているので、`embark-bindings` に戻した (要素の選択は `vaE` で代用できる)。
+- normal state の `RET` は、リンクの上ならリンクを開き、そうでなければ evil の `RET` (次の行へ) のまま。
+  リンクを開く前に jump list に記録するので、`C-o` で戻れる (`C-c C-o` で開いたときも同じ)。
+- normal state の `C-h` は、dired・ibuffer と同じく `tutor/org/README.md` のクイックガイドを出す。
+  insert state の `C-h` は backspace のまま。
