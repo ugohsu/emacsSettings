@@ -34,6 +34,10 @@
              '("melpa" . "https://melpa.org/packages/") t)
 (setq package-archive-priorities
       '(("gnu" . 10) ("nongnu" . 5) ("melpa" . 0)))
+;; evil だけは MELPA から入れる。NonGNU ELPA の公開版 1.15.0 は新しい Emacs (31.1 で確認) で
+;; 「Error in post-command-hook (evil-normal-post-command): (void-variable evil-mode-buffers)」
+;; を出す (define-globalized-minor-mode が MODE-buffers を作らなくなったため。開発版では直っている)
+(setq package-pinned-packages '((evil . "melpa")))
 (package-initialize)
 
 ;; カスタムファイルは custom.el へ逃がす

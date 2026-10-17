@@ -47,6 +47,8 @@ make && sudo make install
 ;; init.el と同じく、公式の置き場を優先し、そこにないものだけ MELPA から入れる
 (setq package-archive-priorities
       '(("gnu" . 10) ("nongnu" . 5) ("melpa" . 0)))
+;; evil だけは MELPA から入れる (下の「パッケージの入手元」を参照)
+(setq package-pinned-packages '((evil . "melpa")))
 (package-initialize)
 
 ;; 2. インストールしたいパッケージのリスト
@@ -100,11 +102,16 @@ GNU ELPA・NonGNU ELPA にあるものはそちらから入れ、MELPA にしか
 MELPA は作者のリポジトリの最新のコミットをそのままビルドして配り、署名もない。
 優先順位を付けないと、MELPA の版の番号 (日付) がいつも大きいので、両方にあるものも MELPA から入る。
 
-- 公式の置き場から入るもの (21): consult, embark, embark-consult, ess, marginalia, orderless, vertico,
-  ef-themes, modus-themes (GNU ELPA)、evil, evil-collection, evil-surround, goto-chg, magit, magit-section,
+- 公式の置き場から入るもの (20): consult, embark, embark-consult, ess, marginalia, orderless, vertico,
+  ef-themes, modus-themes (GNU ELPA)、evil-collection, evil-surround, goto-chg, magit, magit-section,
   with-editor, llama, cond-let, markdown-mode, wgrep, request (NonGNU ELPA)
-- MELPA から入るもの (13): ddskk (と依存の ccc, cdb), yatex, vterm, polymode, poly-R, poly-markdown,
+- MELPA から入るもの (14): evil (下を参照), ddskk (と依存の ccc, cdb), yatex, vterm, polymode, poly-R, poly-markdown,
   poly-noweb, migemo, clipetty, pyvenv, quarto-mode
+
+evil は `package-pinned-packages` で MELPA に固定している。NonGNU ELPA の公開版 1.15.0 は
+新しい Emacs (31.1 で確認) で `Error in post-command-hook (evil-normal-post-command): (void-variable evil-mode-buffers)`
+を出すため (`define-globalized-minor-mode` が `MODE-buffers` を作らなくなった。開発版では直っている)。
+NonGNU ELPA に直った版が出たら、固定を外してよい。
 
 変更より前に入れた環境では、どれも MELPA から入ったままになっている。入れ直すには次のようにする。
 
