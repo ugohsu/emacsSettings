@@ -41,8 +41,12 @@ make && sudo make install
 ;; 1. パッケージ管理の初期化
 (require 'package)
 (setq package-archives
-      '(("melpa"  . "https://melpa.org/packages/")
-        ("gnu"    . "https://elpa.gnu.org/packages/")))  ; ef-themes は GNU ELPA にだけある
+      '(("gnu"    . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa"  . "https://melpa.org/packages/")))
+;; init.el と同じく、公式の置き場を優先し、そこにないものだけ MELPA から入れる
+(setq package-archive-priorities
+      '(("gnu" . 10) ("nongnu" . 5) ("melpa" . 0)))
 (package-initialize)
 
 ;; 2. インストールしたいパッケージのリスト
@@ -88,6 +92,26 @@ make && sudo make install
 
 (message "すべてのパッケージのインストールが完了しました！")
 ```
+
+### パッケージの入手元 (2026-10-17 変更)
+
+GNU ELPA・NonGNU ELPA にあるものはそちらから入れ、MELPA にしかないものだけ MELPA から入れる
+(`package-archive-priorities`)。公式の置き場は Emacs の開発者が管理し、署名付きの公開版を配る。
+MELPA は作者のリポジトリの最新のコミットをそのままビルドして配り、署名もない。
+優先順位を付けないと、MELPA の版の番号 (日付) がいつも大きいので、両方にあるものも MELPA から入る。
+
+- 公式の置き場から入るもの (21): consult, embark, embark-consult, ess, marginalia, orderless, vertico,
+  ef-themes, modus-themes (GNU ELPA)、evil, evil-collection, evil-surround, goto-chg, magit, magit-section,
+  with-editor, llama, cond-let, markdown-mode, wgrep, request (NonGNU ELPA)
+- MELPA から入るもの (13): ddskk (と依存の ccc, cdb), yatex, vterm, polymode, poly-R, poly-markdown,
+  poly-noweb, migemo, clipetty, pyvenv, quarto-mode
+
+変更より前に入れた環境では、どれも MELPA から入ったままになっている。入れ直すには次のようにする。
+
+1. Emacs を終了し、`mv ~/.emacs.d/elpa ~/.emacs.d/elpa.old` で退避する
+2. `emacs -Q` で起動し、上のスクリプトを `*scratch*` で `M-x eval-buffer` する
+3. Emacs を起動し直す。vterm はモジュールのコンパイルを訊かれるので `y` で答える
+4. 問題がなければ `~/.emacs.d/elpa.old` を消す
 
 ## 環境固有の設定 (local.el)
 

@@ -28,8 +28,12 @@
   (setq exec-path (append (mapcar #'file-name-as-directory dirs) (list exec-directory))))
 
 (require 'package)
+;; 公式の置き場 (GNU ELPA・NonGNU ELPA。署名付きの公開版) を優先し、そこにないものだけ MELPA から入れる。
+;; 優先順位を付けないと、MELPA の版の番号 (日付) がいつも大きいので、両方にあるものも MELPA から入る
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
+             '("melpa" . "https://melpa.org/packages/") t)
+(setq package-archive-priorities
+      '(("gnu" . 10) ("nongnu" . 5) ("melpa" . 0)))
 (package-initialize)
 
 ;; カスタムファイルは custom.el へ逃がす
