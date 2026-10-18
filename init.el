@@ -302,7 +302,7 @@
 (require 'my-zoxide)  ; zoxide への記録と、記録されたディレクトリへ飛ぶ (zz・SPC z)
 (require 'my-dired-preview)  ; dired のカーソル行のファイルのプレビュー (zp)
 (require 'my-open-with)  ; dired のファイルを選んだ外部アプリで開く (r)
-(require 'my-tutor-guide)  ; tutor の README のクイックガイドを表示する (dired・ibuffer・org の C-h)
+(require 'my-tutor-guide)  ; tutor の README のクイックガイドを表示する (dired・ibuffer・org・org-agenda の C-h)
 
 ;; SPC メニューや dired の y のように、続けて 1 文字で選ぶキーマップでは、割り当てのないキーは
 ;; 何もしない (read-char 版と同じく、undefined のエラーを出さない)。ただし C-h は割り当てなしのままにして、
@@ -348,7 +348,7 @@
 ;; C-h は global で delete-backward-char にしているが、normal state では vim と同じく
 ;; 左移動にする (insert state では global のまま backspace として効く)
 ;; dired・ibuffer では行内の左右移動を使わないので、それぞれの節でクイックガイドの表示に上書きする
-;; (org でも上書きする。左移動は h でできる)
+;; (org・org-agenda でも上書きする。左移動は h でできる)
 (keymap-set evil-motion-state-map "C-h" #'evil-backward-char)
 
 ;; コマンドラインウィンドウ (: の中の C-f や q:) で C-c を押すと、カーソル行を持って
@@ -645,6 +645,22 @@
           (lambda ()
             (setq-local fill-column 80)
             (auto-fill-mode 1)))
+
+;; org-agenda (M-x org-agenda のあと a)。当分は素の agenda を使い、何が欲しいかを見る (2026-10-18)
+;; キーは evil-collection が決めている (素の b・f・j は H・L・J)。上書きするのは C-h だけ
+;; 対象は ~/wdir/org (Dropbox) の見出し。いまは sample/ で試しているので、本運用では projects/ に替える。
+;; ディレクトリのない環境 (workbox など) では空にする (無いファイルがあると、agenda を開くたびに外すかを聞かれる)
+;; 見出しのログ (- [2026-10-16 金] ...) の日付は inactive (角括弧) なので、拾うように変える (既定は <…> だけ)
+(setq org-agenda-files (seq-filter #'file-directory-p '("~/wdir/org/sample/projects/"))
+      org-agenda-include-inactive-timestamps t)
+
+;; agenda の行の頭は、ファイル名 (カテゴリー) と見出しの階層 (「大学院担当科目->ログ」の親の部分) にする
+;; (既定の頭は時刻・SCHEDULED などの欄で、この使い方では空欄が並ぶだけになる)
+;; C-h は tutor/org-agenda/README.md のクイックガイドを出す。normal state の C-h (左移動) を上書きする
+(with-eval-after-load 'org-agenda
+  (setf (alist-get 'agenda org-agenda-prefix-format) " %-10:c %b")
+  (evil-define-key 'normal org-agenda-mode-map
+    (kbd "C-h") #'my-tutor-guide))
 
 ;;;;
 ;;;; Markdown・Quarto・R Markdown (polymode)

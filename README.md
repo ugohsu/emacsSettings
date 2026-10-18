@@ -902,15 +902,15 @@ magit の `start.el` は、左の課題のウィンドウを dedicated にして
 練習中はそれを開いて `SPC o` (見出しの一覧) でレッスンに飛べばよい (各レッスンのディレクトリには課題を置かない)。
 ibuffer の練習で絞り込みやグループを保存すると `~/.emacs.d/custom.el` に書き込まれるので、課題の最後の手順で消す。
 
-### dired・ibuffer・org の C-h (クイックガイドを出す)
+### dired・ibuffer・org・org-agenda の C-h (クイックガイドを出す)
 
 dired・ibuffer の normal state で `C-h` を押すと、`tutor/dired/README.md`・`tutor/ibuffer/README.md` の
 「クイックガイド」の節を別のウィンドウに閲覧用表示で出す (2026-10-14 追加)。`q` でウィンドウごと閉じる。
 それまでの `C-h` は evil の節で付けた左移動だったが、dired・ibuffer では行内の左右移動はほとんど使わないので上書きした。
 `M-h` (全部のキーの一覧) と `<f1> k` (1 つのキー) のあいだの、全体をざっと見る手段がなかったため。
 押すたびに README を読み直すので、README を直せばすぐに反映される。README はリポジトリの中で探す
-(`~/.emacs.d/site-lisp` のリンクをたどる)。org にも広げた (2026-10-17。`tutor/org/README.md` にはクイックガイドだけがある)。ほかのモードに広げるときは `my-tutor-guide-alist` に足す。
-設定は `site-lisp/my-tutor-guide.el` にまとめ、`init.el` から `require` している (`C-h` の割り当ては `init.el` の dired・ibuffer の節)。
+(`~/.emacs.d/site-lisp` のリンクをたどる)。org にも広げた (2026-10-17。`tutor/org/README.md` にはクイックガイドだけがある)。org-agenda にも広げた (2026-10-18。`tutor/org-agenda/README.md` も同じ)。ほかのモードに広げるときは `my-tutor-guide-alist` に足す。
+設定は `site-lisp/my-tutor-guide.el` にまとめ、`init.el` から `require` している (`C-h` の割り当ては `init.el` の dired・ibuffer・org の節)。
 
 ## org
 
@@ -930,3 +930,9 @@ evil-collection には org の設定がない (2026-10-17 追加)。設定は `i
   org の既定どおり長い行は見切れる (`org-startup-truncated`) が、見切れるのは URL と表くらいになる。
   段落を整え直すのは `M-q` (`org-fill-paragraph`)。evil の `gq` は `fill-region` を呼ぶだけで org の構造を見ないので、
   `#+TITLE:` と `#+STARTUP:` の行やコメントの行をつなげてしまう (2026-10-17 に試して発覚)。
+- org-agenda は最低限の設定だけ入れた (2026-10-18)。当分は素の agenda を使い、何が欲しいかを見る。
+  対象は `~/wdir/org/sample/projects/` (`org-agenda-files`。無い環境では空にする)。本運用では `projects/` に替える。
+  見出しのログ (`- [2026-10-16 金] ...`) の日付を拾うように `org-agenda-include-inactive-timestamps` を有効にし、
+  行の頭をファイル名と見出しの階層 (`gakunai:   大学院担当科目->ログ`) にした (`org-agenda-prefix-format` の agenda)。
+  キーは evil-collection のまま (素の `b`・`f`・`j` は `H`・`L`・`J`)。normal state の `C-h` だけ、`tutor/org-agenda/README.md` の
+  クイックガイドに上書きした。

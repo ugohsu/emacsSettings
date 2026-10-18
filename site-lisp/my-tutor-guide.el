@@ -1,6 +1,6 @@
-;;; my-tutor-guide.el --- tutor の README のクイックガイドを表示する (dired・ibuffer・org の C-h)  -*- lexical-binding: t; -*-
+;;; my-tutor-guide.el --- tutor の README のクイックガイドを表示する (dired・ibuffer・org・org-agenda の C-h)  -*- lexical-binding: t; -*-
 
-;; init.el から (require 'my-tutor-guide) で読み込む。C-h の割り当ては init.el の dired・ibuffer・org の節にある。
+;; init.el から (require 'my-tutor-guide) で読み込む。C-h の割り当ては init.el の dired・ibuffer・org (と org-agenda) の節にある。
 ;; 今のバッファのモードに対応する tutor/<名前>/README.md から「## クイックガイド」の節を切り出し、
 ;; 閲覧用表示 (my-view.el の my-markdown-view) で別のウィンドウに出す。q でウィンドウもバッファも閉じる。
 ;; 押すたびに README を読み直すので、README を直せばすぐに反映される
@@ -16,7 +16,8 @@
 (defvar my-tutor-guide-alist
   '((dired-mode . "dired")
     (ibuffer-mode . "ibuffer")
-    (org-mode . "org"))
+    (org-mode . "org")
+    (org-agenda-mode . "org-agenda"))
   "メジャーモードと、そのクイックガイドがある tutor のディレクトリ名の組。")
 
 (defconst my-tutor-guide-heading "## クイックガイド"
