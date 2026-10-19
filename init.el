@@ -637,13 +637,14 @@
     (kbd "C-h") #'my-tutor-guide
     (kbd "RET") #'my-org-open-link-or-ret))
 
-;; org では打つそばから 80 桁で改行する (auto-fill)。gj・gk が見出しの移動なので、長い行を作らないようにする
+;; org では打つそばから 70 桁で改行する (auto-fill)。gj・gk が見出しの移動なので、長い行を作らないようにする
+;; 70 は Emacs の既定の fill-column。80 では、小さい画面で左右に分けたときに見切れた (2026-10-19)
 ;; (org の既定どおり長い行は見切れるが、見切れるのは URL と表くらいになる)。markdown などはそのまま
 ;; 書いたあとで段落を整えるのは M-q (org-fill-paragraph)。evil の gq は org の構造を見ずに詰めるので、
 ;; #+ の行やコメントの行までつなげてしまう。貼り付けた原文など、改行を残したいものは #+begin_example に入れる
 (add-hook 'org-mode-hook
           (lambda ()
-            (setq-local fill-column 80)
+            (setq-local fill-column 70)
             (auto-fill-mode 1)))
 
 ;; org-agenda (M-x org-agenda のあと a)。当分は素の agenda を使い、何が欲しいかを見る (2026-10-18)
