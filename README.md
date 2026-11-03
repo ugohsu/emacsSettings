@@ -4,9 +4,33 @@
 
 ```bash
 sudo apt install gcc libgtk2.0-dev libgtk-3-dev libjpeg-dev libgif-dev libncurses5-dev libgnutls28-dev libgif-dev libxml2-dev libsqlite3-dev libgccjit-14-dev cmake libtool-bin libvterm-dev
+```
+
+`configure` だけ、その機械のデスクトップが X11 か Wayland かで分ける (2026-11-03)。
+
+X11 (i3 など):
+
+```bash
 ./configure --with-x-toolkit=gtk3 --without-toolkit-scroll-bars --without-xaw3d --without-xim --without-rsvg --without-xpm --without-tiff --without-gpm --with-wide-int 
 make && sudo make install
 ```
+
+Wayland (GNOME・niri など。pgtk):
+
+```bash
+./configure --with-pgtk --without-toolkit-scroll-bars --without-rsvg --without-xpm --without-tiff --without-gpm --with-wide-int
+make && sudo make install
+```
+
+- pgtk は Wayland の上で直接動く版。X11 用の版は Xwayland がないと動かない。GNOME は Xwayland を
+  内蔵しているので X11 用の版も動くが、niri は内蔵していない (xwayland-satellite を別に入れる必要がある)。
+  pgtk ならどちらでも Xwayland を通さずに動く。
+- pgtk は X11 では勧められていない (遅く、X に頼る機能や挙動が違う)。i3 の機械は X11 用のまま。
+- X11 用の 3 つ (`--with-x-toolkit=gtk3`・`--without-xaw3d`・`--without-xim`) は pgtk では外す。
+- `configure` の最後の一覧で、ウィンドウシステムが pgtk になっていることを確かめる。
+- 同じソースのディレクトリで X11 用と pgtk を切り替えるときは、`make clean` してから `configure` し直す。
+- pgtk では GTK の入力 (ibus など) がキーを先に取ることがある。SKK だけで入力するなら、
+  `local.el` で切る (下の「環境固有の設定 (local.el)」)。
 
 - `libgccjit-14-dev` はネイティブコンパイル (Emacs Lisp を機械語に変換して速くする) 用。
   無くてもビルドはできるが、`configure` がネイティブコンパイル無しで進む。
@@ -126,6 +150,19 @@ NonGNU ELPA に直った版が出たら、固定を外してよい。
 (2026-09-30 導入)。`init.el` の末尾で `(load (locate-user-emacs-file "local.el") t)`
 として読み込むので、ファイルがなければ何もしない。最後に読み込むため、テーマなど
 `init.el` の設定をその環境だけ上書きできる。
+
+pgtk の機械では、GTK の入力 (ibus) を使わず SKK だけにする (2026-11-03)。X11 用の版では
+この変数がないので、何もしない。
+
+```lisp
+;; pgtk のときだけ、GTK の入力 (ibus) を使わない。日本語は SKK だけで入れる
+(when (boundp 'pgtk-use-im-context-on-new-connection)
+  ;; emacsclient などで新しく開くフレーム
+  (setq pgtk-use-im-context-on-new-connection nil)
+  ;; 起動したときのフレーム
+  (when (eq window-system 'pgtk)
+    (pgtk-use-im-context nil)))
+```
 
 ## YaTeX での LuaLaTeX 使用
 
