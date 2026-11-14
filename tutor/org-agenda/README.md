@@ -10,7 +10,7 @@ evil-collection に org-agenda の設定があるので、素の org-agenda と�
 
 ### この設定で見えるもの
 
-- 対象は `~/wdir/org/sample/projects/` の org ファイル (`org-agenda-files`)。本運用では `projects/` に替える
+- 対象は `~/wdir/org/projects/` の org ファイル (`org-agenda-files`)
 - 見出しのログの日付 (`- [2026-10-16 金] ...`) も拾う。日表示にすると、その日にログを書いた見出しが、ログの行の数だけ並ぶ
 - 行の頭はファイル名と見出しの階層 (`gakunai:   大学院担当科目->ログ`)。ログの本文は一覧に出ないので、`TAB` で開いて読む
 - 予定・期限の正本は Google Calendar・Tasks。見出しの `:DUE:` はプロパティの写しなので、agenda には出ない

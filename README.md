@@ -968,7 +968,7 @@ evil-collection には org の設定がない (2026-10-17 追加)。設定は `i
   段落を整え直すのは `M-q` (`org-fill-paragraph`)。evil の `gq` は `fill-region` を呼ぶだけで org の構造を見ないので、
   `#+TITLE:` と `#+STARTUP:` の行やコメントの行をつなげてしまう (2026-10-17 に試して発覚)。
 - org-agenda は最低限の設定だけ入れた (2026-10-18)。当分は素の agenda を使い、何が欲しいかを見る。
-  対象は `~/wdir/org/sample/projects/` (`org-agenda-files`。無い環境では空にする)。本運用では `projects/` に替える。
+  対象は `~/wdir/org/projects/` (`org-agenda-files`。無い環境では空にする)。2026-11-15 に `sample/projects/` から本運用に移した。
   見出しのログ (`- [2026-10-16 金] ...`) の日付を拾うように `org-agenda-include-inactive-timestamps` を有効にし、
   行の頭をファイル名と見出しの階層 (`gakunai:   大学院担当科目->ログ`) にした (`org-agenda-prefix-format` の agenda)。
   キーは evil-collection のまま (素の `b`・`f`・`j` は `H`・`L`・`J`)。normal state の `C-h` だけ、`tutor/org-agenda/README.md` の

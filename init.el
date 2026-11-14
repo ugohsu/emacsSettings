@@ -649,10 +649,10 @@
 
 ;; org-agenda (M-x org-agenda のあと a)。当分は素の agenda を使い、何が欲しいかを見る (2026-10-18)
 ;; キーは evil-collection が決めている (素の b・f・j は H・L・J)。上書きするのは C-h だけ
-;; 対象は ~/wdir/org (Dropbox) の見出し。いまは sample/ で試しているので、本運用では projects/ に替える。
+;; 対象は ~/wdir/org (Dropbox) の projects/ の見出し (2026-11-15 に sample/ から本運用に移した)
 ;; ディレクトリのない環境 (workbox など) では空にする (無いファイルがあると、agenda を開くたびに外すかを聞かれる)
 ;; 見出しのログ (- [2026-10-16 金] ...) の日付は inactive (角括弧) なので、拾うように変える (既定は <…> だけ)
-(setq org-agenda-files (seq-filter #'file-directory-p '("~/wdir/org/sample/projects/"))
+(setq org-agenda-files (seq-filter #'file-directory-p '("~/wdir/org/projects/"))
       org-agenda-include-inactive-timestamps t)
 
 ;; agenda の行の頭は、ファイル名 (カテゴリー) と見出しの階層 (「大学院担当科目->ログ」の親の部分) にする
